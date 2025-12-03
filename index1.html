@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Times</title>
+    <style>
+        /* DARK PURPLE THEME */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .prayer-card {
+            background-color: #1a0f24; /* Very Dark Purple Background */
+            border: 1px solid #3c244d; /* Muted Purple Border */
+            border-radius: 8px;
+            width: 95%;
+            max-width: 400px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            color: #ebd9fc;
+        }
+        .header {
+            background-color: #271636; /* Dark Header */
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #5a3275; /* Purple Separator */
+        }
+        .city-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #d4b3ff; /* Lavender */
+            margin-bottom: 4px;
+            text-transform: capitalize;
+        }
+        .date-display {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            color: #e6d4ff;
+        }
+        .prayer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .prayer-row {
+            border-bottom: 1px solid #2f1d3d; /* Subtle row dividers */
+            transition: background 0.2s;
+        }
+        .prayer-row:last-child { border-bottom: none; }
+        .prayer-name {
+            padding: 10px 15px;
+            text-align: right;
+            font-weight: 500;
+            color: #d4b3ff; /* Lavender */
+        }
+        .prayer-time {
+            padding: 10px 15px;
+            text-align: left;
+            font-weight: bold;
+            color: #ffffff;
+            direction: ltr; 
+        }
+        .next-prayer {
+            background-color: #582a7a !important; /* Deep Purple Highlight */
+            color: #FFFFFF !important;
+        }
+        #loading {
+            text-align: center;
+            padding: 20px;
+            color: #d4b3ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="prayer-card">
+        <div class="header">
+            <!-- City name will fill here automatically -->
+            <div class="city-name" id="city-display">...</div>
+            <div class="date-display" id="date-text">Loading...</div>
+        </div>
+        
+        <div id="loading">جاري التحميل...</div>
+        <table class="prayer-table" id="times-table" style="display:none;"></table>
+    </div>
+
+    <script>
+        // --- SMART LOCATION SETUP ---
+        // This looks at your link for ?city=Name&country=Name
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Defaults to Ain Oussera if no link params are found
+        const CITY = urlParams.get('city') || "Ain Oussera";
+        const COUNTRY = urlParams.get('country') || "Algeria";
+
+        // Display the city name (translated to Arabic roughly or just English)
+        document.getElementById('city-display').innerText = CITY + "، " + COUNTRY;
+
+        const API_URL = `https://api.aladhan.com/v1/timingsByCity?city=${CITY}&country=${COUNTRY}&method=19`;
+
+        async function fetchPrayerTimes() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                if(!data.data) throw new Error("City not found");
+
+                const timings = data.data.timings;
+                const dateHijri = data.data.date.hijri;
+                const dateGreg = data.data.date.gregorian;
+
+                document.getElementById('date-text').innerText = 
+                    `${dateGreg.weekday.en} | ${dateHijri.day} ${dateHijri.month.ar} ${dateHijri.year}`;
+
+                const prayers = [
+                    { en: 'Fajr', ar: 'الفجر', time: timings.Fajr },
+                    { en: 'Sunrise', ar: 'الشروق', time: timings.Sunrise },
+                    { en: 'Dhuhr', ar: 'الظهر', time: timings.Dhuhr },
+                    { en: 'Asr', ar: 'العصر', time: timings.Asr },
+                    { en: 'Maghrib', ar: 'المغرب', time: timings.Maghrib },
+                    { en: 'Isha', ar: 'العشاء', time: timings.Isha }
+                ];
+
+                const table = document.getElementById('times-table');
+                const loading = document.getElementById('loading');
+                
+                loading.style.display = 'none';
+                table.style.display = 'table';
+
+                const now = new Date();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                let nextFound = false;
+
+                prayers.forEach(prayer => {
+                    const row = document.createElement('tr');
+                    row.className = 'prayer-row';
+                    
+                    let timeStr = prayer.time.split(' ')[0];
+                    const [h, m] = timeStr.split(':').map(Number);
+                    const prayerMinutes = h * 60 + m;
+                    
+                    if (!nextFound && prayerMinutes > currentMinutes && prayer.en !== 'Sunrise') {
+                        row.classList.add('next-prayer');
+                        nextFound = true;
+                    }
+
+                    row.innerHTML = `
+                        <td class="prayer-name">${prayer.ar}</td>
+                        <td class="prayer-time">${timeStr}</td>
+                    `;
+                    table.appendChild(row);
+                });
+
+            } catch (error) {
+                document.getElementById('loading').innerText = "خطأ: تأكد من اسم المدينة"; 
+                console.error(error);
+            }
+        }
+
+        fetchPrayerTimes();
+    </script>
+</body>
+</html>
