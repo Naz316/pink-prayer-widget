@@ -16,7 +16,6 @@
             --highlight-bg: #782a3b;
             --input-bg: rgba(255,255,255,0.1);
             --font-main: 'Roboto', sans-serif;
-            --font-size-base: 16px;
         }
 
         /* THEMES */
@@ -33,7 +32,6 @@
         [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; }
         [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --input-bg: rgba(0,0,0,0.05); }
 
-        /* LANGUAGE FONT OVERRIDE */
         [lang="ar"] { --font-main: 'Cairo', sans-serif; }
 
         /* --- LAYOUT --- */
@@ -48,7 +46,6 @@
             min-height: 100vh;
             color: var(--text-primary);
             overflow: hidden;
-            box-sizing: border-box;
         }
 
         .widget-card {
@@ -57,8 +54,6 @@
             border-radius: 12px;
             width: 100%;
             max-width: 600px;
-            /* Force height consistency */
-            min-height: 380px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
@@ -67,15 +62,14 @@
             position: relative;
         }
 
-        /* HEADER ROW (Grid for perfect center) */
+        /* HEADER ROW */
         .header-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
             padding: 15px 20px 5px 20px;
             background-color: var(--header-bg);
-            /* Force LTR direction so Next Prayer is always left, Loc always right */
-            direction: ltr; 
+            direction: ltr; /* Force layout direction */
         }
 
         .header-item {
@@ -112,7 +106,7 @@
             padding: 8px 10px 12px 10px;
             background-color: var(--header-bg);
             border-bottom: 1px solid var(--border-card);
-            min-height: 45px; /* Fixed height to prevent jump */
+            min-height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -122,9 +116,7 @@
             color: var(--text-secondary);
             line-height: 1.5;
             white-space: pre-line;
-            direction: rtl; /* Dates usually look better RTL in mixed context */
         }
-        [lang="en"] .date-text { direction: ltr; }
 
         /* PRAYER BAR */
         .prayer-bar {
@@ -132,7 +124,7 @@
             overflow-x: auto;
             background-color: rgba(0,0,0,0.1);
             scrollbar-width: none;
-            direction: ltr; /* Keep order consistent Fajr -> Isha */
+            direction: ltr;
         }
         .prayer-bar::-webkit-scrollbar { display: none; }
 
@@ -159,10 +151,9 @@
             flex-direction: column;
             gap: 15px;
             border-top: 1px solid var(--border-card);
-            direction: ltr; /* Force Layout to be LTR */
+            direction: ltr; /* Keeps inputs LTR, text aligns inside */
         }
 
-        /* Input Labels */
         .input-group {
             display: flex;
             flex-direction: column;
@@ -171,48 +162,47 @@
         .input-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             text-align: center;
         }
 
+        /* Inputs Side by Side */
         .inputs-row {
             display: flex;
-            gap: 10px;
+            gap: 15px; /* Space between the two boxes */
             width: 100%;
-            justify-content: center;
         }
 
         .input-box {
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
             font-family: inherit;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             outline: none;
             text-align: center;
             width: 100%;
+            box-sizing: border-box; /* Ensures padding doesn't break width */
         }
         .input-box option { background: #333; color: #fff; }
 
-        /* Buttons Row - STRICT LAYOUT */
+        /* BUTTONS CENTERED */
         .tools {
-            display: grid;
-            grid-template-columns: 40px 1fr 40px; /* Left - Center - Right */
+            display: flex;
+            justify-content: center; /* Center everything */
             align-items: center;
             width: 100%;
+            gap: 25px; /* Distance between buttons */
+            position: relative;
         }
-
-        .tool-left { display: flex; justify-content: flex-start; }
-        .tool-center { display: flex; justify-content: center; }
-        .tool-right { display: flex; justify-content: flex-end; position: relative; }
 
         .icon-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: var(--text-secondary);
             transition: 0.2s;
             padding: 0;
@@ -223,19 +213,20 @@
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 5px 15px;
+            padding: 6px 16px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             cursor: pointer;
             font-family: inherit;
         }
 
-        /* COLOR POPUP */
+        /* COLOR POPUP (Centers above the color button) */
         .color-popup {
             display: none;
             position: absolute;
-            bottom: 40px;
-            right: 0; 
+            bottom: 45px;
+            left: 50%; /* Center relative to container */
+            transform: translateX(30px); /* Shift slightly right to be over palette icon */
             background: #222;
             border: 1px solid #444;
             border-radius: 6px;
@@ -296,7 +287,7 @@
         <!-- CONTROLS -->
         <div class="controls-row">
             
-            <!-- 1. Inputs Row with Labels -->
+            <!-- 1. Inputs Row -->
             <div class="inputs-row">
                 <!-- City -->
                 <div class="input-group">
@@ -322,36 +313,31 @@
                 </div>
             </div>
 
-            <!-- 2. Buttons Row (Locked Positions) -->
+            <!-- 2. Buttons Row (CENTERED TIGHTLY) -->
             <div class="tools">
-                <!-- Sound Always Left -->
-                <div class="tool-left">
-                    <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
-                </div>
+                <!-- Sound -->
+                <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
                 
-                <!-- Language Always Center -->
-                <div class="tool-center">
-                    <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
-                </div>
+                <!-- Language -->
+                <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
                 
-                <!-- Color Always Right -->
-                <div class="tool-right">
-                    <button class="icon-btn" onclick="toggleColors()">🎨</button>
-                    <!-- Popup anchored right -->
-                    <div class="color-popup" id="color-menu">
-                        <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
-                        <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                        <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                        <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
-                        <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                        <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
-                        <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                        <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                        <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                        <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
-                        <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
-                        <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
-                    </div>
+                <!-- Color -->
+                <button class="icon-btn" onclick="toggleColors()">🎨</button>
+
+                <!-- Color Popup (Hidden) -->
+                <div class="color-popup" id="color-menu">
+                    <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
+                    <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
+                    <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
+                    <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
+                    <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
+                    <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
+                    <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
+                    <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
+                    <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
+                    <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
+                    <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
+                    <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
                 </div>
             </div>
         </div>
@@ -373,7 +359,7 @@
             en: {
                 fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
                 next: "Next Prayer", loading: "Loading...", btn: "عربي",
-                selCity: "City", selCountry: "Country"
+                selCity: "Choose City", selCountry: "Choose Country"
             },
             ar: {
                 fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء",
@@ -416,8 +402,6 @@
                 
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
-                // We do NOT use data.data.date.gregorian for Arabic text because it breaks
-                // We use native JS Date for that
                 
                 renderUI();
             } catch (e) { console.error(e); }
@@ -491,9 +475,14 @@
                 const gregStr = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
                 el.innerHTML = `<span style="opacity:0.8">${hijriStr}</span><br><span style="font-weight:bold">${gregStr}</span>`;
             } else {
-                // Arabic Format (Fixed)
+                // FIXED ARABIC FORMAT: الأربعاء، 3 ديسمبر 2025م
                 const hijriStr = `${h.day} ${h.month.ar} ${h.year}هـ`;
-                const gregStr = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + "م";
+                
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                // Force ar-DZ for correct "ديسمبر" naming if browser supports it
+                let gregStr = now.toLocaleDateString('ar-DZ', options);
+                gregStr += "م"; // Add 'm' suffix
+                
                 el.innerHTML = `${hijriStr}<br>${gregStr}`;
             }
         }
