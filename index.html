@@ -3,57 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prayer Times</title>
+    <title>Prayer Times - Dark Pink</title>
     <style>
-        /* NOTION-STYLE FONT & RESET */
+        /* 1. GENERAL FONT & LAYOUT */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: transparent; /* Transparent for Notion */
-            color: #37352F;
+            background-color: transparent; /* Blends with Notion */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
 
-        /* WIDGET CONTAINER */
+        /* 2. THE MAIN CARD (Dark Background) */
         .prayer-card {
-            background-color: #FDF5F7; /* Light Pink Background */
-            border: 1px solid #EFA7B2; /* Pink Border */
+            background-color: #2b1d20; /* Very Dark Pink/Brown (Like Notion Dark Callout) */
+            border: 1px solid #4f2a32; /* Subtle dark border */
             border-radius: 8px;
             width: 95%;
             max-width: 400px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            color: #ffeef0; /* Light Pink/White Text */
         }
 
-        /* HEADER (City & Date) */
+        /* 3. HEADER (City Name) */
         .header {
-            background-color: #F9EBEF;
+            background-color: #3d2228; /* Slightly lighter dark pink */
             padding: 15px;
             text-align: center;
-            border-bottom: 2px solid #EFA7B2;
-            color: #69242F; /* Dark Pink Text */
+            border-bottom: 2px solid #69242F;
         }
         .city-name {
             font-size: 1.2rem;
             font-weight: bold;
+            color: #ffccd5; /* Pale Pink for City */
             margin-bottom: 4px;
         }
         .date-display {
             font-size: 0.85rem;
-            opacity: 0.8;
+            opacity: 0.7;
+            color: #ffdde4;
         }
 
-        /* TABLE STYLES */
+        /* 4. TABLE STYLES */
         .prayer-table {
             width: 100%;
             border-collapse: collapse;
         }
         .prayer-row {
-            border-bottom: 1px solid #F0F0F0;
+            border-bottom: 1px solid #3d2228; /* Separator lines */
             transition: background 0.2s;
         }
         .prayer-row:last-child {
@@ -63,27 +64,23 @@
             padding: 10px 15px;
             text-align: right;
             font-weight: 500;
-            color: #69242F;
+            color: #ffccd5; /* Light Pink text */
         }
         .prayer-time {
             padding: 10px 15px;
             text-align: left;
             font-weight: bold;
-            color: #37352F;
-            direction: ltr; /* Force time to look correct */
+            color: #ffffff; /* White text for time */
+            direction: ltr; 
         }
 
-        /* HIGHLIGHT NEXT PRAYER */
+        /* 5. HIGHLIGHT NEXT PRAYER */
         .next-prayer {
-            background-color: #EFA7B2 !important; /* Strong Pink Highlight */
+            background-color: #782a3b !important; /* Deep Vibrant Pink Highlight */
             color: #FFFFFF !important;
         }
-        .next-prayer .prayer-name, 
-        .next-prayer .prayer-time {
-            color: #FFFFFF !important;
-        }
-
-        /* Loading State */
+        
+        /* Loading Text */
         #loading {
             text-align: center;
             padding: 20px;
@@ -102,16 +99,14 @@
         <div id="loading">جاري التحميل...</div>
 
         <table class="prayer-table" id="times-table" style="display:none;">
-            <!-- Rows will be inserted here by JavaScript -->
+            <!-- Rows inserted by JS -->
         </table>
     </div>
 
     <script>
-        // Configuration: Ain Oussera, Algeria
+        // CONFIGURATION
         const CITY = "Ain Oussera";
         const COUNTRY = "Algeria";
-        // Method 19 is often used for Algeria (Ministry of Religious Affairs)
-        // You can change method=19 to method=2 (ISNA) or method=3 (MWL) if times are off.
         const API_URL = `https://api.aladhan.com/v1/timingsByCity?city=${CITY}&country=${COUNTRY}&method=19`;
 
         async function fetchPrayerTimes() {
@@ -122,11 +117,11 @@
                 const dateHijri = data.data.date.hijri;
                 const dateGreg = data.data.date.gregorian;
 
-                // Update Date
+                // Set Date
                 document.getElementById('date-text').innerText = 
                     `${dateGreg.weekday.en} | ${dateHijri.day} ${dateHijri.month.ar} ${dateHijri.year}`;
 
-                // Prayer List (Names in Arabic to match your screenshot)
+                // Prayer List
                 const prayers = [
                     { en: 'Fajr', ar: 'الفجر', time: timings.Fajr },
                     { en: 'Sunrise', ar: 'الشروق', time: timings.Sunrise },
@@ -139,45 +134,37 @@
                 const table = document.getElementById('times-table');
                 const loading = document.getElementById('loading');
                 
-                // Clear loading
                 loading.style.display = 'none';
                 table.style.display = 'table';
 
-                // Get Current Time to highlight next prayer
+                // Highlight Logic
                 const now = new Date();
                 const currentMinutes = now.getHours() * 60 + now.getMinutes();
                 let nextFound = false;
 
                 prayers.forEach(prayer => {
-                    // Create Row
                     const row = document.createElement('tr');
                     row.className = 'prayer-row';
                     
-                    // Parse Time (e.g., "05:30")
-                    let timeStr = prayer.time.split(' ')[0]; // remove timezone if any
-                    
-                    // Logic to find "Next Prayer" for highlighting
+                    let timeStr = prayer.time.split(' ')[0];
                     const [h, m] = timeStr.split(':').map(Number);
                     const prayerMinutes = h * 60 + m;
                     
+                    // Logic to find next prayer
                     if (!nextFound && prayerMinutes > currentMinutes && prayer.en !== 'Sunrise') {
                         row.classList.add('next-prayer');
                         nextFound = true;
                     }
 
-                    // Convert to 12-hour format for display if preferred, or keep 24h
-                    // Let's keep 24h as per API or standard, or simple 12h:
-                    let displayTime = timeStr; 
-
                     row.innerHTML = `
                         <td class="prayer-name">${prayer.ar}</td>
-                        <td class="prayer-time">${displayTime}</td>
+                        <td class="prayer-time">${timeStr}</td>
                     `;
                     table.appendChild(row);
                 });
 
             } catch (error) {
-                document.getElementById('loading').innerText = "خطأ في التحميل";
+                document.getElementById('loading').innerText = "Error Loading";
                 console.error(error);
             }
         }
