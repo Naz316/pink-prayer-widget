@@ -63,26 +63,24 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            overflow: visible; /* Changed to visible for popup */
+            overflow: visible;
             transition: background 0.3s;
             position: relative;
         }
 
         /* HEADER ROW */
         .header-row {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; /* Exact Middle Alignment */
             align-items: center;
-            padding: 15px 15px 5px 15px;
+            padding: 15px 20px 5px 20px;
             background-color: var(--header-bg);
         }
 
         .header-item {
-            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-width: 80px;
         }
 
         /* Alignments */
@@ -108,27 +106,28 @@
         
         /* COUNTDOWN FIX FOR ARABIC */
         #countdown {
-            direction: ltr; /* Force LTR for numbers so minus stays left */
+            direction: ltr;
             unicode-bidi: embed;
         }
 
         .mosque-icon {
             font-size: 2.5rem;
             opacity: 0.9;
+            margin: 0 10px;
         }
 
         /* DATE ROW */
         .date-row {
             text-align: center;
-            padding: 5px 10px 10px 10px;
+            padding: 8px 10px 12px 10px; /* Consistent Padding */
             background-color: var(--header-bg);
             border-bottom: 1px solid var(--border-card);
         }
         .date-text {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            line-height: 1.6;
-            white-space: pre-line; /* Allows new lines */
+            line-height: 1.5;
+            white-space: pre-line;
         }
 
         /* PRAYER BAR */
@@ -160,8 +159,8 @@
         .controls-row {
             padding: 10px 20px;
             display: flex;
-            flex-direction: column; /* Stack vertically */
-            gap: 10px;
+            flex-direction: column;
+            gap: 12px;
             border-top: 1px solid var(--border-card);
             text-align: center;
         }
@@ -172,7 +171,7 @@
             background: rgba(255,255,255,0.1);
             border-radius: 2px;
             overflow: hidden;
-            margin-bottom: 5px;
+            margin-bottom: 0px;
         }
         .progress-fill {
             height: 100%;
@@ -184,7 +183,7 @@
         /* Inputs Row - Centered */
         .inputs-row {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             width: 100%;
             justify-content: center;
         }
@@ -194,8 +193,8 @@
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 6px;
-            border-radius: 4px;
+            padding: 8px;
+            border-radius: 6px;
             font-family: inherit;
             font-size: 0.85rem;
             outline: none;
@@ -206,10 +205,10 @@
         /* Buttons Row - Centered */
         .tools {
             display: flex;
-            gap: 15px;
-            justify-content: center; /* Always centered */
+            gap: 20px;
+            justify-content: center;
             align-items: center;
-            position: relative; /* Anchor for popup */
+            position: relative;
             width: 100%;
         }
 
@@ -229,30 +228,32 @@
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
             font-size: 0.8rem;
             cursor: pointer;
             font-family: inherit;
+            min-width: 40px;
+            text-align: center;
         }
 
-        /* COLOR POPUP (Anchored to the tools row) */
+        /* COLOR POPUP (Anchored above color button) */
         .color-popup {
             display: none;
             position: absolute;
-            bottom: 40px; /* Moves it UP above the buttons */
-            left: 50%;
-            transform: translateX(-50%); /* Centers it perfectly */
+            bottom: 40px;
+            right: 0px; /* Aligns roughly with right side buttons */
             background: #222;
             border: 1px solid #444;
             border-radius: 6px;
             padding: 8px;
             z-index: 100;
-            grid-template-columns: repeat(6, 1fr); /* 2 rows of 6 */
+            grid-template-columns: repeat(6, 1fr);
             gap: 6px;
             width: auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
+        [lang="ar"] .color-popup { right: auto; left: 0px; } /* Flip for Arabic */
         
         .color-dot {
             width: 20px;
@@ -274,18 +275,18 @@
         
         <!-- HEADER -->
         <div class="header-row">
-            <!-- Countdown -->
+            <!-- Countdown (Start) -->
             <div class="header-item align-start">
                 <span class="label-text" id="lbl-next">Next Prayer</span>
                 <span class="main-text" id="countdown">--:--:--</span>
             </div>
 
-            <!-- Mosque -->
+            <!-- Mosque (Center) -->
             <div class="header-item align-center">
                 <div class="mosque-icon">🕌</div>
             </div>
 
-            <!-- Location -->
+            <!-- Location (End) -->
             <div class="header-item align-end">
                 <span class="label-text" id="city-display">...</span>
                 <span class="main-text" id="clock">00:00</span>
@@ -306,7 +307,7 @@
                 <div class="progress-fill" id="time-bar"></div>
             </div>
 
-            <!-- 1. Inputs Row (City & Country) -->
+            <!-- 1. Inputs Row -->
             <div class="inputs-row">
                 <input type="text" id="input-city" class="input-box" value="Ain Oussera" onchange="updateLoc()">
                 <select id="input-country" class="input-box" onchange="updateLoc()">
@@ -324,30 +325,32 @@
                 </select>
             </div>
 
-            <!-- 2. Buttons Row (Centered) -->
+            <!-- 2. Buttons Row (Language in Middle) -->
             <div class="tools">
-                <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
+                <!-- Sound Left -->
                 <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
                 
-                <!-- Color Palette Button Wrapper -->
+                <!-- Language Middle -->
+                <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
+                
+                <!-- Color Right -->
                 <div style="position: relative;">
                     <button class="icon-btn" onclick="toggleColors()">🎨</button>
-                </div>
-
-                <!-- Color Menu (Absolute to tools container) -->
-                <div class="color-popup" id="color-menu">
-                    <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
-                    <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                    <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                    <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
-                    <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                    <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
-                    <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                    <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                    <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                    <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
-                    <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
-                    <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
+                    <!-- Color Popup -->
+                    <div class="color-popup" id="color-menu">
+                        <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
+                        <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
+                        <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
+                        <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
+                        <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
+                        <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
+                        <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
+                        <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
+                        <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
+                        <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
+                        <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
+                        <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -420,7 +423,6 @@
         function tick() {
             const now = new Date();
             const timeOpts = { hour: '2-digit', minute:'2-digit', hour12: false };
-            // Ensure clock numbers are LTR even in Arabic
             const clockEl = document.getElementById('clock');
             clockEl.innerText = now.toLocaleTimeString('en-GB', timeOpts);
             clockEl.style.direction = 'ltr';
@@ -461,7 +463,6 @@
             const hLeft = Math.floor(diffMins / 60);
             const mLeft = diffMins % 60;
 
-            // Countdown string: Force LTR for consistency: "-01:30"
             const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${diffSecs<10?'0'+diffSecs:diffSecs}`;
             document.getElementById('countdown').innerText = str;
             
@@ -486,10 +487,13 @@
                 const gregStr = `${g.weekday.en}, ${g.month.en.substr(0,3)} ${g.day}, ${g.year}`;
                 el.innerHTML = `<span style="opacity:0.8">${hijriStr}</span><br><span style="font-weight:bold">${gregStr}</span>`;
             } else {
-                // Precise Arabic Format
-                const gregStr = `التاريخ الميلادي: ${g.weekday.ar}، ${g.day} ${g.month.ar} ${g.year}م`;
-                const hijriStr = `التاريخ الهجري: ${h.day} ${h.month.ar} ${h.year}هـ`;
-                el.innerHTML = `<div style="direction:rtl">${gregStr}<br>${hijriStr}</div>`;
+                // FIXED ARABIC FORMAT
+                // Line 1: Hijri
+                const hijriStr = `${h.day} ${h.month.ar} ${h.year}هـ`;
+                // Line 2: Gregorian
+                const gregStr = `${g.weekday.ar}، ${g.day} ${g.month.ar} ${g.year}م`;
+                
+                el.innerHTML = `${hijriStr}<br>${gregStr}`;
             }
         }
 
