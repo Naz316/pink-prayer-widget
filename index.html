@@ -6,7 +6,9 @@
     <title>Precise Prayer Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. THEME VARIABLES --- */
+        /* --- 1. CSS RESET & VARIABLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         :root {
             --bg-card: #2b1d20;
             --border-card: #4f2a32;
@@ -36,8 +38,6 @@
 
         /* --- LAYOUT --- */
         body {
-            margin: 0;
-            padding: 0;
             background-color: transparent;
             font-family: var(--font-main);
             display: flex;
@@ -54,9 +54,12 @@
             border-radius: 12px;
             width: 100%;
             max-width: 600px;
+            /* LOCK HEIGHT: Prevents jumping between languages */
+            min-height: 400px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
+            justify-content: space-between; /* Distribute space evenly */
             overflow: visible;
             transition: background 0.3s;
             position: relative;
@@ -69,7 +72,8 @@
             align-items: center;
             padding: 15px 20px 5px 20px;
             background-color: var(--header-bg);
-            direction: ltr; /* Force layout direction */
+            direction: ltr; 
+            height: 85px; /* Fixed Height */
         }
 
         .header-item {
@@ -83,15 +87,17 @@
         .align-center { align-items: center; text-align: center; }
 
         .label-text {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            height: 14px; /* Fixed height for label */
         }
         .main-text {
             font-size: 1.1rem;
             font-weight: bold;
+            line-height: 1.2;
         }
 
         .mosque-icon {
@@ -103,10 +109,10 @@
         /* DATE ROW */
         .date-row {
             text-align: center;
-            padding: 8px 10px 12px 10px;
+            padding: 0 10px;
             background-color: var(--header-bg);
             border-bottom: 1px solid var(--border-card);
-            min-height: 45px;
+            height: 60px; /* Fixed height for 2 lines of text */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -117,6 +123,8 @@
             line-height: 1.5;
             white-space: pre-line;
         }
+        /* Cairo font needs slightly tighter leading to match Roboto verticality */
+        [lang="ar"] .date-text { line-height: 1.4; font-size: 0.8rem; }
 
         /* PRAYER BAR */
         .prayer-bar {
@@ -125,14 +133,17 @@
             background-color: rgba(0,0,0,0.1);
             scrollbar-width: none;
             direction: ltr;
+            height: 70px; /* Fixed Height */
         }
         .prayer-bar::-webkit-scrollbar { display: none; }
 
         .prayer-item {
             flex: 1;
             min-width: 60px;
-            padding: 12px 5px;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             border-right: 1px solid var(--border-card);
         }
         .prayer-item:last-child { border-right: none; }
@@ -141,8 +152,8 @@
             background-color: var(--highlight-bg);
             font-weight: bold;
         }
-        .p-name { font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-        .p-time { font-size: 1rem; font-weight: bold; display: block; direction: ltr; }
+        .p-name { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px; }
+        .p-time { font-size: 1rem; font-weight: bold; direction: ltr; }
 
         /* CONTROLS SECTION */
         .controls-row {
@@ -151,7 +162,9 @@
             flex-direction: column;
             gap: 15px;
             border-top: 1px solid var(--border-card);
-            direction: ltr; /* Keeps inputs LTR, text aligns inside */
+            direction: ltr;
+            flex-grow: 1; /* Fills remaining space */
+            justify-content: center;
         }
 
         .input-group {
@@ -162,14 +175,14 @@
         .input-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             text-align: center;
+            height: 12px;
         }
 
-        /* Inputs Side by Side */
         .inputs-row {
             display: flex;
-            gap: 15px; /* Space between the two boxes */
+            gap: 15px;
             width: 100%;
         }
 
@@ -177,25 +190,26 @@
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 10px;
+            padding: 8px;
             border-radius: 6px;
             font-family: inherit;
             font-size: 0.9rem;
             outline: none;
             text-align: center;
             width: 100%;
-            box-sizing: border-box; /* Ensures padding doesn't break width */
+            height: 36px; /* Fixed input height */
         }
         .input-box option { background: #333; color: #fff; }
 
-        /* BUTTONS CENTERED */
+        /* BUTTONS */
         .tools {
             display: flex;
-            justify-content: center; /* Center everything */
+            justify-content: center;
             align-items: center;
             width: 100%;
-            gap: 25px; /* Distance between buttons */
+            gap: 25px;
             position: relative;
+            height: 40px; /* Fixed container height */
         }
 
         .icon-btn {
@@ -206,6 +220,7 @@
             color: var(--text-secondary);
             transition: 0.2s;
             padding: 0;
+            line-height: 1;
         }
         .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
 
@@ -213,20 +228,25 @@
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 6px 16px;
+            padding: 0;
+            width: 50px;
+            height: 28px;
             border-radius: 4px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* COLOR POPUP (Centers above the color button) */
+        /* COLOR POPUP */
         .color-popup {
             display: none;
             position: absolute;
             bottom: 45px;
-            left: 50%; /* Center relative to container */
-            transform: translateX(30px); /* Shift slightly right to be over palette icon */
+            left: 50%;
+            transform: translateX(30px); /* Center above color icon */
             background: #222;
             border: 1px solid #444;
             border-radius: 6px;
@@ -258,18 +278,13 @@
         
         <!-- HEADER -->
         <div class="header-row">
-            <!-- Left: Countdown -->
             <div class="header-item align-start">
                 <span class="label-text" id="lbl-next">Next Prayer</span>
                 <span class="main-text" id="countdown">--:--:--</span>
             </div>
-
-            <!-- Center: Mosque -->
             <div class="header-item align-center">
                 <div class="mosque-icon">🕌</div>
             </div>
-
-            <!-- Right: Clock -->
             <div class="header-item align-end">
                 <span class="label-text" id="city-display">...</span>
                 <span class="main-text" id="clock">00:00</span>
@@ -278,7 +293,7 @@
 
         <!-- DATE -->
         <div class="date-row">
-            <div class="date-text" id="date-display">Loading dates...</div>
+            <div class="date-text" id="date-display">Loading...</div>
         </div>
 
         <!-- PRAYER SCROLL -->
@@ -287,14 +302,11 @@
         <!-- CONTROLS -->
         <div class="controls-row">
             
-            <!-- 1. Inputs Row -->
             <div class="inputs-row">
-                <!-- City -->
                 <div class="input-group">
                     <span class="input-label" id="lbl-city">Choose City</span>
                     <input type="text" id="input-city" class="input-box" value="Ain Oussera" onchange="updateLoc()">
                 </div>
-                <!-- Country -->
                 <div class="input-group">
                     <span class="input-label" id="lbl-country">Choose Country</span>
                     <select id="input-country" class="input-box" onchange="updateLoc()">
@@ -313,18 +325,17 @@
                 </div>
             </div>
 
-            <!-- 2. Buttons Row (CENTERED TIGHTLY) -->
             <div class="tools">
-                <!-- Sound -->
+                <!-- Sound Left -->
                 <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
                 
-                <!-- Language -->
+                <!-- Language Center -->
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
                 
-                <!-- Color -->
+                <!-- Color Right -->
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
-                <!-- Color Popup (Hidden) -->
+                <!-- Color Popup -->
                 <div class="color-popup" id="color-menu">
                     <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
                     <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
@@ -465,8 +476,6 @@
             if(!state.timings || !state.hijri) return;
             const h = state.hijri;
             const el = document.getElementById('date-display');
-            
-            // Native Gregorian Date
             const now = new Date();
             
             if (state.lang === 'en') {
@@ -475,14 +484,9 @@
                 const gregStr = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
                 el.innerHTML = `<span style="opacity:0.8">${hijriStr}</span><br><span style="font-weight:bold">${gregStr}</span>`;
             } else {
-                // FIXED ARABIC FORMAT: الأربعاء، 3 ديسمبر 2025م
                 const hijriStr = `${h.day} ${h.month.ar} ${h.year}هـ`;
-                
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                // Force ar-DZ for correct "ديسمبر" naming if browser supports it
-                let gregStr = now.toLocaleDateString('ar-DZ', options);
-                gregStr += "م"; // Add 'm' suffix
-                
+                let gregStr = now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                gregStr += "م"; 
                 el.innerHTML = `${hijriStr}<br>${gregStr}`;
             }
         }
@@ -524,8 +528,6 @@
             localStorage.setItem('p_lang', l);
             document.documentElement.lang = l;
             document.getElementById('btn-lang').innerText = TEXT[l].btn;
-            
-            // Note: We keep layout LTR, just change text language
             if(l === 'ar') {
                 document.getElementById('input-city').placeholder = "المدينة";
             } else {
