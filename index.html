@@ -5,7 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
     <style>
-        /* SAME DARK PINK THEME */
+        /* --- CSS VARIABLES FOR THEMES --- */
+        :root {
+            /* DEFAULT: DARK PURPLE */
+            --bg-card: #1a0f24;
+            --border-card: #3c244d;
+            --header-bg: #271636;
+            --header-border: #5a3275;
+            --text-primary: #ebd9fc;
+            --text-secondary: #e6d4ff;
+            --text-accent: #d4b3ff;
+            --row-border: #2f1d3d;
+            --highlight-bg: #582a7a;
+            --highlight-text: #ffffff;
+            --shadow: rgba(0,0,0,0.5);
+        }
+
+        /* OVERRIDE: DARK PINK */
+        [data-theme="pink"] {
+            --bg-card: #2b1d20;
+            --border-card: #4f2a32;
+            --header-bg: #3d2228;
+            --header-border: #69242F;
+            --text-primary: #ffeef0;
+            --text-secondary: #ffdde4;
+            --text-accent: #ffccd5;
+            --row-border: #3d2228;
+            --highlight-bg: #782a3b;
+            --highlight-text: #ffffff;
+            --shadow: rgba(0,0,0,0.3);
+        }
+
+        /* GLOBAL STYLES */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
             margin: 0;
@@ -16,72 +47,99 @@
             align-items: center;
             height: 100vh;
         }
+
         .prayer-card {
-            background-color: #2b1d20; 
-            border: 1px solid #4f2a32;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
             border-radius: 8px;
             width: 95%;
             max-width: 400px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            color: #ffeef0;
+            box-shadow: 0 4px 12px var(--shadow);
+            color: var(--text-primary);
+            position: relative;
+            transition: background-color 0.3s, border-color 0.3s;
         }
+
+        /* THEME BUTTON (Hidden if link forces color) */
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.5;
+            z-index: 10;
+        }
+        .theme-toggle:hover { opacity: 1; }
+
         .header {
-            background-color: #3d2228;
+            background-color: var(--header-bg);
             padding: 15px;
             text-align: center;
-            border-bottom: 2px solid #69242F;
+            border-bottom: 2px solid var(--header-border);
         }
+
         .city-name {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #ffccd5;
+            color: var(--text-accent);
             margin-bottom: 4px;
             text-transform: capitalize;
         }
+
         .date-display {
             font-size: 0.85rem;
             opacity: 0.7;
-            color: #ffdde4;
+            color: var(--text-secondary);
         }
+
         .prayer-table {
             width: 100%;
             border-collapse: collapse;
         }
+
         .prayer-row {
-            border-bottom: 1px solid #3d2228;
-            transition: background 0.2s;
+            border-bottom: 1px solid var(--row-border);
         }
         .prayer-row:last-child { border-bottom: none; }
+
         .prayer-name {
             padding: 10px 15px;
             text-align: right;
             font-weight: 500;
-            color: #ffccd5;
+            color: var(--text-accent);
         }
+
         .prayer-time {
             padding: 10px 15px;
             text-align: left;
             font-weight: bold;
-            color: #ffffff;
+            color: var(--text-primary);
             direction: ltr; 
         }
+
         .next-prayer {
-            background-color: #782a3b !important;
-            color: #FFFFFF !important;
+            background-color: var(--highlight-bg) !important;
+            color: var(--highlight-text) !important;
         }
+
         #loading {
             text-align: center;
             padding: 20px;
-            color: #EFA7B2;
+            color: var(--text-accent);
         }
     </style>
 </head>
 <body>
 
     <div class="prayer-card">
+        <!-- Switch Button -->
+        <button id="toggleBtn" class="theme-toggle" onclick="toggleTheme()" title="Switch Color">🖌️</button>
+
         <div class="header">
-            <!-- City name will fill here automatically -->
             <div class="city-name" id="city-display">...</div>
             <div class="date-display" id="date-text">Loading...</div>
         </div>
@@ -91,16 +149,42 @@
     </div>
 
     <script>
-        // --- SMART LOCATION SETUP ---
-        // This looks at your link for ?city=Name&country=Name
+        // --- SMART THEME SETUP ---
         const urlParams = new URLSearchParams(window.location.search);
         
-        // Defaults to Ain Oussera if no link params are found
+        // Check if theme is in link (e.g., &theme=pink)
+        const forcedTheme = urlParams.get('theme');
+        let currentTheme = forcedTheme || localStorage.getItem('prayerTheme') || 'purple';
+
+        // If theme is forced in link, HIDE the toggle button for a cleaner look
+        if (forcedTheme) {
+            document.getElementById('toggleBtn').style.display = 'none';
+        }
+
+        applyTheme(currentTheme);
+
+        function applyTheme(themeName) {
+            const htmlTag = document.documentElement;
+            if (themeName === 'pink') {
+                htmlTag.setAttribute('data-theme', 'pink');
+            } else {
+                htmlTag.removeAttribute('data-theme'); // Default is purple
+            }
+            currentTheme = themeName;
+            if (!forcedTheme) {
+                localStorage.setItem('prayerTheme', themeName);
+            }
+        }
+
+        function toggleTheme() {
+            const newTheme = currentTheme === 'purple' ? 'pink' : 'purple';
+            applyTheme(newTheme);
+        }
+
+        // --- CITY & TIME LOGIC ---
         const CITY = urlParams.get('city') || "Ain Oussera";
         const COUNTRY = urlParams.get('country') || "Algeria";
 
-        // Display the city name (translated to Arabic roughly or just English)
-        // For simplicity in this script, we show the input city name
         document.getElementById('city-display').innerText = CITY + "، " + COUNTRY;
 
         const API_URL = `https://api.aladhan.com/v1/timingsByCity?city=${CITY}&country=${COUNTRY}&method=19`;
@@ -159,7 +243,7 @@
                 });
 
             } catch (error) {
-                document.getElementById('loading').innerText = "خطأ: تأكد من اسم المدينة"; // Error check city name
+                document.getElementById('loading').innerText = "خطأ: تأكد من اسم المدينة";
                 console.error(error);
             }
         }
