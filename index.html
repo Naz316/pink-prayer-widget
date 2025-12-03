@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prayer Times</title>
+    <title>Multi-Color Prayer Widget</title>
     <style>
-        /* --- CSS VARIABLES FOR THEMES --- */
+        /* --- 1. THEME ENGINE --- */
         :root {
-            /* DEFAULT: DARK PURPLE */
+            /* Default (Purple) Variables */
             --bg-card: #1a0f24;
             --border-card: #3c244d;
             --header-bg: #271636;
@@ -21,20 +21,39 @@
             --shadow: rgba(0,0,0,0.5);
         }
 
-        /* OVERRIDE: DARK PINK */
-        [data-theme="pink"] {
-            --bg-card: #2b1d20;
-            --border-card: #4f2a32;
-            --header-bg: #3d2228;
-            --header-border: #69242F;
-            --text-primary: #ffeef0;
-            --text-secondary: #ffdde4;
-            --text-accent: #ffccd5;
-            --row-border: #3d2228;
-            --highlight-bg: #782a3b;
-            --highlight-text: #ffffff;
-            --shadow: rgba(0,0,0,0.3);
-        }
+        /* PINK */
+        [data-theme="pink"] { --bg-card: #2b1d20; --border-card: #4f2a32; --header-bg: #3d2228; --header-border: #69242F; --text-primary: #ffeef0; --text-secondary: #ffdde4; --text-accent: #ffccd5; --row-border: #3d2228; --highlight-bg: #782a3b; --highlight-text: #fff; }
+        
+        /* RED */
+        [data-theme="red"] { --bg-card: #2b0f0f; --border-card: #4d2424; --header-bg: #381414; --header-border: #753232; --text-primary: #fcebeb; --text-secondary: #ffd4d4; --text-accent: #ffb3b3; --row-border: #3d1d1d; --highlight-bg: #7a2a2a; --highlight-text: #fff; }
+        
+        /* ORANGE */
+        [data-theme="orange"] { --bg-card: #2b190f; --border-card: #4d3224; --header-bg: #382214; --header-border: #754a32; --text-primary: #fcefe6; --text-secondary: #ffe0cc; --text-accent: #ffccb3; --row-border: #3d261d; --highlight-bg: #7a452a; --highlight-text: #fff; }
+        
+        /* YELLOW/GOLD */
+        [data-theme="yellow"] { --bg-card: #26220d; --border-card: #4a421b; --header-bg: #332e12; --header-border: #736629; --text-primary: #fcfbe6; --text-secondary: #fffacc; --text-accent: #ffeb80; --row-border: #3b3517; --highlight-bg: #75631b; --highlight-text: #fff; }
+
+        /* GREEN */
+        [data-theme="green"] { --bg-card: #0f2b15; --border-card: #244d2e; --header-bg: #14381c; --header-border: #327544; --text-primary: #ebfcf0; --text-secondary: #d4ffde; --text-accent: #b3ffc7; --row-border: #1d3d25; --highlight-bg: #2a7a3f; --highlight-text: #fff; }
+
+        /* SKY BLUE (CYAN) */
+        [data-theme="cyan"] { --bg-card: #0f262b; --border-card: #24464d; --header-bg: #143238; --header-border: #326975; --text-primary: #ebfbfc; --text-secondary: #d4fcff; --text-accent: #b3faff; --row-border: #1d363d; --highlight-bg: #2a6f7a; --highlight-text: #fff; }
+
+        /* BLUE */
+        [data-theme="blue"] { --bg-card: #0f152b; --border-card: #242d4d; --header-bg: #141c38; --header-border: #324075; --text-primary: #ebeffc; --text-secondary: #d4ddff; --text-accent: #b3c7ff; --row-border: #1d233d; --highlight-bg: #2a3c7a; --highlight-text: #fff; }
+
+        /* BROWN */
+        [data-theme="brown"] { --bg-card: #2b2018; --border-card: #4d3a2b; --header-bg: #382a1f; --header-border: #755941; --text-primary: #fcefe3; --text-secondary: #ffdec2; --text-accent: #ffcc99; --row-border: #3d2f24; --highlight-bg: #7a5232; --highlight-text: #fff; }
+
+        /* GREY */
+        [data-theme="grey"] { --bg-card: #1f1f1f; --border-card: #3d3d3d; --header-bg: #2b2b2b; --header-border: #525252; --text-primary: #f0f0f0; --text-secondary: #d1d1d1; --text-accent: #ffffff; --row-border: #333333; --highlight-bg: #4f4f4f; --highlight-text: #fff; }
+
+        /* BLACK (OLED) */
+        [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --header-bg: #0a0a0a; --header-border: #404040; --text-primary: #ffffff; --text-secondary: #cccccc; --text-accent: #ffffff; --row-border: #1a1a1a; --highlight-bg: #333333; --highlight-text: #fff; }
+
+        /* WHITE (LIGHT MODE) */
+        [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --header-bg: #f5f5f5; --header-border: #d1d1d1; --text-primary: #333333; --text-secondary: #666666; --text-accent: #000000; --row-border: #f0f0f0; --highlight-bg: #e0e0e0; --highlight-text: #000000; --shadow: rgba(0,0,0,0.1); }
+
 
         /* GLOBAL STYLES */
         body {
@@ -58,22 +77,48 @@
             box-shadow: 0 4px 12px var(--shadow);
             color: var(--text-primary);
             position: relative;
-            transition: background-color 0.3s, border-color 0.3s;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
 
-        /* THEME BUTTON (Hidden if link forces color) */
-        .theme-toggle {
+        /* CONTROLS (Top Left) */
+        .controls {
             position: absolute;
             top: 10px;
             left: 10px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Sound Button */
+        .icon-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.2rem;
-            opacity: 0.5;
-            z-index: 10;
+            font-size: 1.1rem;
+            opacity: 0.6;
+            transition: 0.2s;
+            filter: grayscale(100%);
         }
-        .theme-toggle:hover { opacity: 1; }
+        .icon-btn:hover { opacity: 1; transform: scale(1.1); filter: grayscale(0%); }
+
+        /* Dropdown Styling */
+        .theme-select {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-accent);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            padding: 2px 5px;
+            cursor: pointer;
+            outline: none;
+            max-width: 80px;
+        }
+        .theme-select option {
+            background-color: #333;
+            color: #fff;
+        }
 
         .header {
             background-color: var(--header-bg);
@@ -135,9 +180,30 @@
 </head>
 <body>
 
+    <!-- Audio File -->
+    <audio id="adhan-audio" src="https://cdn.aladhan.com/audio/adhan/Makkah.mp3" preload="auto"></audio>
+
     <div class="prayer-card">
-        <!-- Switch Button -->
-        <button id="toggleBtn" class="theme-toggle" onclick="toggleTheme()" title="Switch Color">🖌️</button>
+        <div class="controls">
+            <!-- Sound Button -->
+            <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Unmute Adhan">🔇</button>
+            
+            <!-- Color Selector Dropdown -->
+            <select class="theme-select" id="theme-selector" onchange="changeTheme(this.value)">
+                <option value="purple">💜 Purple</option>
+                <option value="pink">🩷 Pink</option>
+                <option value="red">❤️ Red</option>
+                <option value="orange">🧡 Orange</option>
+                <option value="yellow">💛 Gold</option>
+                <option value="green">💚 Green</option>
+                <option value="cyan">🩵 Sky</option>
+                <option value="blue">💙 Blue</option>
+                <option value="brown">🤎 Brown</option>
+                <option value="grey">🩶 Grey</option>
+                <option value="black">🖤 Black</option>
+                <option value="white">🤍 White</option>
+            </select>
+        </div>
 
         <div class="header">
             <div class="city-name" id="city-display">...</div>
@@ -149,106 +215,6 @@
     </div>
 
     <script>
-        // --- SMART THEME SETUP ---
+        // --- 1. THEME LOGIC ---
         const urlParams = new URLSearchParams(window.location.search);
-        
-        // Check if theme is in link (e.g., &theme=pink)
-        const forcedTheme = urlParams.get('theme');
-        let currentTheme = forcedTheme || localStorage.getItem('prayerTheme') || 'purple';
-
-        // If theme is forced in link, HIDE the toggle button for a cleaner look
-        if (forcedTheme) {
-            document.getElementById('toggleBtn').style.display = 'none';
-        }
-
-        applyTheme(currentTheme);
-
-        function applyTheme(themeName) {
-            const htmlTag = document.documentElement;
-            if (themeName === 'pink') {
-                htmlTag.setAttribute('data-theme', 'pink');
-            } else {
-                htmlTag.removeAttribute('data-theme'); // Default is purple
-            }
-            currentTheme = themeName;
-            if (!forcedTheme) {
-                localStorage.setItem('prayerTheme', themeName);
-            }
-        }
-
-        function toggleTheme() {
-            const newTheme = currentTheme === 'purple' ? 'pink' : 'purple';
-            applyTheme(newTheme);
-        }
-
-        // --- CITY & TIME LOGIC ---
-        const CITY = urlParams.get('city') || "Ain Oussera";
-        const COUNTRY = urlParams.get('country') || "Algeria";
-
-        document.getElementById('city-display').innerText = CITY + "، " + COUNTRY;
-
-        const API_URL = `https://api.aladhan.com/v1/timingsByCity?city=${CITY}&country=${COUNTRY}&method=19`;
-
-        async function fetchPrayerTimes() {
-            try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                
-                if(!data.data) throw new Error("City not found");
-
-                const timings = data.data.timings;
-                const dateHijri = data.data.date.hijri;
-                const dateGreg = data.data.date.gregorian;
-
-                document.getElementById('date-text').innerText = 
-                    `${dateGreg.weekday.en} | ${dateHijri.day} ${dateHijri.month.ar} ${dateHijri.year}`;
-
-                const prayers = [
-                    { en: 'Fajr', ar: 'الفجر', time: timings.Fajr },
-                    { en: 'Sunrise', ar: 'الشروق', time: timings.Sunrise },
-                    { en: 'Dhuhr', ar: 'الظهر', time: timings.Dhuhr },
-                    { en: 'Asr', ar: 'العصر', time: timings.Asr },
-                    { en: 'Maghrib', ar: 'المغرب', time: timings.Maghrib },
-                    { en: 'Isha', ar: 'العشاء', time: timings.Isha }
-                ];
-
-                const table = document.getElementById('times-table');
-                const loading = document.getElementById('loading');
-                
-                loading.style.display = 'none';
-                table.style.display = 'table';
-
-                const now = new Date();
-                const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                let nextFound = false;
-
-                prayers.forEach(prayer => {
-                    const row = document.createElement('tr');
-                    row.className = 'prayer-row';
-                    
-                    let timeStr = prayer.time.split(' ')[0];
-                    const [h, m] = timeStr.split(':').map(Number);
-                    const prayerMinutes = h * 60 + m;
-                    
-                    if (!nextFound && prayerMinutes > currentMinutes && prayer.en !== 'Sunrise') {
-                        row.classList.add('next-prayer');
-                        nextFound = true;
-                    }
-
-                    row.innerHTML = `
-                        <td class="prayer-name">${prayer.ar}</td>
-                        <td class="prayer-time">${timeStr}</td>
-                    `;
-                    table.appendChild(row);
-                });
-
-            } catch (error) {
-                document.getElementById('loading').innerText = "خطأ: تأكد من اسم المدينة";
-                console.error(error);
-            }
-        }
-
-        fetchPrayerTimes();
-    </script>
-</body>
-</html>
+        let currentTheme = urlParams.ge
