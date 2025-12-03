@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  /* General Font Settings to match Notion */
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+    margin: 0;
+    padding: 0;
+    background-color: transparent; /* Allows Notion background to show */
+  }
+
+  /* Target the main box */
+  #boxframeprayer {
+    width: 100% !important;
+    border: none !important;
+  }
+
+  /* FORCE OVERRIDE COLORS */
+  /* You have to use !important to overwrite the widget's default green */
+
+  /* The Header Background (City Name/Logo area) */
+  #boxframeprayer .header, 
+  table tr:first-child {
+    background-color: #F9EBEF !important; /* Notion Pink Background */
+    color: #69242F !important; /* Notion Pink Text Color */
+    border-bottom: 2px solid #EFA7B2 !important;
+  }
+
+  /* The Table Header (Fajr, Dhuhr, etc.) */
+  tr.header-row, 
+  td.header-cell,
+  .subheader { 
+    background-color: #FDF5F7 !important; 
+    color: #69242F !important;
+  }
+
+  /* The content cells */
+  td {
+    background-color: #FFFFFF !important;
+    color: #37352F !important;
+    border-color: #F9EBEF !important;
+  }
+
+  /* The Active/Current Prayer Highlight */
+  .active-prayer, .selected {
+    background-color: #EFA7B2 !important; /* Darker Pink for highlight */
+    color: #FFFFFF !important;
+  }
+  
+</style>
+</head>
+<body>
+
+<!-- This is the widget container -->
+<div id="boxframeprayer"></div>
+
+<!-- This is the script from your screenshot -->
+<script type="text/javascript">
+  // Config for the widget (Standard defaults based on your image)
+  // You might need to re-select your city on the website to get the exact param string
+  // but usually, the script auto-detects or uses defaults.
+  var source = "timesprayer.com";
+</script>
+<script src="https://timesprayer.com/js/ptimer.js"></script>
+
+</body>
+</html>
