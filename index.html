@@ -19,7 +19,7 @@
             --direction: ltr;
         }
 
-        /* THEMES (All 12 Colors Restored) */
+        /* THEMES */
         [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; }
         [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; }
         [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; }
@@ -48,7 +48,7 @@
             direction: var(--direction);
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Aligns to top for better notion fit */
+            align-items: flex-start;
             min-height: 100vh;
             color: var(--text-primary);
             overflow: hidden; 
@@ -58,23 +58,23 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border-card);
             border-radius: 12px;
-            width: 100%; /* Stretch to fit Notion column */
-            max-width: 600px; /* Limit max width so it doesn't look weird on big screens */
+            width: 100%;
+            max-width: 600px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible; /* Changed to visible for popup */
             transition: background 0.3s;
+            position: relative;
         }
 
-        /* TOP SECTION */
+        /* HEADER ROW */
         .header-row {
             display: flex;
-            justify-content: space-between; /* Sides and Center */
+            justify-content: space-between;
             align-items: center;
             padding: 15px 15px 5px 15px;
             background-color: var(--header-bg);
-            position: relative;
         }
 
         .header-item {
@@ -85,25 +85,14 @@
             min-width: 80px;
         }
 
-        /* Left: Countdown (Aligned Start) */
-        .align-start {
-            align-items: flex-start;
-            text-align: left;
-        }
+        /* Alignments */
+        .align-start { align-items: flex-start; text-align: left; }
         [lang="ar"] .align-start { align-items: flex-start; text-align: right; }
-
-        /* Right: Location/Clock (Aligned End) */
-        .align-end {
-            align-items: flex-end;
-            text-align: right;
-        }
+        
+        .align-end { align-items: flex-end; text-align: right; }
         [lang="ar"] .align-end { align-items: flex-end; text-align: left; }
-
-        /* Center: Mosque */
-        .align-center {
-            align-items: center;
-            text-align: center;
-        }
+        
+        .align-center { align-items: center; text-align: center; }
 
         .label-text {
             font-size: 0.75rem;
@@ -116,6 +105,13 @@
             font-size: 1.1rem;
             font-weight: bold;
         }
+        
+        /* COUNTDOWN FIX FOR ARABIC */
+        #countdown {
+            direction: ltr; /* Force LTR for numbers so minus stays left */
+            unicode-bidi: embed;
+        }
+
         .mosque-icon {
             font-size: 2.5rem;
             opacity: 0.9;
@@ -131,17 +127,18 @@
         .date-text {
             font-size: 0.8rem;
             color: var(--text-secondary);
-            line-height: 1.4;
+            line-height: 1.6;
+            white-space: pre-line; /* Allows new lines */
         }
 
-        /* PRAYER BAR (Scrollable) */
+        /* PRAYER BAR */
         .prayer-bar {
             display: flex;
             overflow-x: auto;
             background-color: rgba(0,0,0,0.1);
-            scrollbar-width: none; /* Hide scrollbar Firefox */
+            scrollbar-width: none;
         }
-        .prayer-bar::-webkit-scrollbar { display: none; } /* Hide Chrome */
+        .prayer-bar::-webkit-scrollbar { display: none; }
 
         .prayer-item {
             flex: 1;
@@ -149,7 +146,6 @@
             padding: 10px 5px;
             text-align: center;
             border-right: 1px solid var(--border-card);
-            position: relative;
         }
         [lang="ar"] .prayer-item { border-right: none; border-left: 1px solid var(--border-card); }
         
@@ -160,22 +156,23 @@
         .p-name { font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 2px; }
         .p-time { font-size: 0.95rem; font-weight: bold; display: block; direction: ltr; }
 
-        /* CONTROLS (Bottom) */
+        /* CONTROLS (Centered & Stacked) */
         .controls-row {
-            padding: 10px;
+            padding: 10px 20px;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Stack vertically */
             gap: 10px;
             border-top: 1px solid var(--border-card);
+            text-align: center;
         }
 
-        /* Progress Bar style */
         .progress-container {
             width: 100%;
             height: 4px;
             background: rgba(255,255,255,0.1);
             border-radius: 2px;
             overflow: hidden;
+            margin-bottom: 5px;
         }
         .progress-fill {
             height: 100%;
@@ -184,47 +181,16 @@
             transition: width 1s linear;
         }
 
-        .buttons-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tools {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            transition: 0.2s;
-            padding: 0;
-        }
-        .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
-        .lang-btn {
-            background: var(--input-bg);
-            border: 1px solid var(--border-card);
-            color: var(--text-primary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        /* Equal Input Boxes */
+        /* Inputs Row - Centered */
         .inputs-row {
             display: flex;
             gap: 8px;
             width: 100%;
+            justify-content: center;
         }
+
         .input-box {
-            flex: 1; /* Takes exactly 50% each */
+            flex: 1;
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
@@ -233,35 +199,70 @@
             font-family: inherit;
             font-size: 0.85rem;
             outline: none;
-            width: 100%; /* Ensure it fills the flex space */
-            box-sizing: border-box; /* Includes padding in width */
+            text-align: center;
         }
         .input-box option { background: #333; color: #fff; }
 
-        /* COLOR POPUP */
+        /* Buttons Row - Centered */
+        .tools {
+            display: flex;
+            gap: 15px;
+            justify-content: center; /* Always centered */
+            align-items: center;
+            position: relative; /* Anchor for popup */
+            width: 100%;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            padding: 5px;
+            position: relative;
+        }
+        .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
+
+        .lang-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border-card);
+            color: var(--text-primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* COLOR POPUP (Anchored to the tools row) */
         .color-popup {
             display: none;
             position: absolute;
-            bottom: 45px;
-            left: 10px;
+            bottom: 40px; /* Moves it UP above the buttons */
+            left: 50%;
+            transform: translateX(-50%); /* Centers it perfectly */
             background: #222;
             border: 1px solid #444;
             border-radius: 6px;
-            padding: 5px;
-            z-index: 50;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            width: 100px;
+            padding: 8px;
+            z-index: 100;
+            grid-template-columns: repeat(6, 1fr); /* 2 rows of 6 */
+            gap: 6px;
+            width: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        [lang="ar"] .color-popup { left: auto; right: 10px; }
         
         .color-dot {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.2s;
         }
+        .color-dot:hover { transform: scale(1.2); border-color: #fff; }
 
     </style>
 </head>
@@ -271,73 +272,43 @@
 
     <div class="widget-card">
         
-        <!-- HEADER: Countdown, Mosque, Location -->
+        <!-- HEADER -->
         <div class="header-row">
-            <!-- Left: Countdown -->
+            <!-- Countdown -->
             <div class="header-item align-start">
                 <span class="label-text" id="lbl-next">Next Prayer</span>
                 <span class="main-text" id="countdown">--:--:--</span>
             </div>
 
-            <!-- Center: Mosque -->
+            <!-- Mosque -->
             <div class="header-item align-center">
                 <div class="mosque-icon">🕌</div>
             </div>
 
-            <!-- Right: Location & Clock -->
+            <!-- Location -->
             <div class="header-item align-end">
                 <span class="label-text" id="city-display">...</span>
                 <span class="main-text" id="clock">00:00</span>
             </div>
         </div>
 
-        <!-- DATE DISPLAY -->
+        <!-- DATE -->
         <div class="date-row">
             <div class="date-text" id="date-display">Loading dates...</div>
         </div>
 
-        <!-- PRAYER TIMES SCROLL -->
-        <div class="prayer-bar" id="prayers-container">
-            <!-- JS inserts here -->
-        </div>
+        <!-- PRAYER SCROLL -->
+        <div class="prayer-bar" id="prayers-container"></div>
 
         <!-- CONTROLS -->
         <div class="controls-row">
-            <!-- Progress Bar -->
             <div class="progress-container">
                 <div class="progress-fill" id="time-bar"></div>
             </div>
 
-            <div class="buttons-row">
-                <div class="tools">
-                    <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
-                    <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
-                    <button class="icon-btn" onclick="toggleColors()">🎨</button>
-                    
-                    <!-- Color Menu -->
-                    <div class="color-popup" id="color-menu">
-                        <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
-                        <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                        <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                        <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
-                        <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                        <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
-                        <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                        <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                        <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                        <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
-                        <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
-                        <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- EQUAL INPUTS ROW -->
+            <!-- 1. Inputs Row (City & Country) -->
             <div class="inputs-row">
-                <!-- City Input -->
                 <input type="text" id="input-city" class="input-box" value="Ain Oussera" onchange="updateLoc()">
-                
-                <!-- Country Select -->
                 <select id="input-country" class="input-box" onchange="updateLoc()">
                     <option value="Algeria">Algeria</option>
                     <option value="Saudi Arabia">Saudi Arabia</option>
@@ -352,11 +323,38 @@
                     <option value="Malaysia">Malaysia</option>
                 </select>
             </div>
+
+            <!-- 2. Buttons Row (Centered) -->
+            <div class="tools">
+                <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
+                <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
+                
+                <!-- Color Palette Button Wrapper -->
+                <div style="position: relative;">
+                    <button class="icon-btn" onclick="toggleColors()">🎨</button>
+                </div>
+
+                <!-- Color Menu (Absolute to tools container) -->
+                <div class="color-popup" id="color-menu">
+                    <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
+                    <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
+                    <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
+                    <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
+                    <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
+                    <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
+                    <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
+                    <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
+                    <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
+                    <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
+                    <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
+                    <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- DATA & STATE ---
+        // --- STATE ---
         const state = {
             lang: localStorage.getItem('p_lang') || 'en',
             theme: localStorage.getItem('p_theme') || 'pink',
@@ -383,24 +381,20 @@
 
         // --- INIT ---
         window.onload = () => {
-            // Unlock Audio
             document.body.addEventListener('click', () => {
                 if(state.sound && audio.paused) {
                     audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(()=>{});
                 }
             }, { once: true });
 
-            // Restore State
             applyTheme(state.theme);
             applyLang(state.lang);
             
-            // URL Params Override
             const params = new URLSearchParams(window.location.search);
             if(params.get('city')) state.city = params.get('city');
             if(params.get('country')) state.country = params.get('country');
             if(params.get('theme')) applyTheme(params.get('theme'));
 
-            // Set Inputs
             document.getElementById('input-city').value = state.city;
             document.getElementById('input-country').value = state.country;
 
@@ -408,7 +402,7 @@
             setInterval(tick, 1000);
         };
 
-        // --- CORE LOGIC ---
+        // --- LOGIC ---
         async function fetchData() {
             try {
                 const url = `https://api.aladhan.com/v1/timingsByCity?city=${state.city}&country=${state.country}&method=19`;
@@ -425,10 +419,11 @@
 
         function tick() {
             const now = new Date();
-            
-            // Clock
             const timeOpts = { hour: '2-digit', minute:'2-digit', hour12: false };
-            document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB', timeOpts);
+            // Ensure clock numbers are LTR even in Arabic
+            const clockEl = document.getElementById('clock');
+            clockEl.innerText = now.toLocaleTimeString('en-GB', timeOpts);
+            clockEl.style.direction = 'ltr';
 
             if(state.timings) updateCountdown(now);
         }
@@ -440,83 +435,61 @@
 
             let nextP = null;
             let nextName = "";
-            let nextIndex = -1;
 
-            // Find Next Prayer
             for(let i=0; i<prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
                 if(pMins > curMins) {
                     nextP = pMins;
                     nextName = prayers[i];
-                    nextIndex = i;
                     break;
                 }
             }
 
-            // If none found, next is Fajr tomorrow
             if(!nextP) {
                 const [h, m] = state.timings['Fajr'].split(':').map(Number);
-                nextP = (h * 60 + m) + (24 * 60); // Add 24 hours
+                nextP = (h * 60 + m) + (24 * 60);
                 nextName = 'Fajr';
-                nextIndex = 0;
             }
 
-            // Highlight Active
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
-            // Countdown Math
             const diffMins = nextP - curMins - 1;
             const diffSecs = 60 - curSecs;
             const hLeft = Math.floor(diffMins / 60);
             const mLeft = diffMins % 60;
 
+            // Countdown string: Force LTR for consistency: "-01:30"
             const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${diffSecs<10?'0'+diffSecs:diffSecs}`;
             document.getElementById('countdown').innerText = str;
             
-            // Labels
             const dict = TEXT[state.lang];
             const pNameTrans = dict[nextName.toLowerCase()];
-            
-            if(state.lang === 'ar') {
-                document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
-            } else {
-                document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
-            }
+            document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            // Play Sound
             if(state.sound && hLeft===0 && mLeft===0 && diffSecs===1 && nextName !== 'Sunrise') {
                 audio.play();
             }
-
-            // Progress Bar (Visual flair)
-            const prevIndex = nextIndex === 0 ? 5 : nextIndex - 1;
-            const prevName = prevIndex === 5 && nextIndex === 0 ? 'Isha' : prayers[prevIndex];
-            // Simple visual fill logic could go here, simplified for space
         }
 
-        // --- PRECISE DATE FORMATTING ---
         function formatDate() {
             if(!state.greg || !state.hijri) return;
-            
             const g = state.greg; 
             const h = state.hijri;
             const el = document.getElementById('date-display');
 
             if (state.lang === 'en') {
-                // English: "12th Jumada Al-Akhirah, 1447h" <br> "Wednesday, Dec 03, 2025"
                 const suffix = getOrdinal(h.day);
                 const hijriStr = `${h.day}${suffix} ${h.month.en}, ${h.year}h`;
                 const gregStr = `${g.weekday.en}, ${g.month.en.substr(0,3)} ${g.day}, ${g.year}`;
                 el.innerHTML = `<span style="opacity:0.8">${hijriStr}</span><br><span style="font-weight:bold">${gregStr}</span>`;
             } else {
-                // Arabic: Combined specific format
-                // الأربعاء، 3 ديسمبر 2025م | 12 جمادى الثاني 1447هـ
-                const gregStr = `${g.weekday.ar}، ${g.day} ${g.month.ar} ${g.year}م`;
-                const hijriStr = `${h.day} ${h.month.ar} ${h.year}هـ`;
-                el.innerHTML = `${gregStr} | ${hijriStr}`;
+                // Precise Arabic Format
+                const gregStr = `التاريخ الميلادي: ${g.weekday.ar}، ${g.day} ${g.month.ar} ${g.year}م`;
+                const hijriStr = `التاريخ الهجري: ${h.day} ${h.month.ar} ${h.year}هـ`;
+                el.innerHTML = `<div style="direction:rtl">${gregStr}<br>${hijriStr}</div>`;
             }
         }
 
@@ -526,9 +499,7 @@
             return s[(v - 20) % 10] || s[v] || s[0];
         }
 
-        // --- RENDER UI ---
         function renderUI() {
-            // Render Prayers
             const container = document.getElementById('prayers-container');
             container.innerHTML = '';
             const dict = TEXT[state.lang];
@@ -547,7 +518,6 @@
             formatDate();
         }
 
-        // --- ACTIONS ---
         function toggleLang() {
             applyLang(state.lang === 'en' ? 'ar' : 'en');
             renderUI();
@@ -559,7 +529,6 @@
             document.documentElement.lang = l;
             document.getElementById('btn-lang').innerText = TEXT[l].btn;
             
-            // RTL/LTR logic
             if(l === 'ar') {
                 document.documentElement.style.setProperty('--direction', 'rtl');
                 document.getElementById('input-city').placeholder = "المدينة";
