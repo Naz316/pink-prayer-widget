@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Color Prayer Widget</title>
+    <title>Prayer Times Fixed</title>
     <style>
         /* --- 1. THEME ENGINE --- */
         :root {
@@ -23,35 +23,25 @@
 
         /* PINK */
         [data-theme="pink"] { --bg-card: #2b1d20; --border-card: #4f2a32; --header-bg: #3d2228; --header-border: #69242F; --text-primary: #ffeef0; --text-secondary: #ffdde4; --text-accent: #ffccd5; --row-border: #3d2228; --highlight-bg: #782a3b; --highlight-text: #fff; }
-        
         /* RED */
         [data-theme="red"] { --bg-card: #2b0f0f; --border-card: #4d2424; --header-bg: #381414; --header-border: #753232; --text-primary: #fcebeb; --text-secondary: #ffd4d4; --text-accent: #ffb3b3; --row-border: #3d1d1d; --highlight-bg: #7a2a2a; --highlight-text: #fff; }
-        
         /* ORANGE */
         [data-theme="orange"] { --bg-card: #2b190f; --border-card: #4d3224; --header-bg: #382214; --header-border: #754a32; --text-primary: #fcefe6; --text-secondary: #ffe0cc; --text-accent: #ffccb3; --row-border: #3d261d; --highlight-bg: #7a452a; --highlight-text: #fff; }
-        
-        /* YELLOW/GOLD */
+        /* YELLOW */
         [data-theme="yellow"] { --bg-card: #26220d; --border-card: #4a421b; --header-bg: #332e12; --header-border: #736629; --text-primary: #fcfbe6; --text-secondary: #fffacc; --text-accent: #ffeb80; --row-border: #3b3517; --highlight-bg: #75631b; --highlight-text: #fff; }
-
         /* GREEN */
         [data-theme="green"] { --bg-card: #0f2b15; --border-card: #244d2e; --header-bg: #14381c; --header-border: #327544; --text-primary: #ebfcf0; --text-secondary: #d4ffde; --text-accent: #b3ffc7; --row-border: #1d3d25; --highlight-bg: #2a7a3f; --highlight-text: #fff; }
-
-        /* SKY BLUE (CYAN) */
+        /* CYAN */
         [data-theme="cyan"] { --bg-card: #0f262b; --border-card: #24464d; --header-bg: #143238; --header-border: #326975; --text-primary: #ebfbfc; --text-secondary: #d4fcff; --text-accent: #b3faff; --row-border: #1d363d; --highlight-bg: #2a6f7a; --highlight-text: #fff; }
-
         /* BLUE */
         [data-theme="blue"] { --bg-card: #0f152b; --border-card: #242d4d; --header-bg: #141c38; --header-border: #324075; --text-primary: #ebeffc; --text-secondary: #d4ddff; --text-accent: #b3c7ff; --row-border: #1d233d; --highlight-bg: #2a3c7a; --highlight-text: #fff; }
-
         /* BROWN */
         [data-theme="brown"] { --bg-card: #2b2018; --border-card: #4d3a2b; --header-bg: #382a1f; --header-border: #755941; --text-primary: #fcefe3; --text-secondary: #ffdec2; --text-accent: #ffcc99; --row-border: #3d2f24; --highlight-bg: #7a5232; --highlight-text: #fff; }
-
         /* GREY */
         [data-theme="grey"] { --bg-card: #1f1f1f; --border-card: #3d3d3d; --header-bg: #2b2b2b; --header-border: #525252; --text-primary: #f0f0f0; --text-secondary: #d1d1d1; --text-accent: #ffffff; --row-border: #333333; --highlight-bg: #4f4f4f; --highlight-text: #fff; }
-
-        /* BLACK (OLED) */
+        /* BLACK */
         [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --header-bg: #0a0a0a; --header-border: #404040; --text-primary: #ffffff; --text-secondary: #cccccc; --text-accent: #ffffff; --row-border: #1a1a1a; --highlight-bg: #333333; --highlight-text: #fff; }
-
-        /* WHITE (LIGHT MODE) */
+        /* WHITE */
         [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --header-bg: #f5f5f5; --header-border: #d1d1d1; --text-primary: #333333; --text-secondary: #666666; --text-accent: #000000; --row-border: #f0f0f0; --highlight-bg: #e0e0e0; --highlight-text: #000000; --shadow: rgba(0,0,0,0.1); }
 
 
@@ -91,7 +81,6 @@
             gap: 6px;
         }
 
-        /* Sound Button */
         .icon-btn {
             background: none;
             border: none;
@@ -113,11 +102,13 @@
             padding: 2px 5px;
             cursor: pointer;
             outline: none;
-            max-width: 80px;
+            max-width: 90px;
+            font-family: inherit;
         }
         .theme-select option {
             background-color: #333;
             color: #fff;
+            text-align: right;
         }
 
         .header {
@@ -186,22 +177,22 @@
     <div class="prayer-card">
         <div class="controls">
             <!-- Sound Button -->
-            <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Unmute Adhan">🔇</button>
+            <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="تفعيل الآذان">🔇</button>
             
-            <!-- Color Selector Dropdown -->
+            <!-- Color Selector Dropdown (Arabic Names) -->
             <select class="theme-select" id="theme-selector" onchange="changeTheme(this.value)">
-                <option value="purple">💜 Purple</option>
-                <option value="pink">🩷 Pink</option>
-                <option value="red">❤️ Red</option>
-                <option value="orange">🧡 Orange</option>
-                <option value="yellow">💛 Gold</option>
-                <option value="green">💚 Green</option>
-                <option value="cyan">🩵 Sky</option>
-                <option value="blue">💙 Blue</option>
-                <option value="brown">🤎 Brown</option>
-                <option value="grey">🩶 Grey</option>
-                <option value="black">🖤 Black</option>
-                <option value="white">🤍 White</option>
+                <option value="purple">💜 بنفسجي</option>
+                <option value="pink">🩷 وردي</option>
+                <option value="red">❤️ أحمر</option>
+                <option value="orange">🧡 برتقالي</option>
+                <option value="yellow">💛 ذهبي</option>
+                <option value="green">💚 أخضر</option>
+                <option value="cyan">🩵 سماوي</option>
+                <option value="blue">💙 أزرق</option>
+                <option value="brown">🤎 بني</option>
+                <option value="grey">🩶 رمادي</option>
+                <option value="black">🖤 أسود</option>
+                <option value="white">🤍 أبيض</option>
             </select>
         </div>
 
@@ -215,6 +206,175 @@
     </div>
 
     <script>
+        // --- SAFE STORAGE HANDLER ---
+        // This prevents the widget from crashing if your browser blocks cookies/storage
+        const safeStorage = {
+            getItem: (key) => {
+                try { return localStorage.getItem(key); } 
+                catch (e) { console.warn("Storage blocked"); return null; }
+            },
+            setItem: (key, value) => {
+                try { localStorage.setItem(key, value); } 
+                catch (e) { console.warn("Storage blocked"); }
+            }
+        };
+
         // --- 1. THEME LOGIC ---
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            let currentTheme = urlParams.get('theme') || safeStorage.getItem('prayerTheme') || 'purple';
+            
+            // Set initial value in dropdown
+            const selector = document.getElementById('theme-selector');
+            if(selector) selector.value = currentTheme;
+            
+            applyTheme(currentTheme);
+        } catch (err) {
+            console.error("Theme Error:", err);
+            // Default to purple if something fails
+            applyTheme('purple');
+        }
+
+        function changeTheme(themeName) {
+            applyTheme(themeName);
+        }
+
+        function applyTheme(themeName) {
+            const htmlTag = document.documentElement;
+            if (themeName === 'purple') {
+                htmlTag.removeAttribute('data-theme');
+            } else {
+                htmlTag.setAttribute('data-theme', themeName);
+            }
+            safeStorage.setItem('prayerTheme', themeName);
+            
+            const sel = document.getElementById('theme-selector');
+            if(sel) sel.value = themeName;
+        }
+
+        // --- 2. SOUND LOGIC ---
+        let isSoundOn = false;
+        const soundBtn = document.getElementById('sound-btn');
+        const audioPlayer = document.getElementById('adhan-audio');
+
+        function toggleSound() {
+            isSoundOn = !isSoundOn;
+            if (isSoundOn) {
+                soundBtn.innerText = "🔊";
+                soundBtn.style.opacity = "1";
+                soundBtn.style.filter = "none";
+                audioPlayer.play().then(() => {
+                    audioPlayer.pause();
+                    audioPlayer.currentTime = 0;
+                }).catch(e => console.log("Audio waiting for interaction"));
+            } else {
+                soundBtn.innerText = "🔇";
+                soundBtn.style.opacity = "0.6";
+                soundBtn.style.filter = "grayscale(100%)";
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+            }
+        }
+
+        let todayPrayers = [];
+
+        // --- 3. PRAYER TIMES LOGIC ---
         const urlParams = new URLSearchParams(window.location.search);
-        let currentTheme = urlParams.ge
+        const CITY = urlParams.get('city') || "Ain Oussera";
+        const COUNTRY = urlParams.get('country') || "Algeria";
+
+        // Update Text Immediately so you know it's working
+        document.getElementById('city-display').innerText = CITY + "، " + COUNTRY;
+
+        const API_URL = `https://api.aladhan.com/v1/timingsByCity?city=${CITY}&country=${COUNTRY}&method=19`;
+
+        async function fetchPrayerTimes() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                if(!data.data) throw new Error("City not found");
+
+                const timings = data.data.timings;
+                const dateHijri = data.data.date.hijri;
+                const dateGreg = data.data.date.gregorian;
+
+                document.getElementById('date-text').innerText = 
+                    `${dateGreg.weekday.en} | ${dateHijri.day} ${dateHijri.month.ar} ${dateHijri.year}`;
+
+                const prayers = [
+                    { en: 'Fajr', ar: 'الفجر', time: timings.Fajr },
+                    { en: 'Sunrise', ar: 'الشروق', time: timings.Sunrise },
+                    { en: 'Dhuhr', ar: 'الظهر', time: timings.Dhuhr },
+                    { en: 'Asr', ar: 'العصر', time: timings.Asr },
+                    { en: 'Maghrib', ar: 'المغرب', time: timings.Maghrib },
+                    { en: 'Isha', ar: 'العشاء', time: timings.Isha }
+                ];
+
+                const table = document.getElementById('times-table');
+                const loading = document.getElementById('loading');
+                
+                loading.style.display = 'none';
+                table.style.display = 'table';
+
+                const now = new Date();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                let nextFound = false;
+                todayPrayers = [];
+
+                prayers.forEach(prayer => {
+                    const row = document.createElement('tr');
+                    row.className = 'prayer-row';
+                    
+                    let timeStr = prayer.time.split(' ')[0];
+                    const [h, m] = timeStr.split(':').map(Number);
+                    const prayerMinutes = h * 60 + m;
+
+                    if (prayer.en !== 'Sunrise') {
+                        todayPrayers.push({ name: prayer.en, hour: h, minute: m });
+                    }
+                    
+                    if (!nextFound && prayerMinutes > currentMinutes && prayer.en !== 'Sunrise') {
+                        row.classList.add('next-prayer');
+                        nextFound = true;
+                    }
+
+                    row.innerHTML = `
+                        <td class="prayer-name">${prayer.ar}</td>
+                        <td class="prayer-time">${timeStr}</td>
+                    `;
+                    table.appendChild(row);
+                });
+
+            } catch (error) {
+                // SHOW ERROR ON SCREEN
+                const loadDiv = document.getElementById('loading');
+                loadDiv.innerText = "تعذر تحميل الأوقات. يرجى التحقق من الاتصال.";
+                loadDiv.style.color = "red";
+                console.error(error);
+            }
+        }
+
+        // --- 4. CLOCK CHECK ---
+        setInterval(() => {
+            if (!isSoundOn) return;
+
+            const now = new Date();
+            const currentH = now.getHours();
+            const currentM = now.getMinutes();
+            const currentS = now.getSeconds();
+
+            todayPrayers.forEach(p => {
+                if (p.hour === currentH && p.minute === currentM && currentS === 0) {
+                    audioPlayer.currentTime = 0;
+                    audioPlayer.play();
+                }
+            });
+            
+            if (currentH === 0 && currentM === 0 && currentS === 1) location.reload(); 
+        }, 1000);
+
+        fetchPrayerTimes();
+    </script>
+</body>
+</html>
