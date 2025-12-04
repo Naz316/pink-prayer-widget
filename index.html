@@ -15,24 +15,25 @@
             --header-bg: rgba(0,0,0,0.2);
             --text-primary: #ffffff;
             --text-secondary: #ffccd5;
+            --text-accent: #ff8fa3; /* NEW: Distinct Accent Color */
             --highlight-bg: #782a3b;
             --input-bg: rgba(255,255,255,0.1);
             --font-main: 'Roboto', sans-serif;
         }
 
-        /* THEMES */
-        [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; }
-        [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; }
-        [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; }
-        [data-theme="orange"] { --bg-card: #42210b; --border-card: #663614; --highlight-bg: #8f4718; --text-secondary: #ffdec7; }
-        [data-theme="yellow"] { --bg-card: #3d360e; --border-card: #615619; --highlight-bg: #85751f; --text-secondary: #fff8cc; }
-        [data-theme="green"] { --bg-card: #13381e; --border-card: #225e34; --highlight-bg: #2d7a44; --text-secondary: #ccffda; }
-        [data-theme="cyan"] { --bg-card: #0e333d; --border-card: #1d5666; --highlight-bg: #24768a; --text-secondary: #ccf7ff; }
-        [data-theme="blue"] { --bg-card: #111e3d; --border-card: #213666; --highlight-bg: #2b498a; --text-secondary: #ccd9ff; }
-        [data-theme="brown"] { --bg-card: #3d2b1e; --border-card: #5e4430; --highlight-bg: #7a583e; --text-secondary: #ffeacc; }
-        [data-theme="grey"] { --bg-card: #262626; --border-card: #404040; --highlight-bg: #595959; --text-secondary: #e0e0e0; }
-        [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; }
-        [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --input-bg: rgba(0,0,0,0.05); }
+        /* THEMES - Added --text-accent for clear color difference */
+        [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; --text-accent: #ff9eb5; }
+        [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; --text-accent: #c4a6ff; }
+        [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; --text-accent: #ff8888; }
+        [data-theme="orange"] { --bg-card: #42210b; --border-card: #663614; --highlight-bg: #8f4718; --text-secondary: #ffdec7; --text-accent: #ffb380; }
+        [data-theme="yellow"] { --bg-card: #3d360e; --border-card: #615619; --highlight-bg: #85751f; --text-secondary: #fff8cc; --text-accent: #ffe666; }
+        [data-theme="green"] { --bg-card: #13381e; --border-card: #225e34; --highlight-bg: #2d7a44; --text-secondary: #ccffda; --text-accent: #88ffaa; }
+        [data-theme="cyan"] { --bg-card: #0e333d; --border-card: #1d5666; --highlight-bg: #24768a; --text-secondary: #ccf7ff; --text-accent: #66eeff; }
+        [data-theme="blue"] { --bg-card: #111e3d; --border-card: #213666; --highlight-bg: #2b498a; --text-secondary: #ccd9ff; --text-accent: #88aaff; }
+        [data-theme="brown"] { --bg-card: #3d2b1e; --border-card: #5e4430; --highlight-bg: #7a583e; --text-secondary: #ffeacc; --text-accent: #ffcc99; }
+        [data-theme="grey"] { --bg-card: #262626; --border-card: #404040; --highlight-bg: #595959; --text-secondary: #e0e0e0; --text-accent: #aaaaaa; }
+        [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; }
+        [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --text-accent: #333; --input-bg: rgba(0,0,0,0.05); }
 
         [lang="ar"] { 
             --font-main: 'Cairo', sans-serif; 
@@ -111,12 +112,12 @@
             justify-content: center;
         }
         
-        /* Updated Hijri Color to match Widget Theme */
+        /* HIJRI DATE COLOR FIX - Using --text-accent */
         [lang="ar"] .hijri-main {
             font-family: 'Cairo', sans-serif;
             font-weight: 700;
             font-size: 1.1rem;
-            color: var(--text-secondary); /* CHANGED FROM PRIMARY TO SECONDARY */
+            color: var(--text-accent) !important; /* Force Color Change */
             direction: rtl;
             unicode-bidi: embed;
             display: inline-block;
@@ -165,10 +166,11 @@
 
         .input-group { display: flex; flex-direction: column; flex: 1; }
         
+        /* LABEL SPACING FIX */
         .input-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 8px; 
+            margin-bottom: 8px; /* Increased spacing */
             text-align: center;
             display: block;
             line-height: 1;
@@ -176,7 +178,7 @@
 
         .inputs-row { display: flex; gap: 15px; width: 100%; }
 
-        /* FIXED INPUT ALIGNMENT */
+        /* INPUT ALIGNMENT FIX */
         .input-box {
             background: var(--input-bg);
             border: 1px solid var(--border-card);
@@ -187,10 +189,10 @@
             outline: none;
             text-align: center;
             width: 100%;
-            height: 36px; 
-            /* Fix for vertical alignment */
-            line-height: 36px; 
-            padding: 0 5px; 
+            height: 38px; 
+            line-height: 38px; /* Strict vertical centering */
+            padding: 0; /* Remove padding to rely on line-height */
+            margin: 0;
         }
         [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
         .input-box option { background: #333; color: #fff; }
@@ -245,7 +247,7 @@
             border: 1px solid #444;
             border-radius: 6px;
             padding: 10px;
-            z-index: 100;
+            z-index: 200;
             grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             width: auto;
@@ -259,27 +261,28 @@
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.3);
             transition: transform 0.2s;
-            position: relative; /* For Tooltip */
+            position: relative; /* REQUIRED FOR TOOLTIP */
         }
         .color-dot:hover { transform: scale(1.2); border-color: #fff; }
 
-        /* TOOLTIP CSS */
+        /* TOOLTIP BUBBLES */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
-            bottom: 130%;
+            bottom: 140%; /* Moved slightly higher */
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.9);
+            background-color: #000;
             color: #fff;
             padding: 4px 8px;
-            font-size: 10px;
+            font-size: 11px;
             border-radius: 4px;
             white-space: nowrap;
             pointer-events: none;
-            border: 1px solid #444;
+            border: 1px solid #555;
             font-family: 'Roboto', sans-serif;
-            z-index: 101;
+            z-index: 300;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         #audio-hint {
@@ -399,12 +402,10 @@
             "Malaysia": "ماليزيا"
         };
         
-        // Specific City Translation
         const DICT_CITIES = {
             "Ain Oussera": "عين وسارة"
         };
 
-        // Helper to swap keys and values for reverse translation
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
         }
@@ -443,18 +444,18 @@
             document.addEventListener('touchstart', enableAudio, { once: true });
 
             applyTheme(state.theme);
-            applyLang(state.lang);
+            applyLang(state.lang); // This triggers updateInputTexts
             
             const params = new URLSearchParams(window.location.search);
             if(params.get('city')) state.city = params.get('city');
             if(params.get('country')) state.country = params.get('country');
             if(params.get('theme')) applyTheme(params.get('theme'));
 
-            // Initial set of input values (raw values are always English for API, text is translated via JS)
+            // Set Initial Values in State but Text is handled by updateInputTexts
             document.getElementById('input-city').value = state.city;
             document.getElementById('input-country').value = state.country;
             
-            // Apply translation to inputs immediately if needed
+            // FORCE TRANSLATION ON LOAD
             updateInputTexts(state.lang);
 
             fetchData();
@@ -481,7 +482,7 @@
                 let queryCity = state.city;
                 let queryCountry = state.country;
                 
-                // If current state is Arabic, try to revert to English key for API
+                // If current state value is Arabic, try to revert to English key
                 const engCity = getKeyByValue(DICT_CITIES, state.city);
                 if(engCity) queryCity = engCity;
 
@@ -576,7 +577,7 @@
                 const hijriStr = `\u200F${h.day} ${h.month.ar} ${h.year} هـ`;
                 let gregStr = now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 gregStr += " م"; 
-                // Removed white color inline style, handled by CSS class .hijri-main
+                // Using .hijri-main class which now forces the accent color
                 el.innerHTML = `<span class="hijri-main">${hijriStr}</span><br><span class="greg-sub">${gregStr}</span>`;
             }
         }
@@ -602,14 +603,14 @@
                 container.appendChild(div);
             });
 
-            // Handle Display City Name (Header)
+            // HANDLE DISPLAY NAME IN HEADER
             let displayCity = state.city;
-            if(state.lang === 'ar' && DICT_CITIES[displayCity]) {
-                displayCity = DICT_CITIES[displayCity];
-            } else if(state.lang === 'ar' && getKeyByValue(DICT_CITIES, displayCity)) {
-                // Already in Arabic
-            } else if (state.lang === 'en' && getKeyByValue(DICT_CITIES, displayCity)) {
-                 displayCity = getKeyByValue(DICT_CITIES, displayCity);
+            // Check if we have a translation for the header
+            if(state.lang === 'ar') {
+                 if(DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
+                 else if(getKeyByValue(DICT_CITIES, displayCity)) { /* already arabic */ }
+            } else {
+                 if(getKeyByValue(DICT_CITIES, displayCity)) displayCity = getKeyByValue(DICT_CITIES, displayCity);
             }
 
             document.getElementById('city-display').innerText = displayCity;
@@ -638,15 +639,14 @@
             renderUI();
         }
 
-        // Logic to translate the inputs visually
         function updateInputTexts(l) {
             const cityInput = document.getElementById('input-city');
             const countrySelect = document.getElementById('input-country');
             const opts = countrySelect.options;
 
-            // 1. Translate Dropdown Options
+            // Translate Country Dropdown
             for (let i = 0; i < opts.length; i++) {
-                const englishVal = opts[i].value; // The value is always English for API
+                const englishVal = opts[i].value; 
                 if (l === 'ar' && DICT_COUNTRIES[englishVal]) {
                     opts[i].text = DICT_COUNTRIES[englishVal];
                 } else {
@@ -654,13 +654,11 @@
                 }
             }
 
-            // 2. Translate City Input Value (only if it matches known dictionary)
+            // Translate City Input
             let currentVal = cityInput.value;
             if(l === 'ar') {
-                // Switch English -> Arabic
                 if(DICT_CITIES[currentVal]) cityInput.value = DICT_CITIES[currentVal];
             } else {
-                // Switch Arabic -> English
                 const engVal = getKeyByValue(DICT_CITIES, currentVal);
                 if(engVal) cityInput.value = engVal;
             }
@@ -688,14 +686,10 @@
         function setTheme(t) { applyTheme(t); }
 
         function updateLoc() {
-            // Get raw values
             let cCity = document.getElementById('input-city').value;
             let cCountry = document.getElementById('input-country').value;
 
-            // If user typed Arabic, keep it as is, or try to reverse look up for API logic
-            // But for simple "state" storage, we just store what's there. 
-            // The fetchData function handles the reverse lookup if needed.
-            
+            // If user types Arabic, we just store it. fetchData handles the API conversion.
             state.city = cCity;
             state.country = cCountry;
             
