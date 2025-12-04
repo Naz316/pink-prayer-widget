@@ -15,13 +15,13 @@
             --header-bg: rgba(0,0,0,0.2);
             --text-primary: #ffffff;
             --text-secondary: #ffccd5;
-            --text-accent: #ff8fa3; /* NEW: Distinct Accent Color */
+            --text-accent: #ff8fa3; 
             --highlight-bg: #782a3b;
             --input-bg: rgba(255,255,255,0.1);
             --font-main: 'Roboto', sans-serif;
         }
 
-        /* THEMES - Added --text-accent for clear color difference */
+        /* THEMES */
         [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; --text-accent: #ff9eb5; }
         [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; --text-accent: #c4a6ff; }
         [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; --text-accent: #ff8888; }
@@ -112,12 +112,12 @@
             justify-content: center;
         }
         
-        /* HIJRI DATE COLOR FIX - Using --text-accent */
+        /* HIJRI DATE COLOR */
         [lang="ar"] .hijri-main {
             font-family: 'Cairo', sans-serif;
             font-weight: 700;
             font-size: 1.1rem;
-            color: var(--text-accent) !important; /* Force Color Change */
+            color: var(--text-accent) !important; /* Force Accent Color */
             direction: rtl;
             unicode-bidi: embed;
             display: inline-block;
@@ -166,11 +166,10 @@
 
         .input-group { display: flex; flex-direction: column; flex: 1; }
         
-        /* LABEL SPACING FIX */
         .input-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 8px; /* Increased spacing */
+            margin-bottom: 8px; 
             text-align: center;
             display: block;
             line-height: 1;
@@ -178,7 +177,6 @@
 
         .inputs-row { display: flex; gap: 15px; width: 100%; }
 
-        /* INPUT ALIGNMENT FIX */
         .input-box {
             background: var(--input-bg);
             border: 1px solid var(--border-card);
@@ -190,8 +188,8 @@
             text-align: center;
             width: 100%;
             height: 38px; 
-            line-height: 38px; /* Strict vertical centering */
-            padding: 0; /* Remove padding to rely on line-height */
+            line-height: 38px; 
+            padding: 0; 
             margin: 0;
         }
         [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
@@ -261,15 +259,14 @@
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.3);
             transition: transform 0.2s;
-            position: relative; /* REQUIRED FOR TOOLTIP */
+            position: relative; 
         }
         .color-dot:hover { transform: scale(1.2); border-color: #fff; }
 
-        /* TOOLTIP BUBBLES */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
-            bottom: 140%; /* Moved slightly higher */
+            bottom: 140%;
             left: 50%;
             transform: translateX(-50%);
             background-color: #000;
@@ -367,7 +364,7 @@
                 <!-- Color Right -->
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
-                <!-- Color Popup with Tooltips -->
+                <!-- Color Popup -->
                 <div class="color-popup" id="color-menu">
                     <div class="color-dot" data-name="Pink" style="background:#581c33" onclick="setTheme('pink')"></div>
                     <div class="color-dot" data-name="Purple" style="background:#2e1a47" onclick="setTheme('purple')"></div>
@@ -406,10 +403,6 @@
             "Ain Oussera": "عين وسارة"
         };
 
-        function getKeyByValue(object, value) {
-            return Object.keys(object).find(key => object[key] === value);
-        }
-
         // --- STATE ---
         const state = {
             lang: localStorage.getItem('p_lang') || 'en',
@@ -444,50 +437,42 @@
             document.addEventListener('touchstart', enableAudio, { once: true });
 
             applyTheme(state.theme);
-            applyLang(state.lang); // This triggers updateInputTexts
+            applyLang(state.lang);
             
             const params = new URLSearchParams(window.location.search);
             if(params.get('city')) state.city = params.get('city');
             if(params.get('country')) state.country = params.get('country');
             if(params.get('theme')) applyTheme(params.get('theme'));
 
-            // Set Initial Values in State but Text is handled by updateInputTexts
+            // Initial input values
             document.getElementById('input-city').value = state.city;
             document.getElementById('input-country').value = state.country;
             
-            // FORCE TRANSLATION ON LOAD
+            // Apply translation to inputs
             updateInputTexts(state.lang);
 
             fetchData();
             setInterval(tick, 1000);
         };
 
-        function enableAudio() {
-            if(state.sound) {
-                audio.play().then(() => {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    state.audioReady = true;
-                    const hint = document.getElementById('audio-hint');
-                    hint.style.opacity = '1';
-                    setTimeout(() => hint.style.opacity = '0', 2000);
-                }).catch(err => console.log("Audio init error:", err));
-            }
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
         }
 
-        // --- LOGIC ---
+        // --- API & LOGIC ---
         async function fetchData() {
             try {
-                // Ensure we send English names to API
+                // IMPORTANT: ALWAYS SEND ENGLISH TO API
                 let queryCity = state.city;
                 let queryCountry = state.country;
-                
-                // If current state value is Arabic, try to revert to English key
-                const engCity = getKeyByValue(DICT_CITIES, state.city);
-                if(engCity) queryCity = engCity;
 
-                const engCountry = getKeyByValue(DICT_COUNTRIES, state.country);
-                if(engCountry) queryCountry = engCountry;
+                // 1. Check if the current city variable matches an Arabic value in Dictionary
+                const englishCity = getKeyByValue(DICT_CITIES, queryCity);
+                if (englishCity) queryCity = englishCity;
+
+                // 2. Check if the current country variable matches an Arabic value in Dictionary
+                const englishCountry = getKeyByValue(DICT_COUNTRIES, queryCountry);
+                if (englishCountry) queryCountry = englishCountry;
 
                 const url = `https://api.aladhan.com/v1/timingsByCity?city=${queryCity}&country=${queryCountry}&method=19`;
                 const res = await fetch(url);
@@ -496,8 +481,12 @@
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
                 
-                renderUI();
-            } catch (e) { console.error(e); }
+                renderPrayerTimes(); // Replaces renderUI part for prayers
+                renderDate();
+            } catch (e) { 
+                console.error("API Error", e);
+                document.getElementById('date-display').innerText = "Error Loading Data";
+            }
         }
 
         function tick() {
@@ -562,7 +551,7 @@
             }
         }
 
-        function formatDate() {
+        function renderDate() {
             if(!state.timings || !state.hijri) return;
             const h = state.hijri;
             const el = document.getElementById('date-display');
@@ -577,7 +566,6 @@
                 const hijriStr = `\u200F${h.day} ${h.month.ar} ${h.year} هـ`;
                 let gregStr = now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 gregStr += " م"; 
-                // Using .hijri-main class which now forces the accent color
                 el.innerHTML = `<span class="hijri-main">${hijriStr}</span><br><span class="greg-sub">${gregStr}</span>`;
             }
         }
@@ -588,7 +576,7 @@
             return s[(v - 20) % 10] || s[v] || s[0];
         }
 
-        function renderUI() {
+        function renderPrayerTimes() {
             const container = document.getElementById('prayers-container');
             container.innerHTML = '';
             const dict = TEXT[state.lang];
@@ -602,21 +590,31 @@
                 div.innerHTML = `<span class="p-name">${dict[k.toLowerCase()]}</span><span class="p-time">${time}</span>`;
                 container.appendChild(div);
             });
+        }
 
-            // HANDLE DISPLAY NAME IN HEADER
-            let displayCity = state.city;
-            // Check if we have a translation for the header
-            if(state.lang === 'ar') {
-                 if(DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
-                 else if(getKeyByValue(DICT_CITIES, displayCity)) { /* already arabic */ }
-            } else {
-                 if(getKeyByValue(DICT_CITIES, displayCity)) displayCity = getKeyByValue(DICT_CITIES, displayCity);
-            }
-
-            document.getElementById('city-display').innerText = displayCity;
+        function renderStaticText() {
+            // This function handles the "Choose City/Country" labels immediately
+            const dict = TEXT[state.lang];
+            
             document.getElementById('lbl-city').innerText = dict.selCity;
             document.getElementById('lbl-country').innerText = dict.selCountry;
-            formatDate();
+            document.getElementById('btn-lang').innerText = dict.btn;
+
+            if(state.lang === 'ar') {
+                document.getElementById('input-city').placeholder = "المدينة";
+            } else {
+                document.getElementById('input-city').placeholder = "City";
+            }
+
+            // Handle Header City Name (if known translation)
+            let displayCity = state.city;
+            if(state.lang === 'ar') {
+                 if(DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
+            } else {
+                 const eng = getKeyByValue(DICT_CITIES, displayCity);
+                 if(eng) displayCity = eng;
+            }
+            document.getElementById('city-display').innerText = displayCity;
         }
 
         function toggleLang() {
@@ -627,16 +625,18 @@
             state.lang = l;
             localStorage.setItem('p_lang', l);
             document.documentElement.lang = l;
-            document.getElementById('btn-lang').innerText = TEXT[l].btn;
             
-            if(l === 'ar') {
-                document.getElementById('input-city').placeholder = "المدينة";
-            } else {
-                document.getElementById('input-city').placeholder = "City";
-            }
-
+            // 1. Update Labels Immediately (Fixes "Choose City" bug)
+            renderStaticText();
+            
+            // 2. Update Input fields text
             updateInputTexts(l);
-            renderUI();
+
+            // 3. Re-render date/prayers if data exists
+            if(state.timings) {
+                renderPrayerTimes();
+                renderDate();
+            }
         }
 
         function updateInputTexts(l) {
@@ -672,6 +672,19 @@
             if(state.sound && !state.audioReady) enableAudio();
         }
 
+        function enableAudio() {
+            if(state.sound) {
+                audio.play().then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    state.audioReady = true;
+                    const hint = document.getElementById('audio-hint');
+                    hint.style.opacity = '1';
+                    setTimeout(() => hint.style.opacity = '0', 2000);
+                }).catch(err => console.log("Audio init error:", err));
+            }
+        }
+
         function toggleColors() {
             const m = document.getElementById('color-menu');
             m.style.display = m.style.display === 'grid' ? 'none' : 'grid';
@@ -686,14 +699,17 @@
         function setTheme(t) { applyTheme(t); }
 
         function updateLoc() {
+            // Save what user sees in the input
             let cCity = document.getElementById('input-city').value;
             let cCountry = document.getElementById('input-country').value;
 
-            // If user types Arabic, we just store it. fetchData handles the API conversion.
             state.city = cCity;
             state.country = cCountry;
             
             document.getElementById('date-display').innerText = TEXT[state.lang].loading;
+            
+            // Render text updates immediately (e.g. Header name)
+            renderStaticText();
             fetchData();
         }
     </script>
