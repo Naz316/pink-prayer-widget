@@ -72,19 +72,14 @@
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            padding: 10px 20px; /* Adjusted padding to prevent jump */
+            padding: 10px 20px;
             background-color: var(--header-bg);
             direction: ltr; 
-            height: 90px; /* Fixed height to contain large Arabic font */
+            height: 90px;
             overflow: hidden;
         }
 
-        .header-item {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
+        .header-item { display: flex; flex-direction: column; justify-content: center; }
         .align-start { align-items: flex-start; text-align: left; }
         .align-end { align-items: flex-end; text-align: right; }
         .align-center { align-items: center; text-align: center; }
@@ -99,24 +94,10 @@
             white-space: nowrap;
         }
         
-        .main-text {
-            font-size: 1.1rem;
-            font-weight: bold;
-            line-height: 1.2;
-        }
-        
-        /* Fix for Cairo Font Line Height in Header */
-        [lang="ar"] .main-text {
-            line-height: 1.1;
-            padding-top: 2px;
-        }
+        .main-text { font-size: 1.1rem; font-weight: bold; line-height: 1.2; }
+        [lang="ar"] .main-text { line-height: 1.1; padding-top: 2px; }
 
-        .mosque-icon {
-            font-size: 2.5rem;
-            opacity: 0.9;
-            margin: 0 10px;
-            line-height: 1;
-        }
+        .mosque-icon { font-size: 2.5rem; opacity: 0.9; margin: 0 10px; line-height: 1; }
 
         /* DATE ROW */
         .date-row {
@@ -129,28 +110,19 @@
             align-items: center;
             justify-content: center;
         }
-        .date-text {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            white-space: pre-line;
-        }
         
+        /* Updated Hijri Color to match Widget Theme */
         [lang="ar"] .hijri-main {
             font-family: 'Cairo', sans-serif;
             font-weight: 700;
             font-size: 1.1rem;
-            color: var(--text-primary);
-            direction: rtl; /* Enforce Right to Left */
+            color: var(--text-secondary); /* CHANGED FROM PRIMARY TO SECONDARY */
+            direction: rtl;
             unicode-bidi: embed;
             display: inline-block;
         }
         
-        [lang="ar"] .greg-sub {
-            font-size: 0.75rem;
-            opacity: 0.8;
-            direction: rtl;
-        }
+        [lang="ar"] .greg-sub { font-size: 0.75rem; opacity: 0.8; direction: rtl; color: var(--text-primary); }
 
         /* PRAYER BAR */
         .prayer-bar {
@@ -171,29 +143,13 @@
             justify-content: center;
             align-items: center;
             border-right: 1px solid var(--border-card);
-            /* FIX 3: Add gap between Name and Time */
             gap: 6px;
         }
         .prayer-item:last-child { border-right: none; }
         
-        .prayer-item.active {
-            background-color: var(--highlight-bg);
-            font-weight: bold;
-        }
-        
-        /* FIX for Arabic Prayer Names position */
-        .p-name { 
-            font-size: 0.75rem; 
-            color: var(--text-secondary); 
-            margin: 0;
-            line-height: 1;
-        }
-        .p-time { 
-            font-size: 1rem; 
-            font-weight: bold; 
-            direction: ltr; 
-            line-height: 1;
-        }
+        .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
+        .p-name { font-size: 0.75rem; color: var(--text-secondary); margin: 0; line-height: 1; }
+        .p-time { font-size: 1rem; font-weight: bold; direction: ltr; line-height: 1; }
 
         /* CONTROLS SECTION */
         .controls-row {
@@ -207,13 +163,8 @@
             justify-content: center;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
+        .input-group { display: flex; flex-direction: column; flex: 1; }
         
-        /* FIX 2: Increased margin to prevent label overlap */
         .input-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
@@ -223,25 +174,25 @@
             line-height: 1;
         }
 
-        .inputs-row {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-        }
+        .inputs-row { display: flex; gap: 15px; width: 100%; }
 
+        /* FIXED INPUT ALIGNMENT */
         .input-box {
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 6px; 
             border-radius: 6px;
             font-family: inherit;
             font-size: 0.9rem;
             outline: none;
             text-align: center;
             width: 100%;
-            height: 34px; 
+            height: 36px; 
+            /* Fix for vertical alignment */
+            line-height: 36px; 
+            padding: 0 5px; 
         }
+        [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
         .input-box option { background: #333; color: #fff; }
 
         /* BUTTONS */
@@ -287,16 +238,16 @@
         .color-popup {
             display: none;
             position: absolute;
-            bottom: 40px;
+            bottom: 45px;
             left: 50%;
             transform: translateX(30px);
             background: #222;
             border: 1px solid #444;
             border-radius: 6px;
-            padding: 8px;
+            padding: 10px;
             z-index: 100;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
+            gap: 8px;
             width: auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
@@ -308,8 +259,28 @@
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.3);
             transition: transform 0.2s;
+            position: relative; /* For Tooltip */
         }
         .color-dot:hover { transform: scale(1.2); border-color: #fff; }
+
+        /* TOOLTIP CSS */
+        .color-dot:hover::after {
+            content: attr(data-name);
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+            pointer-events: none;
+            border: 1px solid #444;
+            font-family: 'Roboto', sans-serif;
+            z-index: 101;
+        }
 
         #audio-hint {
             position: absolute;
@@ -393,26 +364,51 @@
                 <!-- Color Right -->
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
-                <!-- Color Popup -->
+                <!-- Color Popup with Tooltips -->
                 <div class="color-popup" id="color-menu">
-                    <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
-                    <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                    <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                    <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
-                    <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                    <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
-                    <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                    <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                    <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                    <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
-                    <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
-                    <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
+                    <div class="color-dot" data-name="Pink" style="background:#581c33" onclick="setTheme('pink')"></div>
+                    <div class="color-dot" data-name="Purple" style="background:#2e1a47" onclick="setTheme('purple')"></div>
+                    <div class="color-dot" data-name="Red" style="background:#3d0e0e" onclick="setTheme('red')"></div>
+                    <div class="color-dot" data-name="Orange" style="background:#42210b" onclick="setTheme('orange')"></div>
+                    <div class="color-dot" data-name="Yellow" style="background:#85751f" onclick="setTheme('yellow')"></div>
+                    <div class="color-dot" data-name="Green" style="background:#13381e" onclick="setTheme('green')"></div>
+                    <div class="color-dot" data-name="Cyan" style="background:#0e333d" onclick="setTheme('cyan')"></div>
+                    <div class="color-dot" data-name="Blue" style="background:#111e3d" onclick="setTheme('blue')"></div>
+                    <div class="color-dot" data-name="Brown" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
+                    <div class="color-dot" data-name="Grey" style="background:#595959" onclick="setTheme('grey')"></div>
+                    <div class="color-dot" data-name="Black" style="background:#000" onclick="setTheme('black')"></div>
+                    <div class="color-dot" data-name="White" style="background:#fff" onclick="setTheme('white')"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // --- TRANSLATION DICTIONARY ---
+        const DICT_COUNTRIES = {
+            "Algeria": "الجزائر",
+            "Saudi Arabia": "السعودية",
+            "Egypt": "مصر",
+            "Morocco": "المغرب",
+            "Tunisia": "تونس",
+            "France": "فرنسا",
+            "US": "أمريكا",
+            "UK": "بريطانيا",
+            "Turkey": "تركيا",
+            "Indonesia": "إندونيسيا",
+            "Malaysia": "ماليزيا"
+        };
+        
+        // Specific City Translation
+        const DICT_CITIES = {
+            "Ain Oussera": "عين وسارة"
+        };
+
+        // Helper to swap keys and values for reverse translation
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+
         // --- STATE ---
         const state = {
             lang: localStorage.getItem('p_lang') || 'en',
@@ -454,8 +450,12 @@
             if(params.get('country')) state.country = params.get('country');
             if(params.get('theme')) applyTheme(params.get('theme'));
 
+            // Initial set of input values (raw values are always English for API, text is translated via JS)
             document.getElementById('input-city').value = state.city;
             document.getElementById('input-country').value = state.country;
+            
+            // Apply translation to inputs immediately if needed
+            updateInputTexts(state.lang);
 
             fetchData();
             setInterval(tick, 1000);
@@ -477,7 +477,18 @@
         // --- LOGIC ---
         async function fetchData() {
             try {
-                const url = `https://api.aladhan.com/v1/timingsByCity?city=${state.city}&country=${state.country}&method=19`;
+                // Ensure we send English names to API
+                let queryCity = state.city;
+                let queryCountry = state.country;
+                
+                // If current state is Arabic, try to revert to English key for API
+                const engCity = getKeyByValue(DICT_CITIES, state.city);
+                if(engCity) queryCity = engCity;
+
+                const engCountry = getKeyByValue(DICT_COUNTRIES, state.country);
+                if(engCountry) queryCountry = engCountry;
+
+                const url = `https://api.aladhan.com/v1/timingsByCity?city=${queryCity}&country=${queryCountry}&method=19`;
                 const res = await fetch(url);
                 const data = await res.json();
                 
@@ -562,13 +573,10 @@
                 const gregStr = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
                 el.innerHTML = `<span style="opacity:0.8">${hijriStr}</span><br><span style="font-weight:bold">${gregStr}</span>`;
             } else {
-                // FIX 4: Hijri Date order fix. 
-                // We use \u200F (Right-to-Left Mark) to force the browser to treat this line as RTL.
-                // This ensures "13" appears to the right of the month text.
                 const hijriStr = `\u200F${h.day} ${h.month.ar} ${h.year} هـ`;
-                
                 let gregStr = now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 gregStr += " م"; 
+                // Removed white color inline style, handled by CSS class .hijri-main
                 el.innerHTML = `<span class="hijri-main">${hijriStr}</span><br><span class="greg-sub">${gregStr}</span>`;
             }
         }
@@ -594,7 +602,17 @@
                 container.appendChild(div);
             });
 
-            document.getElementById('city-display').innerText = state.city;
+            // Handle Display City Name (Header)
+            let displayCity = state.city;
+            if(state.lang === 'ar' && DICT_CITIES[displayCity]) {
+                displayCity = DICT_CITIES[displayCity];
+            } else if(state.lang === 'ar' && getKeyByValue(DICT_CITIES, displayCity)) {
+                // Already in Arabic
+            } else if (state.lang === 'en' && getKeyByValue(DICT_CITIES, displayCity)) {
+                 displayCity = getKeyByValue(DICT_CITIES, displayCity);
+            }
+
+            document.getElementById('city-display').innerText = displayCity;
             document.getElementById('lbl-city').innerText = dict.selCity;
             document.getElementById('lbl-country').innerText = dict.selCountry;
             formatDate();
@@ -602,7 +620,6 @@
 
         function toggleLang() {
             applyLang(state.lang === 'en' ? 'ar' : 'en');
-            renderUI();
         }
 
         function applyLang(l) {
@@ -610,10 +627,42 @@
             localStorage.setItem('p_lang', l);
             document.documentElement.lang = l;
             document.getElementById('btn-lang').innerText = TEXT[l].btn;
+            
             if(l === 'ar') {
                 document.getElementById('input-city').placeholder = "المدينة";
             } else {
                 document.getElementById('input-city').placeholder = "City";
+            }
+
+            updateInputTexts(l);
+            renderUI();
+        }
+
+        // Logic to translate the inputs visually
+        function updateInputTexts(l) {
+            const cityInput = document.getElementById('input-city');
+            const countrySelect = document.getElementById('input-country');
+            const opts = countrySelect.options;
+
+            // 1. Translate Dropdown Options
+            for (let i = 0; i < opts.length; i++) {
+                const englishVal = opts[i].value; // The value is always English for API
+                if (l === 'ar' && DICT_COUNTRIES[englishVal]) {
+                    opts[i].text = DICT_COUNTRIES[englishVal];
+                } else {
+                    opts[i].text = englishVal;
+                }
+            }
+
+            // 2. Translate City Input Value (only if it matches known dictionary)
+            let currentVal = cityInput.value;
+            if(l === 'ar') {
+                // Switch English -> Arabic
+                if(DICT_CITIES[currentVal]) cityInput.value = DICT_CITIES[currentVal];
+            } else {
+                // Switch Arabic -> English
+                const engVal = getKeyByValue(DICT_CITIES, currentVal);
+                if(engVal) cityInput.value = engVal;
             }
         }
 
@@ -639,8 +688,17 @@
         function setTheme(t) { applyTheme(t); }
 
         function updateLoc() {
-            state.city = document.getElementById('input-city').value;
-            state.country = document.getElementById('input-country').value;
+            // Get raw values
+            let cCity = document.getElementById('input-city').value;
+            let cCountry = document.getElementById('input-country').value;
+
+            // If user typed Arabic, keep it as is, or try to reverse look up for API logic
+            // But for simple "state" storage, we just store what's there. 
+            // The fetchData function handles the reverse lookup if needed.
+            
+            state.city = cCity;
+            state.country = cCountry;
+            
             document.getElementById('date-display').innerText = TEXT[state.lang].loading;
             fetchData();
         }
