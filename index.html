@@ -235,6 +235,17 @@
             line-height: 1;
         }
         .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
+        
+        /* PULSE ANIMATION FOR SOUND BUTTON */
+        @keyframes pulse-icon {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .playing-audio {
+            animation: pulse-icon 1s infinite;
+            color: var(--text-accent);
+        }
 
         .lang-btn {
             background: var(--input-bg);
@@ -312,14 +323,17 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.5s;
+            color: #fff;
+            z-index: 500;
         }
 
     </style>
 </head>
 <body>
 
-    <audio id="adhan-audio" src="https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/adhan/makkah.mp3" preload="auto"></audio>
-    <div id="audio-hint">Sound enabled</div>
+    <!-- UPDATED: More reliable audio source -->
+    <audio id="adhan-audio" src="https://cdn.aladhan.com/audio/adhan/Makkah.mp3" preload="auto"></audio>
+    <div id="audio-hint">Sound Enabled: Test Playing...</div>
 
     <div class="widget-card">
         
@@ -352,7 +366,6 @@
             <div class="inputs-row">
                 <div class="input-group">
                     <span class="input-label" id="lbl-city">Choose City</span>
-                    <!-- CHANGED FROM INPUT TO SELECT -->
                     <select id="input-city" class="input-box" onchange="updateLoc()"></select>
                 </div>
                 <div class="input-group">
@@ -375,8 +388,8 @@
             </div>
 
             <div class="tools">
-                <!-- Sound Left -->
-                <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
+                <!-- Sound Left: UPDATED WITH TEST FUNCTIONALITY -->
+                <button class="icon-btn" onclick="testSound()" id="btn-sound" title="Click to Test Sound">🔊</button>
                 
                 <!-- Language Center -->
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
@@ -404,7 +417,7 @@
     </div>
 
     <script>
-        // --- 1. DATA: CITIES PER COUNTRY (ENGLISH) ---
+        // --- DATA & DICTIONARIES ---
         const COUNTRY_DATA = {
             "Algeria": ["Ain Oussera", "Algiers"],
             "Saudi Arabia": ["Makkah", "Madinah"],
@@ -420,7 +433,6 @@
             "Malaysia": ["Kuala Lumpur"]
         };
 
-        // --- 2. TRANSLATION DICTIONARY (COUNTRIES) ---
         const DICT_COUNTRIES = {
             "Algeria": "الجزائر",
             "Palestine": "فلسطين",
@@ -436,10 +448,9 @@
             "Malaysia": "ماليزيا"
         };
         
-        // --- 3. TRANSLATION DICTIONARY (CITIES) ---
         const DICT_CITIES = {
             "Ain Oussera": "عين وسارة",
-            "Algiers": "الجزائر العاصمة", // DISTINCT NAME
+            "Algiers": "الجزائر العاصمة",
             "Makkah": "مكة المكرمة",
             "Madinah": "المدينة المنورة",
             "Gaza": "غزة",
@@ -464,7 +475,7 @@
             country: "Algeria",
             timings: null,
             hijri: null,
-            timezone: null, // NEW: Store API Timezone
+            timezone: null,
             audioReady: false,
             lastPlayedPrayer: ""
         };
@@ -486,8 +497,9 @@
 
         // --- INIT ---
         window.onload = () => {
-            document.addEventListener('click', enableAudio, { once: true });
-            document.addEventListener('touchstart', enableAudio, { once: true });
+            // Browsers block audio until interaction.
+            document.body.addEventListener('click', initAudio, { once: true });
+            document.body.addEventListener('touchstart', initAudio, { once: true });
 
             applyTheme(state.theme);
             
@@ -504,6 +516,56 @@
             fetchData();
             setInterval(tick, 1000);
         };
+
+        function initAudio() {
+            // Silently priming the audio engine
+            if(!state.audioReady) {
+                audio.play().then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    state.audioReady = true;
+                }).catch(() => {});
+            }
+        }
+
+        // --- TEST SOUND FUNCTION ---
+        function testSound() {
+            if(!state.sound) {
+                // If muted, just toggle unmute
+                toggleSound();
+            }
+            
+            // Visual Feedback
+            const btn = document.getElementById('btn-sound');
+            btn.classList.add('playing-audio');
+            
+            const hint = document.getElementById('audio-hint');
+            hint.innerText = "Playing Adhan Test...";
+            hint.style.opacity = '1';
+
+            // Play for 3 seconds then stop
+            audio.currentTime = 0;
+            audio.volume = 1.0;
+            audio.play().then(() => {
+                state.audioReady = true; // Confirmed working
+                setTimeout(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    btn.classList.remove('playing-audio');
+                    hint.style.opacity = '0';
+                }, 3000);
+            }).catch(e => {
+                console.error(e);
+                hint.innerText = "Audio Blocked. Click page first.";
+            });
+        }
+
+        function toggleSound() {
+            state.sound = !state.sound;
+            const btn = document.getElementById('btn-sound');
+            btn.innerText = state.sound ? "🔊" : "🔇";
+            btn.style.opacity = state.sound ? "1" : "0.5";
+        }
 
         // --- LOGIC FOR DROPDOWNS ---
         function changeCountry() {
@@ -554,11 +616,10 @@
                 
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
-                state.timezone = data.data.meta.timezone; // STORE TIMEZONE
+                state.timezone = data.data.meta.timezone; 
                 
                 renderPrayerTimes();
                 renderDate();
-                // Immediately update tick to jump to new time
                 tick();
             } catch (e) { 
                 console.error("API Error", e);
@@ -566,14 +627,12 @@
             }
         }
 
-        // --- NEW TIME LOGIC ---
+        // --- TIME LOGIC (TIMEZONE AWARE) ---
         function getCurrentTimeInZone() {
             const now = new Date();
             if (!state.timezone) {
-                // Fallback to local if no API data yet
                 return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
             }
-            // Create a DateTimeFormat for the target timezone
             const formatter = new Intl.DateTimeFormat('en-GB', {
                 timeZone: state.timezone,
                 hour: 'numeric',
@@ -591,7 +650,6 @@
         function tick() {
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
-            // Format HH:MM
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
 
             if(state.timings) updateCountdown(time);
@@ -599,7 +657,6 @@
 
         function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-            // Current time in minutes relative to the target location
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
@@ -638,12 +695,24 @@
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            // Trigger audio relative to location time
-            if(state.sound && hLeft === 0 && mLeft === 0 && diffSecs <= 2) {
+            // --- RELIABLE TRIGGER LOGIC ---
+            // If we are at 00:00 remaining OR current time exactly matches prayer time
+            if(state.sound && (hLeft === 0 && mLeft === 0 && diffSecs <= 2)) {
                 if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
-                    if(state.audioReady) {
-                        audio.currentTime = 0;
-                        audio.play().catch(e => console.error("Play failed:", e));
+                    // Force play
+                    audio.currentTime = 0;
+                    audio.volume = 1.0;
+                    const playPromise = audio.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            // Autoplay started!
+                        }).catch(error => {
+                            console.log("Autoplay blocked. User needs to interact first.");
+                            const hint = document.getElementById('audio-hint');
+                            hint.innerText = "Click page to enable Adhan!";
+                            hint.style.opacity = '1';
+                        });
                     }
                     state.lastPlayedPrayer = nextName;
                 }
@@ -652,6 +721,7 @@
             }
         }
 
+        // ... (Render functions remain same) ...
         function renderDate() {
             if(!state.timings || !state.hijri) return;
             const h = state.hijri;
@@ -748,27 +818,6 @@
                 } else {
                     cityOpts[i].text = engVal;
                 }
-            }
-        }
-
-        function toggleSound() {
-            state.sound = !state.sound;
-            const btn = document.getElementById('btn-sound');
-            btn.innerText = state.sound ? "🔊" : "🔇";
-            btn.style.opacity = state.sound ? "1" : "0.5";
-            if(state.sound && !state.audioReady) enableAudio();
-        }
-
-        function enableAudio() {
-            if(state.sound) {
-                audio.play().then(() => {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    state.audioReady = true;
-                    const hint = document.getElementById('audio-hint');
-                    hint.style.opacity = '1';
-                    setTimeout(() => hint.style.opacity = '0', 2000);
-                }).catch(err => console.log("Audio init error:", err));
             }
         }
 
