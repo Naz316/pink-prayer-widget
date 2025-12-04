@@ -100,30 +100,49 @@
 
         .mosque-icon { font-size: 2.5rem; opacity: 0.9; margin: 0 10px; line-height: 1; }
 
-        /* DATE ROW */
+        /* --- DATE ROW UPDATES --- */
         .date-row {
             text-align: center;
-            padding: 0 10px;
+            padding: 12px 10px; /* Increased top/bottom padding for spacing */
             background-color: var(--header-bg);
             border-bottom: 1px solid var(--border-card);
-            height: 65px; 
+            height: auto; /* Allow growth */
+            min-height: 85px; /* Taller area to prevent conflict */
             display: flex;
+            flex-direction: column; /* Stack items nicely */
             align-items: center;
             justify-content: center;
         }
         
-        /* HIJRI DATE COLOR */
-        [lang="ar"] .hijri-main {
-            font-family: 'Cairo', sans-serif;
-            font-weight: 700;
+        /* UNIFIED DATE CLASSES FOR BOTH LANGUAGES */
+        .date-hijri {
             font-size: 1.1rem;
-            color: var(--text-accent) !important; /* Force Accent Color */
-            direction: rtl;
-            unicode-bidi: embed;
-            display: inline-block;
+            font-weight: 700;
+            color: var(--text-accent); /* ACCENT COLOR (e.g. Green/Pink) */
+            margin-bottom: 8px; /* SPACE BETWEEN HIJRI AND GREGORIAN */
+            line-height: 1.2;
+            display: block;
+        }
+
+        .date-greg {
+            font-size: 0.85rem;
+            color: var(--text-secondary); /* SOFT THEME COLOR */
+            font-weight: 600;
+            line-height: 1.2;
+            display: block;
+            opacity: 0.9;
+            margin-bottom: 5px; /* Extra breathing room above prayer bar */
         }
         
-        [lang="ar"] .greg-sub { font-size: 0.75rem; opacity: 0.8; direction: rtl; color: var(--text-primary); }
+        /* Language Specific Tweaks */
+        [lang="ar"] .date-hijri {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            unicode-bidi: embed;
+        }
+        [lang="ar"] .date-greg {
+            direction: rtl;
+        }
 
         /* PRAYER BAR */
         .prayer-bar {
@@ -444,13 +463,10 @@
             if(params.get('country')) state.country = params.get('country');
             if(params.get('theme')) applyTheme(params.get('theme'));
 
-            // Initial input values
             document.getElementById('input-city').value = state.city;
             document.getElementById('input-country').value = state.country;
             
-            // Apply translation to inputs
             updateInputTexts(state.lang);
-
             fetchData();
             setInterval(tick, 1000);
         };
@@ -462,15 +478,12 @@
         // --- API & LOGIC ---
         async function fetchData() {
             try {
-                // IMPORTANT: ALWAYS SEND ENGLISH TO API
                 let queryCity = state.city;
                 let queryCountry = state.country;
 
-                // 1. Check if the current city variable matches an Arabic value in Dictionary
                 const englishCity = getKeyByValue(DICT_CITIES, queryCity);
                 if (englishCity) queryCity = englishCity;
 
-                // 2. Check if the current country variable matches an Arabic value in Dictionary
                 const englishCountry = getKeyByValue(DICT_COUNTRIES, queryCountry);
                 if (englishCountry) queryCountry = englishCountry;
 
@@ -481,7 +494,7 @@
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
                 
-                renderPrayerTimes(); // Replaces renderUI part for prayers
+                renderPrayerTimes();
                 renderDate();
             } catch (e) { 
                 console.error("API Error", e);
@@ -559,14 +572,16 @@
             
             if (state.lang === 'en') {
                 const suffix = getOrdinal(h.day);
+                // UPDATED: Use specific classes for color/spacing
                 const hijriStr = `${h.day}${suffix} ${h.month.en}, ${h.year} AH`;
                 const gregStr = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
-                el.innerHTML = `<span style="opacity:0.8">${hijriStr}</span><br><span style="font-weight:bold">${gregStr}</span>`;
+                el.innerHTML = `<span class="date-hijri">${hijriStr}</span><span class="date-greg">${gregStr}</span>`;
             } else {
                 const hijriStr = `\u200F${h.day} ${h.month.ar} ${h.year} هـ`;
                 let gregStr = now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 gregStr += " م"; 
-                el.innerHTML = `<span class="hijri-main">${hijriStr}</span><br><span class="greg-sub">${gregStr}</span>`;
+                // UPDATED: Use specific classes for color/spacing
+                el.innerHTML = `<span class="date-hijri">${hijriStr}</span><span class="date-greg">${gregStr}</span>`;
             }
         }
 
@@ -593,7 +608,6 @@
         }
 
         function renderStaticText() {
-            // This function handles the "Choose City/Country" labels immediately
             const dict = TEXT[state.lang];
             
             document.getElementById('lbl-city').innerText = dict.selCity;
@@ -606,7 +620,6 @@
                 document.getElementById('input-city').placeholder = "City";
             }
 
-            // Handle Header City Name (if known translation)
             let displayCity = state.city;
             if(state.lang === 'ar') {
                  if(DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
@@ -626,13 +639,9 @@
             localStorage.setItem('p_lang', l);
             document.documentElement.lang = l;
             
-            // 1. Update Labels Immediately (Fixes "Choose City" bug)
             renderStaticText();
-            
-            // 2. Update Input fields text
             updateInputTexts(l);
 
-            // 3. Re-render date/prayers if data exists
             if(state.timings) {
                 renderPrayerTimes();
                 renderDate();
@@ -644,7 +653,6 @@
             const countrySelect = document.getElementById('input-country');
             const opts = countrySelect.options;
 
-            // Translate Country Dropdown
             for (let i = 0; i < opts.length; i++) {
                 const englishVal = opts[i].value; 
                 if (l === 'ar' && DICT_COUNTRIES[englishVal]) {
@@ -654,7 +662,6 @@
                 }
             }
 
-            // Translate City Input
             let currentVal = cityInput.value;
             if(l === 'ar') {
                 if(DICT_CITIES[currentVal]) cityInput.value = DICT_CITIES[currentVal];
@@ -699,7 +706,6 @@
         function setTheme(t) { applyTheme(t); }
 
         function updateLoc() {
-            // Save what user sees in the input
             let cCity = document.getElementById('input-city').value;
             let cCountry = document.getElementById('input-country').value;
 
@@ -708,7 +714,6 @@
             
             document.getElementById('date-display').innerText = TEXT[state.lang].loading;
             
-            // Render text updates immediately (e.g. Header name)
             renderStaticText();
             fetchData();
         }
