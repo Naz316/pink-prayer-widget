@@ -359,7 +359,7 @@
                     <span class="input-label" id="lbl-country">Choose Country</span>
                     <select id="input-country" class="input-box" onchange="changeCountry()">
                         <option value="Algeria">Algeria</option>
-                        <option value="Palestine">Palestine</option> <!-- Added Palestine -->
+                        <option value="Palestine">Palestine</option>
                         <option value="Saudi Arabia">Saudi Arabia</option>
                         <option value="Egypt">Egypt</option>
                         <option value="Morocco">Morocco</option>
@@ -439,7 +439,7 @@
         // --- 3. TRANSLATION DICTIONARY (CITIES) ---
         const DICT_CITIES = {
             "Ain Oussera": "عين وسارة",
-            "Algiers": "الجزائر العاصمة",
+            "Algiers": "الجزائر العاصمة", // DISTINCT NAME
             "Makkah": "مكة المكرمة",
             "Madinah": "المدينة المنورة",
             "Gaza": "غزة",
@@ -464,6 +464,7 @@
             country: "Algeria",
             timings: null,
             hijri: null,
+            timezone: null, // NEW: Store API Timezone
             audioReady: false,
             lastPlayedPrayer: ""
         };
@@ -490,58 +491,47 @@
 
             applyTheme(state.theme);
             
-            // Handle URL params or defaults
             const params = new URLSearchParams(window.location.search);
             if(params.get('country')) state.country = params.get('country');
             if(params.get('city')) state.city = params.get('city');
 
-            // Apply logic
             populateCities(state.country);
             document.getElementById('input-city').value = state.city;
             document.getElementById('input-country').value = state.country;
 
-            applyLang(state.lang); // This applies text translations
+            applyLang(state.lang); 
             
             fetchData();
             setInterval(tick, 1000);
         };
 
         // --- LOGIC FOR DROPDOWNS ---
-        
-        // 1. When Country Changes
         function changeCountry() {
             const countrySelect = document.getElementById('input-country');
-            // Get the English value (even if Arabic text is shown, value remains English)
             const val = countrySelect.value; 
-            
-            // Check if it's a translated value (in case browser behavior differs) and map back
             const engCountry = getKeyByValue(DICT_COUNTRIES, val) || val;
             
             state.country = engCountry;
             populateCities(state.country);
             
-            // Auto-select first city
             const citySelect = document.getElementById('input-city');
             state.city = citySelect.options[0].value;
             
             updateLoc();
         }
 
-        // 2. Populate City Dropdown based on Country
         function populateCities(country) {
             const citySelect = document.getElementById('input-city');
-            citySelect.innerHTML = ""; // Clear existing
+            citySelect.innerHTML = ""; 
 
             const cities = COUNTRY_DATA[country] || ["Capital"];
-            
             cities.forEach(city => {
                 const opt = document.createElement('option');
                 opt.value = city;
-                opt.text = city; // Will be translated by updateInputTexts
+                opt.text = city; 
                 citySelect.appendChild(opt);
             });
             
-            // If language is currently Arabic, translate these new options immediately
             if(state.lang === 'ar') updateInputTexts('ar');
         }
 
@@ -555,7 +545,6 @@
                 let queryCity = state.city;
                 let queryCountry = state.country;
 
-                // Ensure English for API
                 const englishCity = getKeyByValue(DICT_CITIES, queryCity) || queryCity;
                 const englishCountry = getKeyByValue(DICT_COUNTRIES, queryCountry) || queryCountry;
 
@@ -565,28 +554,54 @@
                 
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
+                state.timezone = data.data.meta.timezone; // STORE TIMEZONE
                 
                 renderPrayerTimes();
                 renderDate();
+                // Immediately update tick to jump to new time
+                tick();
             } catch (e) { 
                 console.error("API Error", e);
                 document.getElementById('date-display').innerText = "Error Loading Data";
             }
         }
 
-        function tick() {
+        // --- NEW TIME LOGIC ---
+        function getCurrentTimeInZone() {
             const now = new Date();
-            const timeOpts = { hour: '2-digit', minute:'2-digit', hour12: false };
-            const clockEl = document.getElementById('clock');
-            clockEl.innerText = now.toLocaleTimeString('en-GB', timeOpts);
-
-            if(state.timings) updateCountdown(now);
+            if (!state.timezone) {
+                // Fallback to local if no API data yet
+                return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
+            }
+            // Create a DateTimeFormat for the target timezone
+            const formatter = new Intl.DateTimeFormat('en-GB', {
+                timeZone: state.timezone,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: false
+            });
+            const parts = formatter.formatToParts(now);
+            const h = parseInt(parts.find(p => p.type === 'hour').value);
+            const m = parseInt(parts.find(p => p.type === 'minute').value);
+            const s = parseInt(parts.find(p => p.type === 'second').value);
+            return { h, m, s };
         }
 
-        function updateCountdown(now) {
+        function tick() {
+            const time = getCurrentTimeInZone();
+            const clockEl = document.getElementById('clock');
+            // Format HH:MM
+            clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+
+            if(state.timings) updateCountdown(time);
+        }
+
+        function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-            const curMins = now.getHours() * 60 + now.getMinutes();
-            const curSecs = now.getSeconds();
+            // Current time in minutes relative to the target location
+            const curMins = time.h * 60 + time.m;
+            const curSecs = time.s;
 
             let nextP = null;
             let nextName = "";
@@ -623,6 +638,7 @@
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
+            // Trigger audio relative to location time
             if(state.sound && hLeft === 0 && mLeft === 0 && diffSecs <= 2) {
                 if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
                     if(state.audioReady) {
@@ -683,7 +699,6 @@
             document.getElementById('lbl-country').innerText = dict.selCountry;
             document.getElementById('btn-lang').innerText = dict.btn;
 
-            // Handle Header City Name 
             let displayCity = state.city;
             if(state.lang === 'ar') {
                  if(DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
@@ -713,7 +728,6 @@
         }
 
         function updateInputTexts(l) {
-            // Update Country Dropdown
             const countrySelect = document.getElementById('input-country');
             const cOpts = countrySelect.options;
             for (let i = 0; i < cOpts.length; i++) {
@@ -725,7 +739,6 @@
                 }
             }
 
-            // Update City Dropdown
             const citySelect = document.getElementById('input-city');
             const cityOpts = citySelect.options;
             for (let i = 0; i < cityOpts.length; i++) {
@@ -773,7 +786,6 @@
         function setTheme(t) { applyTheme(t); }
 
         function updateLoc() {
-            // Grab English values from the current selection (value is always English)
             let cCity = document.getElementById('input-city').value;
             let cCountry = document.getElementById('input-country').value;
 
