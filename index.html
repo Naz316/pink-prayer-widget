@@ -46,6 +46,7 @@
             min-height: 100vh;
             color: var(--text-primary);
             overflow: hidden;
+            user-select: none; /* Prevent selection */
         }
 
         .widget-card {
@@ -54,12 +55,11 @@
             border-radius: 12px;
             width: 100%;
             max-width: 600px;
-            /* REDUCED HEIGHT */
             min-height: 340px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Stack from top */
+            justify-content: flex-start;
             overflow: visible;
             transition: background 0.3s;
             position: relative;
@@ -123,7 +123,22 @@
             line-height: 1.5;
             white-space: pre-line;
         }
-        [lang="ar"] .date-text { line-height: 1.4; font-size: 0.8rem; }
+        
+        /* Specific Hijri styling for Arabic */
+        [lang="ar"] .hijri-main {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            direction: rtl;
+            display: inline-block;
+        }
+        
+        [lang="ar"] .greg-sub {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            direction: rtl;
+        }
 
         /* PRAYER BAR */
         .prayer-bar {
@@ -154,12 +169,12 @@
         .p-name { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px; }
         .p-time { font-size: 1rem; font-weight: bold; direction: ltr; }
 
-        /* CONTROLS SECTION - REDUCED PADDING */
+        /* CONTROLS SECTION */
         .controls-row {
-            padding: 10px 20px; /* Reduced top/bottom padding */
+            padding: 10px 20px; 
             display: flex;
             flex-direction: column;
-            gap: 10px; /* Reduced gap between inputs and buttons */
+            gap: 10px; 
             border-top: 1px solid var(--border-card);
             direction: ltr;
             flex-grow: 1; 
@@ -174,7 +189,7 @@
         .input-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 3px; /* Reduced margin */
+            margin-bottom: 3px; 
             text-align: center;
             height: 12px;
         }
@@ -189,14 +204,14 @@
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 6px; /* Reduced padding slightly */
+            padding: 6px; 
             border-radius: 6px;
             font-family: inherit;
             font-size: 0.9rem;
             outline: none;
             text-align: center;
             width: 100%;
-            height: 34px; /* Fixed input height */
+            height: 34px; 
         }
         .input-box option { background: #333; color: #fff; }
 
@@ -208,7 +223,7 @@
             width: 100%;
             gap: 25px;
             position: relative;
-            height: 35px; /* Reduced container height */
+            height: 35px; 
         }
 
         .icon-btn {
@@ -267,11 +282,27 @@
         }
         .color-dot:hover { transform: scale(1.2); border-color: #fff; }
 
+        /* Audio hint toast */
+        #audio-hint {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
     </style>
 </head>
 <body>
 
-    <audio id="adhan-audio" src="https://cdn.aladhan.com/audio/adhan/Makkah.mp3" preload="auto"></audio>
+    <audio id="adhan-audio" src="https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/adhan/makkah.mp3" preload="auto"></audio>
+    <div id="audio-hint">Sound enabled</div>
 
     <div class="widget-card">
         
@@ -362,7 +393,9 @@
             city: "Ain Oussera",
             country: "Algeria",
             timings: null,
-            hijri: null
+            hijri: null,
+            audioReady: false,
+            lastPlayedPrayer: ""
         };
 
         const TEXT = {
@@ -382,11 +415,9 @@
 
         // --- INIT ---
         window.onload = () => {
-            document.body.addEventListener('click', () => {
-                if(state.sound && audio.paused) {
-                    audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(()=>{});
-                }
-            }, { once: true });
+            // Fix: Browser Policy requires interaction
+            document.addEventListener('click', enableAudio, { once: true });
+            document.addEventListener('touchstart', enableAudio, { once: true });
 
             applyTheme(state.theme);
             applyLang(state.lang);
@@ -402,6 +433,20 @@
             fetchData();
             setInterval(tick, 1000);
         };
+
+        function enableAudio() {
+            if(state.sound) {
+                audio.play().then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    state.audioReady = true;
+                    // Flash hint
+                    const hint = document.getElementById('audio-hint');
+                    hint.style.opacity = '1';
+                    setTimeout(() => hint.style.opacity = '0', 2000);
+                }).catch(err => console.log("Audio init error:", err));
+            }
+        }
 
         // --- LOGIC ---
         async function fetchData() {
@@ -450,6 +495,7 @@
                 nextName = 'Fajr';
             }
 
+            // UI Update
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
@@ -466,8 +512,20 @@
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            if(state.sound && hLeft===0 && mLeft===0 && diffSecs===1 && nextName !== 'Sunrise') {
-                audio.play();
+            // --- AUDIO LOGIC FIX ---
+            // If timer is at 00:00:00 (or close to it due to lag)
+            if(state.sound && hLeft === 0 && mLeft === 0 && diffSecs <= 2) {
+                if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
+                    // Try to play
+                    if(state.audioReady) {
+                        audio.currentTime = 0;
+                        audio.play().catch(e => console.error("Play failed:", e));
+                    }
+                    state.lastPlayedPrayer = nextName;
+                }
+            } else if (diffMins > 1) {
+                // Reset tracker if we are far away from prayer
+                state.lastPlayedPrayer = "";
             }
         }
 
@@ -479,14 +537,16 @@
             
             if (state.lang === 'en') {
                 const suffix = getOrdinal(h.day);
-                const hijriStr = `${h.day}${suffix} ${h.month.en}, ${h.year}h`;
+                const hijriStr = `${h.day}${suffix} ${h.month.en}, ${h.year} AH`;
                 const gregStr = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
                 el.innerHTML = `<span style="opacity:0.8">${hijriStr}</span><br><span style="font-weight:bold">${gregStr}</span>`;
             } else {
-                const hijriStr = `${h.day} ${h.month.ar} ${h.year}هـ`;
+                // FIXED: Hijri Date in Arabic on one line, bold, matching image
+                const hijriStr = `${h.day} ${h.month.ar} ${h.year} هـ`;
                 let gregStr = now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                gregStr += "م"; 
-                el.innerHTML = `${hijriStr}<br>${gregStr}`;
+                gregStr += " م"; 
+                // Using span with direction: rtl
+                el.innerHTML = `<span class="hijri-main">${hijriStr}</span><br><span class="greg-sub">${gregStr}</span>`;
             }
         }
 
@@ -539,6 +599,8 @@
             const btn = document.getElementById('btn-sound');
             btn.innerText = state.sound ? "🔊" : "🔇";
             btn.style.opacity = state.sound ? "1" : "0.5";
+            // Re-prime if turning on
+            if(state.sound && !state.audioReady) enableAudio();
         }
 
         function toggleColors() {
