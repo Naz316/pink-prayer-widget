@@ -332,7 +332,6 @@
 </head>
 <body>
 
-    <!-- UPDATED SOURCE: A very reliable Adhan MP3 -->
     <audio id="adhan-audio" src="https://www.islamcan.com/audio/adhan/azan1.mp3" preload="auto"></audio>
     <div id="audio-hint">Sound Enabled: Test Playing...</div>
 
@@ -389,8 +388,8 @@
             </div>
 
             <div class="tools">
-                <!-- Sound Left: CLICK HERE TO TEST -->
-                <button class="icon-btn" onclick="testSound()" id="btn-sound" title="Click to Test Sound">🔊</button>
+                <!-- Sound Left: SMART TOGGLE (MUTE / UNMUTE+TEST) -->
+                <button class="icon-btn" onclick="toggleSoundWrapper()" id="btn-sound" title="Toggle Sound">🔊</button>
                 
                 <!-- Language Center -->
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
@@ -418,7 +417,7 @@
     </div>
 
     <script>
-        // --- DATA ---
+        // --- DATA & DICTIONARIES ---
         const COUNTRY_DATA = {
             "Algeria": ["Ain Oussera", "Algiers"],
             "Saudi Arabia": ["Makkah", "Madinah"],
@@ -498,6 +497,7 @@
 
         // --- INIT ---
         window.onload = () => {
+            // Browsers block audio until interaction.
             document.body.addEventListener('click', initAudio, { once: true });
             document.body.addEventListener('touchstart', initAudio, { once: true });
 
@@ -518,9 +518,8 @@
         };
 
         function initAudio() {
-            if(!state.audioReady) {
-                audio.volume = 1.0;
-                audio.muted = false;
+            // Silently priming the audio engine
+            if(!state.audioReady && state.sound) {
                 audio.play().then(() => {
                     audio.pause();
                     audio.currentTime = 0;
@@ -529,18 +528,41 @@
             }
         }
 
-        // --- TEST FUNCTION ---
-        function testSound() {
-            // Force sound on
-            state.sound = true;
-            const btn = document.getElementById('btn-sound');
-            btn.innerText = "🔊";
-            btn.style.opacity = "1";
-            btn.classList.add('playing-audio'); // visual pulse
+        // --- SMART TOGGLE FUNCTION ---
+        function toggleSoundWrapper() {
+            if(state.sound) {
+                // If ON, Turn OFF (Mute)
+                state.sound = false;
+                audio.pause();
+                audio.currentTime = 0;
+                renderSoundBtn();
+            } else {
+                // If OFF, Turn ON & Play Test (Prime Audio)
+                state.sound = true;
+                renderSoundBtn();
+                testSound(); // Use test to guarantee permission
+            }
+        }
 
+        function renderSoundBtn() {
+            const btn = document.getElementById('btn-sound');
+            btn.innerText = state.sound ? "🔊" : "🔇";
+            btn.style.opacity = state.sound ? "1" : "0.5";
+            if(!state.sound) {
+                btn.classList.remove('playing-audio');
+                document.getElementById('audio-hint').style.opacity = '0';
+            }
+        }
+
+        // --- TEST SOUND FUNCTION ---
+        function testSound() {
+            // Visual Feedback
+            const btn = document.getElementById('btn-sound');
+            btn.classList.add('playing-audio');
+            
             const hint = document.getElementById('audio-hint');
-            hint.innerText = "Attempting to play...";
-            hint.style.opacity = "1";
+            hint.innerText = "Enabled & Testing...";
+            hint.style.opacity = '1';
 
             // Reset Audio
             audio.pause();
@@ -555,27 +577,21 @@
                 playPromise.then(_ => {
                     // Success!
                     state.audioReady = true;
-                    hint.innerText = "Playing Adhan (3s test)...";
                     setTimeout(() => {
-                        audio.pause();
-                        audio.currentTime = 0;
-                        btn.classList.remove('playing-audio');
-                        hint.style.opacity = '0';
+                        // Stop after 3 seconds
+                        if(state.sound) {
+                            audio.pause();
+                            audio.currentTime = 0;
+                            btn.classList.remove('playing-audio');
+                            hint.style.opacity = '0';
+                        }
                     }, 3000);
                 }).catch(error => {
-                    // Error
                     console.error("Audio Failed:", error);
-                    hint.innerText = "Audio Blocked! Click Page background.";
+                    hint.innerText = "Blocked. Click page background.";
                     btn.classList.remove('playing-audio');
                 });
             }
-        }
-
-        function toggleSound() {
-            state.sound = !state.sound;
-            const btn = document.getElementById('btn-sound');
-            btn.innerText = state.sound ? "🔊" : "🔇";
-            btn.style.opacity = state.sound ? "1" : "0.5";
         }
 
         // --- LOGIC FOR DROPDOWNS ---
@@ -583,16 +599,20 @@
             const countrySelect = document.getElementById('input-country');
             const val = countrySelect.value; 
             const engCountry = getKeyByValue(DICT_COUNTRIES, val) || val;
+            
             state.country = engCountry;
             populateCities(state.country);
+            
             const citySelect = document.getElementById('input-city');
             state.city = citySelect.options[0].value;
+            
             updateLoc();
         }
 
         function populateCities(country) {
             const citySelect = document.getElementById('input-city');
             citySelect.innerHTML = ""; 
+
             const cities = COUNTRY_DATA[country] || ["Capital"];
             cities.forEach(city => {
                 const opt = document.createElement('option');
@@ -600,6 +620,7 @@
                 opt.text = city; 
                 citySelect.appendChild(opt);
             });
+            
             if(state.lang === 'ar') updateInputTexts('ar');
         }
 
