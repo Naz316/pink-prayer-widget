@@ -235,18 +235,6 @@
             line-height: 1;
         }
         .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
-        
-        /* PULSE ANIMATION FOR SOUND BUTTON */
-        @keyframes pulse-icon {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        .playing-audio {
-            animation: pulse-icon 1s infinite;
-            color: #00ff00; /* Bright Green to show active */
-            text-shadow: 0 0 5px rgba(0,255,0,0.5);
-        }
 
         .lang-btn {
             background: var(--input-bg);
@@ -324,16 +312,14 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.5s;
-            color: #fff;
-            z-index: 500;
         }
 
     </style>
 </head>
 <body>
 
-    <audio id="adhan-audio" src="https://www.islamcan.com/audio/adhan/azan1.mp3" preload="auto"></audio>
-    <div id="audio-hint">Sound Enabled: Test Playing...</div>
+    <audio id="adhan-audio" src="https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/adhan/makkah.mp3" preload="auto"></audio>
+    <div id="audio-hint">Sound enabled</div>
 
     <div class="widget-card">
         
@@ -366,6 +352,7 @@
             <div class="inputs-row">
                 <div class="input-group">
                     <span class="input-label" id="lbl-city">Choose City</span>
+                    <!-- CHANGED FROM INPUT TO SELECT -->
                     <select id="input-city" class="input-box" onchange="updateLoc()"></select>
                 </div>
                 <div class="input-group">
@@ -388,8 +375,8 @@
             </div>
 
             <div class="tools">
-                <!-- Sound Left: SMART TOGGLE (MUTE / UNMUTE+TEST) -->
-                <button class="icon-btn" onclick="toggleSoundWrapper()" id="btn-sound" title="Toggle Sound">🔊</button>
+                <!-- Sound Left -->
+                <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
                 
                 <!-- Language Center -->
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
@@ -417,7 +404,7 @@
     </div>
 
     <script>
-        // --- DATA & DICTIONARIES ---
+        // --- 1. DATA: CITIES PER COUNTRY (ENGLISH) ---
         const COUNTRY_DATA = {
             "Algeria": ["Ain Oussera", "Algiers"],
             "Saudi Arabia": ["Makkah", "Madinah"],
@@ -433,6 +420,7 @@
             "Malaysia": ["Kuala Lumpur"]
         };
 
+        // --- 2. TRANSLATION DICTIONARY (COUNTRIES) ---
         const DICT_COUNTRIES = {
             "Algeria": "الجزائر",
             "Palestine": "فلسطين",
@@ -448,9 +436,10 @@
             "Malaysia": "ماليزيا"
         };
         
+        // --- 3. TRANSLATION DICTIONARY (CITIES) ---
         const DICT_CITIES = {
             "Ain Oussera": "عين وسارة",
-            "Algiers": "الجزائر العاصمة",
+            "Algiers": "الجزائر العاصمة", // DISTINCT NAME
             "Makkah": "مكة المكرمة",
             "Madinah": "المدينة المنورة",
             "Gaza": "غزة",
@@ -475,7 +464,7 @@
             country: "Algeria",
             timings: null,
             hijri: null,
-            timezone: null,
+            timezone: null, // NEW: Store API Timezone
             audioReady: false,
             lastPlayedPrayer: ""
         };
@@ -497,9 +486,8 @@
 
         // --- INIT ---
         window.onload = () => {
-            // Browsers block audio until interaction.
-            document.body.addEventListener('click', initAudio, { once: true });
-            document.body.addEventListener('touchstart', initAudio, { once: true });
+            document.addEventListener('click', enableAudio, { once: true });
+            document.addEventListener('touchstart', enableAudio, { once: true });
 
             applyTheme(state.theme);
             
@@ -516,83 +504,6 @@
             fetchData();
             setInterval(tick, 1000);
         };
-
-        function initAudio() {
-            // Silently priming the audio engine
-            if(!state.audioReady && state.sound) {
-                audio.play().then(() => {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    state.audioReady = true;
-                }).catch(() => {});
-            }
-        }
-
-        // --- SMART TOGGLE FUNCTION ---
-        function toggleSoundWrapper() {
-            if(state.sound) {
-                // If ON, Turn OFF (Mute)
-                state.sound = false;
-                audio.pause();
-                audio.currentTime = 0;
-                renderSoundBtn();
-            } else {
-                // If OFF, Turn ON & Play Test (Prime Audio)
-                state.sound = true;
-                renderSoundBtn();
-                testSound(); // Use test to guarantee permission
-            }
-        }
-
-        function renderSoundBtn() {
-            const btn = document.getElementById('btn-sound');
-            btn.innerText = state.sound ? "🔊" : "🔇";
-            btn.style.opacity = state.sound ? "1" : "0.5";
-            if(!state.sound) {
-                btn.classList.remove('playing-audio');
-                document.getElementById('audio-hint').style.opacity = '0';
-            }
-        }
-
-        // --- TEST SOUND FUNCTION ---
-        function testSound() {
-            // Visual Feedback
-            const btn = document.getElementById('btn-sound');
-            btn.classList.add('playing-audio');
-            
-            const hint = document.getElementById('audio-hint');
-            hint.innerText = "Enabled & Testing...";
-            hint.style.opacity = '1';
-
-            // Reset Audio
-            audio.pause();
-            audio.currentTime = 0;
-            audio.volume = 1.0;
-            audio.muted = false;
-
-            // Attempt Play
-            const playPromise = audio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    // Success!
-                    state.audioReady = true;
-                    setTimeout(() => {
-                        // Stop after 3 seconds
-                        if(state.sound) {
-                            audio.pause();
-                            audio.currentTime = 0;
-                            btn.classList.remove('playing-audio');
-                            hint.style.opacity = '0';
-                        }
-                    }, 3000);
-                }).catch(error => {
-                    console.error("Audio Failed:", error);
-                    hint.innerText = "Blocked. Click page background.";
-                    btn.classList.remove('playing-audio');
-                });
-            }
-        }
 
         // --- LOGIC FOR DROPDOWNS ---
         function changeCountry() {
@@ -643,10 +554,11 @@
                 
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
-                state.timezone = data.data.meta.timezone; 
+                state.timezone = data.data.meta.timezone; // STORE TIMEZONE
                 
                 renderPrayerTimes();
                 renderDate();
+                // Immediately update tick to jump to new time
                 tick();
             } catch (e) { 
                 console.error("API Error", e);
@@ -654,12 +566,14 @@
             }
         }
 
-        // --- TIME LOGIC (TIMEZONE AWARE) ---
+        // --- NEW TIME LOGIC ---
         function getCurrentTimeInZone() {
             const now = new Date();
             if (!state.timezone) {
+                // Fallback to local if no API data yet
                 return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
             }
+            // Create a DateTimeFormat for the target timezone
             const formatter = new Intl.DateTimeFormat('en-GB', {
                 timeZone: state.timezone,
                 hour: 'numeric',
@@ -677,6 +591,7 @@
         function tick() {
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
+            // Format HH:MM
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
 
             if(state.timings) updateCountdown(time);
@@ -684,6 +599,7 @@
 
         function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            // Current time in minutes relative to the target location
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
@@ -710,33 +626,42 @@
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
-            const diffMins = nextP - curMins - 1;
-            const diffSecs = 60 - curSecs;
-            const hLeft = Math.floor(diffMins / 60);
-            const mLeft = diffMins % 60;
+            // --- FIX FOR :60 SECONDS ISSUE START ---
+            // Calculate total difference in seconds rather than minutes + seconds separately
+            const nextTotalSeconds = nextP * 60;
+            const currentTotalSeconds = (curMins * 60) + curSecs;
+            
+            let diffInSeconds = nextTotalSeconds - currentTotalSeconds;
+            
+            // Calculate H, M, S from total seconds difference
+            const hLeft = Math.floor(diffInSeconds / 3600);
+            diffInSeconds %= 3600;
+            const mLeft = Math.floor(diffInSeconds / 60);
+            const sLeft = diffInSeconds % 60; // This guarantees 0-59 range
+            // --- FIX END ---
 
-            const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${diffSecs<10?'0'+diffSecs:diffSecs}`;
+            const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('countdown').innerText = str;
             
             const dict = TEXT[state.lang];
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            // --- TRIGGER LOGIC ---
-            if(state.sound && (hLeft === 0 && mLeft === 0 && diffSecs <= 2)) {
+            // Trigger audio relative to location time
+            // Updated variable name from diffSecs to sLeft to match logic above
+            if(state.sound && hLeft === 0 && mLeft === 0 && sLeft <= 2) {
                 if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
-                    // FORCE PLAY
-                    audio.currentTime = 0;
-                    audio.volume = 1.0;
-                    audio.play().catch(e => console.error("Adhan Blocked:", e));
+                    if(state.audioReady) {
+                        audio.currentTime = 0;
+                        audio.play().catch(e => console.error("Play failed:", e));
+                    }
                     state.lastPlayedPrayer = nextName;
                 }
-            } else if (diffMins > 1) {
+            } else if (hLeft > 0 || mLeft > 1) {
                 state.lastPlayedPrayer = "";
             }
         }
 
-        // --- RENDER FUNCTIONS ---
         function renderDate() {
             if(!state.timings || !state.hijri) return;
             const h = state.hijri;
@@ -783,6 +708,7 @@
             document.getElementById('lbl-city').innerText = dict.selCity;
             document.getElementById('lbl-country').innerText = dict.selCountry;
             document.getElementById('btn-lang').innerText = dict.btn;
+
             let displayCity = state.city;
             if(state.lang === 'ar') {
                  if(DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
@@ -801,8 +727,10 @@
             state.lang = l;
             localStorage.setItem('p_lang', l);
             document.documentElement.lang = l;
+            
             renderStaticText();
             updateInputTexts(l);
+
             if(state.timings) {
                 renderPrayerTimes();
                 renderDate();
@@ -820,6 +748,7 @@
                     cOpts[i].text = engVal;
                 }
             }
+
             const citySelect = document.getElementById('input-city');
             const cityOpts = citySelect.options;
             for (let i = 0; i < cityOpts.length; i++) {
@@ -829,6 +758,27 @@
                 } else {
                     cityOpts[i].text = engVal;
                 }
+            }
+        }
+
+        function toggleSound() {
+            state.sound = !state.sound;
+            const btn = document.getElementById('btn-sound');
+            btn.innerText = state.sound ? "🔊" : "🔇";
+            btn.style.opacity = state.sound ? "1" : "0.5";
+            if(state.sound && !state.audioReady) enableAudio();
+        }
+
+        function enableAudio() {
+            if(state.sound) {
+                audio.play().then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    state.audioReady = true;
+                    const hint = document.getElementById('audio-hint');
+                    hint.style.opacity = '1';
+                    setTimeout(() => hint.style.opacity = '0', 2000);
+                }).catch(err => console.log("Audio init error:", err));
             }
         }
 
@@ -848,13 +798,15 @@
         function updateLoc() {
             let cCity = document.getElementById('input-city').value;
             let cCountry = document.getElementById('input-country').value;
+
             state.city = cCity;
             state.country = cCountry;
+            
             document.getElementById('date-display').innerText = TEXT[state.lang].loading;
+            
             renderStaticText();
             fetchData();
         }
     </script>
 </body>
 </html>
-
