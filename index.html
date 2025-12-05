@@ -626,12 +626,21 @@
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
-            const diffMins = nextP - curMins - 1;
-            const diffSecs = 60 - curSecs;
-            const hLeft = Math.floor(diffMins / 60);
-            const mLeft = diffMins % 60;
+            // --- FIX FOR :60 SECONDS ISSUE START ---
+            // Calculate total difference in seconds rather than minutes + seconds separately
+            const nextTotalSeconds = nextP * 60;
+            const currentTotalSeconds = (curMins * 60) + curSecs;
+            
+            let diffInSeconds = nextTotalSeconds - currentTotalSeconds;
+            
+            // Calculate H, M, S from total seconds difference
+            const hLeft = Math.floor(diffInSeconds / 3600);
+            diffInSeconds %= 3600;
+            const mLeft = Math.floor(diffInSeconds / 60);
+            const sLeft = diffInSeconds % 60; // This guarantees 0-59 range
+            // --- FIX END ---
 
-            const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${diffSecs<10?'0'+diffSecs:diffSecs}`;
+            const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('countdown').innerText = str;
             
             const dict = TEXT[state.lang];
@@ -639,7 +648,8 @@
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
             // Trigger audio relative to location time
-            if(state.sound && hLeft === 0 && mLeft === 0 && diffSecs <= 2) {
+            // Updated variable name from diffSecs to sLeft to match logic above
+            if(state.sound && hLeft === 0 && mLeft === 0 && sLeft <= 2) {
                 if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
                     if(state.audioReady) {
                         audio.currentTime = 0;
@@ -647,7 +657,7 @@
                     }
                     state.lastPlayedPrayer = nextName;
                 }
-            } else if (diffMins > 1) {
+            } else if (hLeft > 0 || mLeft > 1) {
                 state.lastPlayedPrayer = "";
             }
         }
