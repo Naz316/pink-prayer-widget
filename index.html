@@ -378,6 +378,9 @@
                 <!-- Sound Left -->
                 <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
                 
+                <!-- NEW TEST BUTTON -->
+                <button class="icon-btn" onclick="testAdhan()" id="btn-test" title="Test Adhan">▶</button>
+
                 <!-- Language Center -->
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
                 
@@ -464,7 +467,7 @@
             country: "Algeria",
             timings: null,
             hijri: null,
-            timezone: null, // NEW: Store API Timezone
+            timezone: null, 
             audioReady: false,
             lastPlayedPrayer: ""
         };
@@ -483,6 +486,11 @@
         };
 
         const audio = document.getElementById('adhan-audio');
+        
+        // Reset Test Button when audio ends naturally
+        audio.addEventListener('ended', () => {
+            document.getElementById('btn-test').innerText = "▶";
+        });
 
         // --- INIT ---
         window.onload = () => {
@@ -554,11 +562,10 @@
                 
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
-                state.timezone = data.data.meta.timezone; // STORE TIMEZONE
+                state.timezone = data.data.meta.timezone; 
                 
                 renderPrayerTimes();
                 renderDate();
-                // Immediately update tick to jump to new time
                 tick();
             } catch (e) { 
                 console.error("API Error", e);
@@ -566,14 +573,11 @@
             }
         }
 
-        // --- NEW TIME LOGIC ---
         function getCurrentTimeInZone() {
             const now = new Date();
             if (!state.timezone) {
-                // Fallback to local if no API data yet
                 return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
             }
-            // Create a DateTimeFormat for the target timezone
             const formatter = new Intl.DateTimeFormat('en-GB', {
                 timeZone: state.timezone,
                 hour: 'numeric',
@@ -591,7 +595,6 @@
         function tick() {
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
-            // Format HH:MM
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
 
             if(state.timings) updateCountdown(time);
@@ -599,7 +602,6 @@
 
         function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-            // Current time in minutes relative to the target location
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
@@ -626,19 +628,15 @@
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
-            // --- FIX FOR :60 SECONDS ISSUE START ---
-            // Calculate total difference in seconds rather than minutes + seconds separately
+            // --- SECONDS FIX LOGIC ---
             const nextTotalSeconds = nextP * 60;
             const currentTotalSeconds = (curMins * 60) + curSecs;
-            
             let diffInSeconds = nextTotalSeconds - currentTotalSeconds;
             
-            // Calculate H, M, S from total seconds difference
             const hLeft = Math.floor(diffInSeconds / 3600);
             diffInSeconds %= 3600;
             const mLeft = Math.floor(diffInSeconds / 60);
-            const sLeft = diffInSeconds % 60; // This guarantees 0-59 range
-            // --- FIX END ---
+            const sLeft = diffInSeconds % 60; // Guarantees 0-59 range
 
             const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('countdown').innerText = str;
@@ -647,13 +645,12 @@
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            // Trigger audio relative to location time
-            // Updated variable name from diffSecs to sLeft to match logic above
             if(state.sound && hLeft === 0 && mLeft === 0 && sLeft <= 2) {
                 if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
                     if(state.audioReady) {
                         audio.currentTime = 0;
                         audio.play().catch(e => console.error("Play failed:", e));
+                        document.getElementById('btn-test').innerText = "■"; // Update test button to stop icon
                     }
                     state.lastPlayedPrayer = nextName;
                 }
@@ -767,6 +764,21 @@
             btn.innerText = state.sound ? "🔊" : "🔇";
             btn.style.opacity = state.sound ? "1" : "0.5";
             if(state.sound && !state.audioReady) enableAudio();
+        }
+
+        // Added dedicated Test function
+        function testAdhan() {
+            const btn = document.getElementById('btn-test');
+            if (audio.paused) {
+                audio.currentTime = 0;
+                audio.play().then(() => {
+                    btn.innerText = "■"; // Show stop icon
+                }).catch(e => console.error("Test play failed:", e));
+            } else {
+                audio.pause();
+                audio.currentTime = 0;
+                btn.innerText = "▶"; // Show play icon
+            }
         }
 
         function enableAudio() {
