@@ -319,7 +319,7 @@
 <body>
 
     <audio id="adhan-audio" src="https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/adhan/makkah.mp3" preload="auto"></audio>
-    <div id="audio-hint">Sound enabled</div>
+    <div id="audio-hint">Click anywhere to enable Sound</div>
 
     <div class="widget-card">
         
@@ -597,8 +597,43 @@
             if(state.timings) updateCountdown(time);
         }
 
+        function playAdhan(prayerName) {
+            if(state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
+                if(state.audioReady) {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.error("Play failed:", e));
+                }
+                state.lastPlayedPrayer = prayerName;
+            }
+        }
+
         function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            const dict = TEXT[state.lang];
+            
+            // --- CRITICAL FIX: EXACT MATCH FIRST ---
+            // If we are strictly at the prayer second (00:00:00), force display and play audio.
+            // This prevents the "next" loop from skipping the exact activation second.
+            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            for(let i=0; i<prayers.length; i++) {
+                if(state.timings[prayers[i]] === timeStr && time.s < 2) {
+                    // Activate Audio
+                    playAdhan(prayers[i]);
+                    // Force Visuals to 00:00:00
+                    const pNameTrans = dict[prayers[i].toLowerCase()];
+                    document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
+                    document.getElementById('countdown').innerText = "00:00:00";
+                    
+                    // Highlight current
+                    document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
+                    const activeEl = document.getElementById(`p-${prayers[i]}`);
+                    if(activeEl) activeEl.classList.add('active');
+                    
+                    return; // Stop function here so loop doesn't override
+                }
+            }
+
+            // --- STANDARD COUNTDOWN LOGIC ---
             // Current time in minutes relative to the target location
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
@@ -609,6 +644,7 @@
             for(let i=0; i<prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
+                // STRICTLY GREATER (>), so if it is exactly the minute, we handled it above.
                 if(pMins > curMins) {
                     nextP = pMins;
                     nextName = prayers[i];
@@ -622,11 +658,12 @@
                 nextName = 'Fajr';
             }
 
+            // Update Highlight
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
-            // --- FIX FOR :60 SECONDS ISSUE START ---
+            // --- FIX FOR :60 SECONDS ISSUE ---
             // Calculate total difference in seconds rather than minutes + seconds separately
             const nextTotalSeconds = nextP * 60;
             const currentTotalSeconds = (curMins * 60) + curSecs;
@@ -638,26 +675,16 @@
             diffInSeconds %= 3600;
             const mLeft = Math.floor(diffInSeconds / 60);
             const sLeft = diffInSeconds % 60; // This guarantees 0-59 range
-            // --- FIX END ---
+            // --- END FIX ---
 
             const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('countdown').innerText = str;
             
-            const dict = TEXT[state.lang];
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            // Trigger audio relative to location time
-            // Updated variable name from diffSecs to sLeft to match logic above
-            if(state.sound && hLeft === 0 && mLeft === 0 && sLeft <= 2) {
-                if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
-                    if(state.audioReady) {
-                        audio.currentTime = 0;
-                        audio.play().catch(e => console.error("Play failed:", e));
-                    }
-                    state.lastPlayedPrayer = nextName;
-                }
-            } else if (hLeft > 0 || mLeft > 1) {
+            // Reset "last played" if we are far away from the prayer to allow re-triggering next day
+            if (hLeft > 0 || mLeft > 1) {
                 state.lastPlayedPrayer = "";
             }
         }
@@ -776,6 +803,7 @@
                     audio.currentTime = 0;
                     state.audioReady = true;
                     const hint = document.getElementById('audio-hint');
+                    hint.innerText = "Sound Enabled";
                     hint.style.opacity = '1';
                     setTimeout(() => hint.style.opacity = '0', 2000);
                 }).catch(err => console.log("Audio init error:", err));
