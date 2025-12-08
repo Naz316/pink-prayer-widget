@@ -66,7 +66,6 @@
             overflow: visible;
             transition: background 0.3s;
             position: relative;
-            cursor: pointer; /* Indicates clickable */
         }
 
         /* HEADER ROW */
@@ -306,28 +305,24 @@
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(120, 42, 59, 0.9);
-            color: #fff;
-            padding: 8px 15px;
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             pointer-events: none;
-            opacity: 0.9;
+            opacity: 0;
             transition: opacity 0.5s;
-            z-index: 999;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
     </style>
 </head>
 <body>
 
-    <!-- UPDATED: High speed audio link -->
-    <audio id="adhan-audio" src="https://files.aladhan.com/media/adhans/makkah.mp3" preload="auto"></audio>
-    <div id="audio-hint">👆 Click here to Enable Sound</div>
+    <!-- REVERTED TO THE AUDIO SOURCE THAT WORKED FOR YOU -->
+    <audio id="adhan-audio" src="https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/adhan/makkah.mp3" preload="auto"></audio>
+    <div id="audio-hint">Sound Enabled</div>
 
-    <!-- Added onclick handler to the whole card -->
-    <div class="widget-card" onclick="enableAudio()">
+    <div class="widget-card">
         
         <!-- HEADER -->
         <div class="header-row">
@@ -353,11 +348,12 @@
         <div class="prayer-bar" id="prayers-container"></div>
 
         <!-- CONTROLS -->
-        <div class="controls-row" onclick="event.stopPropagation()"> <!-- Stop propagation so controls don't trigger sound test again -->
+        <div class="controls-row">
             
             <div class="inputs-row">
                 <div class="input-group">
                     <span class="input-label" id="lbl-city">Choose City</span>
+                    <!-- CHANGED FROM INPUT TO SELECT -->
                     <select id="input-city" class="input-box" onchange="updateLoc()"></select>
                 </div>
                 <div class="input-group">
@@ -381,7 +377,7 @@
 
             <div class="tools">
                 <!-- Sound Left -->
-                <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
+                <button class="icon-btn" onclick="toggleSound()" id="btn-sound" style="opacity: 0.5;">🔇</button>
                 
                 <!-- Language Center -->
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
@@ -444,7 +440,7 @@
         // --- 3. TRANSLATION DICTIONARY (CITIES) ---
         const DICT_CITIES = {
             "Ain Oussera": "عين وسارة",
-            "Algiers": "الجزائر العاصمة", 
+            "Algiers": "الجزائر العاصمة", // DISTINCT NAME
             "Makkah": "مكة المكرمة",
             "Madinah": "المدينة المنورة",
             "Gaza": "غزة",
@@ -464,12 +460,12 @@
         const state = {
             lang: localStorage.getItem('p_lang') || 'en',
             theme: localStorage.getItem('p_theme') || 'pink',
-            sound: true,
+            sound: false, // Default false until clicked
             city: "Ain Oussera",
             country: "Algeria",
             timings: null,
             hijri: null,
-            timezone: null, 
+            timezone: null, // NEW: Store API Timezone
             audioReady: false,
             lastPlayedPrayer: ""
         };
@@ -556,10 +552,11 @@
                 
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
-                state.timezone = data.data.meta.timezone; 
+                state.timezone = data.data.meta.timezone; // STORE TIMEZONE
                 
                 renderPrayerTimes();
                 renderDate();
+                // Immediately update tick to jump to new time
                 tick();
             } catch (e) { 
                 console.error("API Error", e);
@@ -567,12 +564,14 @@
             }
         }
 
-        // --- TIME LOGIC ---
+        // --- NEW TIME LOGIC ---
         function getCurrentTimeInZone() {
             const now = new Date();
             if (!state.timezone) {
+                // Fallback to local if no API data yet
                 return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
             }
+            // Create a DateTimeFormat for the target timezone
             const formatter = new Intl.DateTimeFormat('en-GB', {
                 timeZone: state.timezone,
                 hour: 'numeric',
@@ -590,38 +589,17 @@
         function tick() {
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
+            // Format HH:MM
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
-            
-            if(state.timings) {
-                checkPrayerTrigger(time);
-                updateCountdown(time);
-            }
-        }
 
-        function checkPrayerTrigger(time) {
-            const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
-            
-            // Check if exact minute matches
-            for(let i=0; i<prayers.length; i++) {
-                if(state.timings[prayers[i]] === timeStr && time.s < 2) {
-                    playAdhan(prayers[i]);
-                }
-            }
+            if(state.timings) updateCountdown(time);
         }
 
         function playAdhan(prayerName) {
+            // Only play if Sound is ON
             if(state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
-                audio.volume = 1.0;
                 audio.currentTime = 0;
-                const playPromise = audio.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.log("Auto-play blocked: User must interact first.");
-                    });
-                }
-                
+                audio.play().catch(e => console.error("Play failed:", e));
                 state.lastPlayedPrayer = prayerName;
             }
         }
@@ -630,6 +608,16 @@
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
             const dict = TEXT[state.lang];
             
+            // --- CRITICAL FIX: EXACT MATCH TRIGGER ---
+            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            for(let i=0; i<prayers.length; i++) {
+                if(state.timings[prayers[i]] === timeStr && time.s < 2) {
+                    playAdhan(prayers[i]);
+                    // Don't return here, let logic proceed to find next prayer to avoid 00:00:00 stick
+                }
+            }
+
+            // --- STANDARD COUNTDOWN LOGIC ---
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
@@ -639,7 +627,7 @@
             for(let i=0; i<prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
-                // Skips if equal, so no 00:00:00
+                // STRICTLY GREATER (>) avoids 00:00:00 showing
                 if(pMins > curMins) {
                     nextP = pMins;
                     nextName = prayers[i];
@@ -653,10 +641,12 @@
                 nextName = 'Fajr';
             }
 
+            // Update Highlight
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
+            // --- FIX FOR :60 SECONDS ISSUE ---
             const nextTotalSeconds = nextP * 60;
             const currentTotalSeconds = (curMins * 60) + curSecs;
             
@@ -666,6 +656,7 @@
             diffInSeconds %= 3600;
             const mLeft = Math.floor(diffInSeconds / 60);
             const sLeft = diffInSeconds % 60; 
+            // --- END FIX ---
 
             const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('countdown').innerText = str;
@@ -780,40 +771,34 @@
         function toggleSound() {
             state.sound = !state.sound;
             const btn = document.getElementById('btn-sound');
-            btn.innerText = state.sound ? "🔊" : "🔇";
-            btn.style.opacity = state.sound ? "1" : "0.5";
+            
             if(state.sound) {
-                // Manually triggering enableAudio if button clicked
-                enableAudio();
+                // TURN ON
+                btn.innerText = "🔊";
+                btn.style.opacity = "1";
+                // TRIGGER 3s TEST
+                audio.play().then(() => {
+                    const hint = document.getElementById('audio-hint');
+                    hint.innerText = "Sound Testing...";
+                    hint.style.opacity = '1';
+                    
+                    // Stop after 3 seconds
+                    setTimeout(() => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        hint.innerText = "Sound Enabled";
+                        setTimeout(() => hint.style.opacity = '0', 2000);
+                    }, 3000);
+                }).catch(e => console.error(e));
+                
+                state.audioReady = true;
+
             } else {
+                // TURN OFF
+                btn.innerText = "🔇";
+                btn.style.opacity = "0.5";
                 audio.pause();
                 audio.currentTime = 0;
-            }
-        }
-
-        // --- UPDATED ENABLE AUDIO FUNCTION ---
-        // This function now runs when you click ANYWHERE on the card
-        function enableAudio() {
-            if(!state.audioReady && state.sound) {
-                audio.volume = 1.0;
-                const p = audio.play();
-                if(p !== undefined) {
-                    p.then(() => {
-                        state.audioReady = true;
-                        const hint = document.getElementById('audio-hint');
-                        hint.innerText = "Sound Playing (Test)...";
-                        
-                        // Play for 3 seconds then stop
-                        setTimeout(() => {
-                            audio.pause();
-                            audio.currentTime = 0;
-                            hint.innerText = "Sound Enabled ✅";
-                            setTimeout(() => hint.style.opacity = '0', 2000);
-                        }, 3000);
-                    }).catch(err => {
-                        console.log("Audio init error:", err);
-                    });
-                }
             }
         }
 
