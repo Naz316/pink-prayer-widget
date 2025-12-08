@@ -318,9 +318,9 @@
 </head>
 <body>
 
-    <!-- UPDATED: Using QuranicAudio which is secure and fast -->
-    <audio id="adhan-audio" src="https://download.quranicaudio.com/misc/adhan/adhan_makkah.mp3" preload="auto"></audio>
-    <div id="audio-hint">Click anywhere to enable Sound</div>
+    <!-- SECURE AUDIO (IslamCan - HTTPS) -->
+    <audio id="adhan-audio" src="https://www.islamcan.com/audio/adhan/azan1.mp3" preload="auto"></audio>
+    <div id="audio-hint">Sound Enabled</div>
 
     <div class="widget-card">
         
@@ -456,7 +456,7 @@
             "Kuala Lumpur": "كوالالمبور"
         };
 
-        // --- SAFE STORAGE ---
+        // --- SAFE STORAGE HELPERS ---
         function getStorage(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
         function setStorage(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
 
@@ -469,8 +469,7 @@
             country: "Algeria",
             timings: null,
             hijri: null,
-            timezone: null, // NEW: Store API Timezone
-            audioReady: false,
+            timezone: null,
             lastPlayedPrayer: ""
         };
 
@@ -493,16 +492,16 @@
         window.onload = () => {
             try {
                 applyTheme(state.theme);
-                
                 const params = new URLSearchParams(window.location.search);
                 if(params.get('country')) state.country = params.get('country');
                 if(params.get('city')) state.city = params.get('city');
 
-                // FORCE POPULATE BEFORE ANYTHING ELSE
+                // POPULATE DROPDOWNS FIRST TO PREVENT CRASH
                 populateCities(state.country);
                 
                 document.getElementById('input-country').value = state.country;
                 
+                // Safe City Selection
                 const citySel = document.getElementById('input-city');
                 let cityExists = false;
                 for(let i=0; i<citySel.options.length; i++) {
@@ -511,12 +510,12 @@
                 if(!cityExists && citySel.options.length > 0) state.city = citySel.options[0].value;
                 citySel.value = state.city;
 
-                applyLang(state.lang); 
+                applyLang(state.lang);
                 
                 fetchData();
                 setInterval(tick, 1000);
-            } catch(e) {
-                console.error("Initialization Error: ", e);
+            } catch (e) {
+                console.error("Init Error", e);
                 document.getElementById('date-display').innerText = "Init Failed";
             }
         };
@@ -558,38 +557,42 @@
         // --- API & LOGIC ---
         async function fetchData() {
             try {
-                let queryCity = state.city;
-                let queryCountry = state.country;
+                let engCity = state.city;
+                let engCountry = state.country;
 
-                const englishCity = getKeyByValue(DICT_CITIES, queryCity) || queryCity;
-                const englishCountry = getKeyByValue(DICT_COUNTRIES, queryCountry) || queryCountry;
+                // Ensure we use English names for API if current state matches dictionary
+                const kCity = Object.keys(DICT_CITIES).find(key => DICT_CITIES[key] === state.city);
+                if(kCity) engCity = kCity;
 
-                const url = `https://api.aladhan.com/v1/timingsByCity?city=${englishCity}&country=${englishCountry}&method=19`;
+                const kCountry = Object.keys(DICT_COUNTRIES).find(key => DICT_COUNTRIES[key] === state.country);
+                if(kCountry) engCountry = kCountry;
+
+                const url = `https://api.aladhan.com/v1/timingsByCity?city=${engCity}&country=${engCountry}&method=19`;
                 const res = await fetch(url);
                 const data = await res.json();
                 
-                state.timings = data.data.timings;
-                state.hijri = data.data.date.hijri;
-                state.timezone = data.data.meta.timezone; // STORE TIMEZONE
-                
-                renderPrayerTimes();
-                renderDate();
-                // Immediately update tick to jump to new time
-                tick();
+                if (data.code === 200) {
+                    state.timings = data.data.timings;
+                    state.hijri = data.data.date.hijri;
+                    state.timezone = data.data.meta.timezone;
+                    renderPrayerTimes();
+                    renderDate();
+                    tick();
+                } else {
+                    document.getElementById('date-display').innerText = "API Error";
+                }
             } catch (e) { 
                 console.error("API Error", e);
-                document.getElementById('date-display').innerText = "Error Loading Data";
+                document.getElementById('date-display').innerText = "Network Error";
             }
         }
 
-        // --- NEW TIME LOGIC ---
+        // --- TIME LOGIC ---
         function getCurrentTimeInZone() {
             const now = new Date();
             if (!state.timezone) {
-                // Fallback to local if no API data yet
                 return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
             }
-            // Create a DateTimeFormat for the target timezone
             const formatter = new Intl.DateTimeFormat('en-GB', {
                 timeZone: state.timezone,
                 hour: 'numeric',
@@ -607,7 +610,6 @@
         function tick() {
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
-            // Format HH:MM
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
 
             if(state.timings) updateCountdown(time);
@@ -625,7 +627,7 @@
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
             const dict = TEXT[state.lang];
             
-            // --- CRITICAL FIX: EXACT MATCH FIRST ---
+            // Exact match logic
             const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
             for(let i=0; i<prayers.length; i++) {
                 if(state.timings[prayers[i]] === timeStr && time.s < 2) {
@@ -633,8 +635,6 @@
                 }
             }
 
-            // --- STANDARD COUNTDOWN LOGIC ---
-            // Current time in minutes relative to the target location
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
@@ -644,7 +644,6 @@
             for(let i=0; i<prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
-                // STRICTLY GREATER (>), so if it is exactly the minute, we handled it above.
                 if(pMins > curMins) {
                     nextP = pMins;
                     nextName = prayers[i];
@@ -658,24 +657,18 @@
                 nextName = 'Fajr';
             }
 
-            // Update Highlight
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
-            // --- FIX FOR :60 SECONDS ISSUE ---
-            // Calculate total difference in seconds rather than minutes + seconds separately
             const nextTotalSeconds = nextP * 60;
             const currentTotalSeconds = (curMins * 60) + curSecs;
-            
             let diffInSeconds = nextTotalSeconds - currentTotalSeconds;
             
-            // Calculate H, M, S from total seconds difference
             const hLeft = Math.floor(diffInSeconds / 3600);
             diffInSeconds %= 3600;
             const mLeft = Math.floor(diffInSeconds / 60);
-            const sLeft = diffInSeconds % 60; // This guarantees 0-59 range
-            // --- END FIX ---
+            const sLeft = diffInSeconds % 60; 
 
             const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('countdown').innerText = str;
@@ -683,7 +676,6 @@
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            // Reset "last played" if we are far away from the prayer to allow re-triggering next day
             if (hLeft > 0 || mLeft > 1) {
                 state.lastPlayedPrayer = "";
             }
@@ -798,10 +790,9 @@
                 btn.innerText = "🔊";
                 btn.style.opacity = "1";
                 
-                // --- TEST SOUND START ---
+                // TEST SOUND
                 hint.innerText = "Testing Audio...";
                 hint.style.opacity = '1';
-                
                 audio.play().then(() => {
                     setTimeout(() => {
                         audio.pause();
@@ -813,7 +804,6 @@
                     console.error("Audio Failed:", err);
                     hint.innerText = "Error: Check Internet";
                 });
-                // --- TEST SOUND END ---
 
             } else {
                 // TURN OFF
