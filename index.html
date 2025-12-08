@@ -6,6 +6,7 @@
     <title>Precise Prayer Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* --- CSS STYLES --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --bg-card: #2b1d20; --border-card: #4f2a32; --header-bg: rgba(0,0,0,0.2);
@@ -84,8 +85,8 @@
 </head>
 <body>
 
-    <!-- CHANGED AUDIO SOURCE TO ISLAMICFINDER (Secure & Different Server) -->
-    <audio id="adhan-audio" src="https://www.islamicfinder.org/prayer-widget/assets/audio/Makkah.mp3" preload="auto"></audio>
+    <!-- NEW AUDIO SOURCE: QuranicAudio (Secure & Fast) -->
+    <audio id="adhan-audio" src="https://download.quranicaudio.com/misc/adhan/adhan_makkah.mp3" preload="auto"></audio>
     <div id="audio-hint">Sound Enabled</div>
 
     <div class="widget-card">
@@ -149,6 +150,10 @@
     </div>
 
     <script>
+        // --- SAFE STORAGE HELPERS (Prevents Loading Crash) ---
+        function getStorage(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+        function setStorage(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
         // --- DATA SECTION ---
         const COUNTRY_DATA = {
             "Algeria": ["Ain Oussera", "Algiers"], "Saudi Arabia": ["Makkah", "Madinah"],
@@ -171,9 +176,10 @@
             "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور"
         };
 
+        // Initialize state using safe helpers
         const state = {
-            lang: localStorage.getItem('p_lang') || 'en',
-            theme: localStorage.getItem('p_theme') || 'pink',
+            lang: getStorage('p_lang') || 'en',
+            theme: getStorage('p_theme') || 'pink',
             sound: false,
             city: "Ain Oussera",
             country: "Algeria",
@@ -182,10 +188,6 @@
             timezone: null,
             lastPlayedPrayer: ""
         };
-
-        // SAFETY: Handle localStorage errors in Notion
-        function getStorage(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
-        function setStorage(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
 
         const TEXT = {
             en: { fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", next: "Next Prayer", loading: "Loading...", btn: "عربي", selCity: "Choose City", selCountry: "Choose Country" },
@@ -196,28 +198,34 @@
 
         // --- INIT ---
         window.onload = () => {
-            applyTheme(state.theme);
-            const params = new URLSearchParams(window.location.search);
-            if(params.get('country')) state.country = params.get('country');
-            if(params.get('city')) state.city = params.get('city');
+            try {
+                applyTheme(state.theme);
+                const params = new URLSearchParams(window.location.search);
+                if(params.get('country')) state.country = params.get('country');
+                if(params.get('city')) state.city = params.get('city');
 
-            // Force populate first to avoid empty dropdown crash
-            populateCities(state.country);
-            
-            // Set values
-            document.getElementById('input-country').value = state.country;
-            // Check if city exists in list, if not default to first
-            const citySel = document.getElementById('input-city');
-            let cityExists = false;
-            for(let i=0; i<citySel.options.length; i++) {
-                if(citySel.options[i].value === state.city) cityExists = true;
+                // Force populate first to avoid empty dropdown crash
+                populateCities(state.country);
+                
+                // Set dropdown values
+                document.getElementById('input-country').value = state.country;
+                
+                // Safe City selection
+                const citySel = document.getElementById('input-city');
+                let cityExists = false;
+                for(let i=0; i<citySel.options.length; i++) {
+                    if(citySel.options[i].value === state.city) cityExists = true;
+                }
+                if(!cityExists && citySel.options.length > 0) state.city = citySel.options[0].value;
+                citySel.value = state.city;
+
+                applyLang(state.lang);
+                fetchData();
+                setInterval(tick, 1000);
+            } catch (e) {
+                console.error("Startup Error:", e);
+                document.getElementById('date-display').innerText = "Startup Error";
             }
-            if(!cityExists && citySel.options.length > 0) state.city = citySel.options[0].value;
-            citySel.value = state.city;
-
-            applyLang(state.lang);
-            fetchData();
-            setInterval(tick, 1000);
         };
 
         function populateCities(country) {
@@ -233,7 +241,6 @@
 
         async function fetchData() {
             try {
-                // Determine English names for API
                 let engCity = state.city;
                 let engCountry = state.country;
 
@@ -328,6 +335,7 @@
                 hint.style.opacity = "1";
                 
                 // Force play
+                audio.volume = 1.0;
                 const playPromise = audio.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
@@ -339,7 +347,7 @@
                         }, 3000);
                     }).catch(error => {
                         console.error("Playback failed", error);
-                        hint.innerText = "Browser Blocked Sound";
+                        hint.innerText = "Error: Browser Blocked";
                     });
                 }
             } else {
@@ -398,6 +406,7 @@
             const ci = document.getElementById('input-city').options;
             for(let i=0; i<ci.length; i++) ci[i].text = (l==='ar' && DICT_CITIES[ci[i].value]) ? DICT_CITIES[ci[i].value] : ci[i].value;
         }
+        function getKeyByValue(obj, val) { return Object.keys(obj).find(key => obj[key] === val); }
     </script>
 </body>
 </html>
