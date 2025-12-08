@@ -352,7 +352,6 @@
             <div class="inputs-row">
                 <div class="input-group">
                     <span class="input-label" id="lbl-city">Choose City</span>
-                    <!-- CHANGED FROM INPUT TO SELECT -->
                     <select id="input-city" class="input-box" onchange="updateLoc()"></select>
                 </div>
                 <div class="input-group">
@@ -439,7 +438,7 @@
         // --- 3. TRANSLATION DICTIONARY (CITIES) ---
         const DICT_CITIES = {
             "Ain Oussera": "عين وسارة",
-            "Algiers": "الجزائر العاصمة", // DISTINCT NAME
+            "Algiers": "الجزائر العاصمة", 
             "Makkah": "مكة المكرمة",
             "Madinah": "المدينة المنورة",
             "Gaza": "غزة",
@@ -464,9 +463,9 @@
             country: "Algeria",
             timings: null,
             hijri: null,
-            timezone: null, // NEW: Store API Timezone
+            timezone: null, 
             audioReady: false,
-            lastPlayedPrayer: ""
+            lastPlayedPrayer: "" // Prevents double playing
         };
 
         const TEXT = {
@@ -554,11 +553,10 @@
                 
                 state.timings = data.data.timings;
                 state.hijri = data.data.date.hijri;
-                state.timezone = data.data.meta.timezone; // STORE TIMEZONE
+                state.timezone = data.data.meta.timezone; 
                 
                 renderPrayerTimes();
                 renderDate();
-                // Immediately update tick to jump to new time
                 tick();
             } catch (e) { 
                 console.error("API Error", e);
@@ -566,14 +564,11 @@
             }
         }
 
-        // --- NEW TIME LOGIC ---
         function getCurrentTimeInZone() {
             const now = new Date();
             if (!state.timezone) {
-                // Fallback to local if no API data yet
                 return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
             }
-            // Create a DateTimeFormat for the target timezone
             const formatter = new Intl.DateTimeFormat('en-GB', {
                 timeZone: state.timezone,
                 hour: 'numeric',
@@ -591,21 +586,54 @@
         function tick() {
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
-            // Format HH:MM
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
 
-            if(state.timings) updateCountdown(time);
+            if(state.timings) {
+                updateCountdown(time);
+                checkAlarm(time); // Separate check for audio
+            }
+        }
+
+        // --- NEW AUDIO LOGIC (Separated from Visual Countdown) ---
+        function checkAlarm(time) {
+            if(!state.sound) return;
+
+            const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            const curHM = `${time.h < 10 ? '0' + time.h : time.h}:${time.m < 10 ? '0' + time.m : time.m}`;
+            
+            // Iterate all prayers to see if one matches NOW
+            for(let i=0; i<prayers.length; i++) {
+                const name = prayers[i];
+                const pTime = state.timings[name].split(' ')[0]; // "05:10"
+                
+                // If Time Matches AND Seconds are within first 2 seconds (to avoid drift missing 0)
+                if(curHM === pTime && time.s <= 2) {
+                    
+                    // Don't play for Sunrise (usually)
+                    if(name === 'Sunrise') return;
+
+                    // Play only if we haven't played this prayer yet
+                    if(state.lastPlayedPrayer !== name) {
+                        if(state.audioReady) {
+                            console.log(`Playing Adhan for ${name}`);
+                            audio.currentTime = 0;
+                            audio.play().catch(e => console.error(e));
+                        }
+                        state.lastPlayedPrayer = name;
+                    }
+                }
+            }
         }
 
         function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-            // Current time in minutes relative to the target location
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
             let nextP = null;
             let nextName = "";
 
+            // Find next prayer
             for(let i=0; i<prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
@@ -616,29 +644,27 @@
                 }
             }
 
+            // Loop to Fajr next day
             if(!nextP) {
                 const [h, m] = state.timings['Fajr'].split(':').map(Number);
                 nextP = (h * 60 + m) + (24 * 60);
                 nextName = 'Fajr';
             }
 
+            // UI Updates
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
-            // --- FIX FOR :60 SECONDS ISSUE START ---
-            // Calculate total difference in seconds rather than minutes + seconds separately
+            // Countdown Math
             const nextTotalSeconds = nextP * 60;
             const currentTotalSeconds = (curMins * 60) + curSecs;
-            
             let diffInSeconds = nextTotalSeconds - currentTotalSeconds;
             
-            // Calculate H, M, S from total seconds difference
             const hLeft = Math.floor(diffInSeconds / 3600);
             diffInSeconds %= 3600;
             const mLeft = Math.floor(diffInSeconds / 60);
-            const sLeft = diffInSeconds % 60; // This guarantees 0-59 range
-            // --- FIX END ---
+            const sLeft = diffInSeconds % 60;
 
             const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('countdown').innerText = str;
@@ -646,20 +672,8 @@
             const dict = TEXT[state.lang];
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
-
-            // Trigger audio relative to location time
-            // Updated variable name from diffSecs to sLeft to match logic above
-            if(state.sound && hLeft === 0 && mLeft === 0 && sLeft <= 2) {
-                if(state.lastPlayedPrayer !== nextName && nextName !== 'Sunrise') {
-                    if(state.audioReady) {
-                        audio.currentTime = 0;
-                        audio.play().catch(e => console.error("Play failed:", e));
-                    }
-                    state.lastPlayedPrayer = nextName;
-                }
-            } else if (hLeft > 0 || mLeft > 1) {
-                state.lastPlayedPrayer = "";
-            }
+            
+            // --- REMOVED BROKEN AUDIO LOGIC FROM HERE ---
         }
 
         function renderDate() {
