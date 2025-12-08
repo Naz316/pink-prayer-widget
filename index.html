@@ -6,7 +6,7 @@
     <title>Precise Prayer Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS STYLES --- */
+        /* --- 1. CSS RESET & VARIABLES --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
@@ -35,8 +35,11 @@
         [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; }
         [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --text-accent: #333; --input-bg: rgba(0,0,0,0.05); }
 
-        [lang="ar"] { --font-main: 'Cairo', sans-serif; }
+        [lang="ar"] { 
+            --font-main: 'Cairo', sans-serif; 
+        }
 
+        /* --- LAYOUT --- */
         body {
             background-color: transparent;
             font-family: var(--font-main);
@@ -65,6 +68,7 @@
             position: relative;
         }
 
+        /* HEADER ROW */
         .header-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -82,87 +86,234 @@
         .align-center { align-items: center; text-align: center; }
 
         .label-text {
-            font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 4px;
-            text-transform: uppercase; letter-spacing: 0.5px; height: 14px; white-space: nowrap;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            height: 14px; 
+            white-space: nowrap;
         }
+        
         .main-text { font-size: 1.1rem; font-weight: bold; line-height: 1.2; }
         [lang="ar"] .main-text { line-height: 1.1; padding-top: 2px; }
+
         .mosque-icon { font-size: 2.5rem; opacity: 0.9; margin: 0 10px; line-height: 1; }
 
+        /* --- DATE ROW --- */
         .date-row {
-            text-align: center; padding: 12px 10px; background-color: var(--header-bg);
-            border-bottom: 1px solid var(--border-card); height: auto; min-height: 85px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center;
+            padding: 12px 10px; 
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-card);
+            height: auto; 
+            min-height: 85px; 
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
         }
-        .date-hijri { font-size: 1.1rem; font-weight: 700; color: var(--text-accent); margin-bottom: 8px; line-height: 1.2; display: block; }
-        .date-greg { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; line-height: 1.2; display: block; opacity: 0.9; margin-bottom: 5px; }
         
-        [lang="ar"] .date-hijri { font-family: 'Cairo', sans-serif; direction: rtl; unicode-bidi: embed; }
-        [lang="ar"] .date-greg { direction: rtl; }
+        .date-hijri {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-accent); 
+            margin-bottom: 8px; 
+            line-height: 1.2;
+            display: block;
+        }
 
+        .date-greg {
+            font-size: 0.85rem;
+            color: var(--text-secondary); 
+            font-weight: 600;
+            line-height: 1.2;
+            display: block;
+            opacity: 0.9;
+            margin-bottom: 5px; 
+        }
+        
+        [lang="ar"] .date-hijri {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            unicode-bidi: embed;
+        }
+        [lang="ar"] .date-greg {
+            direction: rtl;
+        }
+
+        /* PRAYER BAR */
         .prayer-bar {
-            display: flex; overflow-x: auto; background-color: rgba(0,0,0,0.1);
-            scrollbar-width: none; direction: ltr; height: 75px; 
+            display: flex;
+            overflow-x: auto;
+            background-color: rgba(0,0,0,0.1);
+            scrollbar-width: none;
+            direction: ltr;
+            height: 75px; 
         }
         .prayer-bar::-webkit-scrollbar { display: none; }
 
         .prayer-item {
-            flex: 1; min-width: 60px; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; border-right: 1px solid var(--border-card); gap: 6px;
+            flex: 1;
+            min-width: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-right: 1px solid var(--border-card);
+            gap: 6px;
         }
         .prayer-item:last-child { border-right: none; }
+        
         .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
         .p-name { font-size: 0.75rem; color: var(--text-secondary); margin: 0; line-height: 1; }
         .p-time { font-size: 1rem; font-weight: bold; direction: ltr; line-height: 1; }
 
+        /* CONTROLS SECTION */
         .controls-row {
-            padding: 12px 20px; display: flex; flex-direction: column; gap: 12px; 
-            border-top: 1px solid var(--border-card); direction: ltr; flex-grow: 1; justify-content: center;
+            padding: 12px 20px; 
+            display: flex;
+            flex-direction: column;
+            gap: 12px; 
+            border-top: 1px solid var(--border-card);
+            direction: ltr;
+            flex-grow: 1; 
+            justify-content: center;
         }
+
         .input-group { display: flex; flex-direction: column; flex: 1; }
-        .input-label { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 8px; text-align: center; display: block; line-height: 1; }
+        
+        .input-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px; 
+            text-align: center;
+            display: block;
+            line-height: 1;
+        }
+
         .inputs-row { display: flex; gap: 15px; width: 100%; }
+
         .input-box {
-            background: var(--input-bg); border: 1px solid var(--border-card); color: var(--text-primary);
-            border-radius: 6px; font-family: inherit; font-size: 0.9rem; outline: none;
-            text-align: center; width: 100%; height: 38px; line-height: 38px; padding: 0; margin: 0; cursor: pointer;
+            background: var(--input-bg);
+            border: 1px solid var(--border-card);
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            text-align: center;
+            width: 100%;
+            height: 38px; 
+            line-height: 38px; 
+            padding: 0; 
+            margin: 0;
+            cursor: pointer;
         }
         [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
         .input-box option { background: #333; color: #fff; }
 
+        /* BUTTONS */
         .tools {
-            display: flex; justify-content: center; align-items: center;
-            width: 100%; gap: 25px; position: relative; height: 35px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 25px;
+            position: relative;
+            height: 35px; 
         }
+
         .icon-btn {
-            background: none; border: none; cursor: pointer; font-size: 1.4rem;
-            color: var(--text-secondary); transition: 0.2s; padding: 0; line-height: 1;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            padding: 0;
+            line-height: 1;
         }
         .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
 
         .lang-btn {
-            background: var(--input-bg); border: 1px solid var(--border-card); color: var(--text-primary);
-            padding: 0; width: 50px; height: 28px; border-radius: 4px; font-size: 0.8rem;
-            cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center;
+            background: var(--input-bg);
+            border: 1px solid var(--border-card);
+            color: var(--text-primary);
+            padding: 0;
+            width: 50px;
+            height: 28px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        /* COLOR POPUP */
         .color-popup {
-            display: none; position: absolute; bottom: 45px; left: 50%;
-            transform: translateX(30px); background: #222; border: 1px solid #444;
-            border-radius: 6px; padding: 10px; z-index: 200; grid-template-columns: repeat(4, 1fr);
-            gap: 8px; width: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: none;
+            position: absolute;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(30px);
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px;
+            z-index: 200;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
+        
         .color-dot {
-            width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.3); transition: transform 0.2s; position: relative; 
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.2s;
+            position: relative; 
         }
         .color-dot:hover { transform: scale(1.2); border-color: #fff; }
 
-        #audio-hint {
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 20px;
-            font-size: 0.7rem; pointer-events: none; opacity: 1; transition: opacity 0.5s; z-index: 500;
+        .color-dot:hover::after {
+            content: attr(data-name);
+            position: absolute;
+            bottom: 140%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            white-space: nowrap;
+            pointer-events: none;
+            border: 1px solid #555;
+            font-family: 'Roboto', sans-serif;
+            z-index: 300;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
+
+        #audio-hint {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
     </style>
 </head>
 <body>
@@ -170,7 +321,7 @@
     <audio id="adhan-audio" src="https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/adhan/makkah.mp3" preload="auto"></audio>
     <div id="audio-hint">Click anywhere to enable Sound</div>
 
-    <div class="widget-card" onclick="enableAudio()">
+    <div class="widget-card">
         
         <!-- HEADER -->
         <div class="header-row">
@@ -197,9 +348,11 @@
 
         <!-- CONTROLS -->
         <div class="controls-row">
+            
             <div class="inputs-row">
                 <div class="input-group">
                     <span class="input-label" id="lbl-city">Choose City</span>
+                    <!-- CHANGED FROM INPUT TO SELECT -->
                     <select id="input-city" class="input-box" onchange="updateLoc()"></select>
                 </div>
                 <div class="input-group">
@@ -222,30 +375,36 @@
             </div>
 
             <div class="tools">
-                <button class="icon-btn" onclick="toggleSound(event)" id="btn-sound">🔊</button>
-                <button class="lang-btn" onclick="toggleLang(event)" id="btn-lang">EN</button>
-                <button class="icon-btn" onclick="toggleColors(event)">🎨</button>
+                <!-- Sound Left -->
+                <button class="icon-btn" onclick="toggleSound()" id="btn-sound">🔊</button>
+                
+                <!-- Language Center -->
+                <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
+                
+                <!-- Color Right -->
+                <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
+                <!-- Color Popup -->
                 <div class="color-popup" id="color-menu">
-                    <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
-                    <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                    <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                    <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
-                    <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                    <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
-                    <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                    <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                    <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                    <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
-                    <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
-                    <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
+                    <div class="color-dot" data-name="Pink" style="background:#581c33" onclick="setTheme('pink')"></div>
+                    <div class="color-dot" data-name="Purple" style="background:#2e1a47" onclick="setTheme('purple')"></div>
+                    <div class="color-dot" data-name="Red" style="background:#3d0e0e" onclick="setTheme('red')"></div>
+                    <div class="color-dot" data-name="Orange" style="background:#42210b" onclick="setTheme('orange')"></div>
+                    <div class="color-dot" data-name="Yellow" style="background:#85751f" onclick="setTheme('yellow')"></div>
+                    <div class="color-dot" data-name="Green" style="background:#13381e" onclick="setTheme('green')"></div>
+                    <div class="color-dot" data-name="Cyan" style="background:#0e333d" onclick="setTheme('cyan')"></div>
+                    <div class="color-dot" data-name="Blue" style="background:#111e3d" onclick="setTheme('blue')"></div>
+                    <div class="color-dot" data-name="Brown" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
+                    <div class="color-dot" data-name="Grey" style="background:#595959" onclick="setTheme('grey')"></div>
+                    <div class="color-dot" data-name="Black" style="background:#000" onclick="setTheme('black')"></div>
+                    <div class="color-dot" data-name="White" style="background:#fff" onclick="setTheme('white')"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIG
+        // --- 1. DATA: CITIES PER COUNTRY (ENGLISH) ---
         const COUNTRY_DATA = {
             "Algeria": ["Ain Oussera", "Algiers"],
             "Saudi Arabia": ["Makkah", "Madinah"],
@@ -261,20 +420,42 @@
             "Malaysia": ["Kuala Lumpur"]
         };
 
+        // --- 2. TRANSLATION DICTIONARY (COUNTRIES) ---
         const DICT_COUNTRIES = {
-            "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية",
-            "Egypt": "مصر", "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا",
-            "US": "أمريكا", "UK": "بريطانيا", "Turkey": "تركيا",
-            "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا"
+            "Algeria": "الجزائر",
+            "Palestine": "فلسطين",
+            "Saudi Arabia": "السعودية",
+            "Egypt": "مصر",
+            "Morocco": "المغرب",
+            "Tunisia": "تونس",
+            "France": "فرنسا",
+            "US": "أمريكا",
+            "UK": "بريطانيا",
+            "Turkey": "تركيا",
+            "Indonesia": "إندونيسيا",
+            "Malaysia": "ماليزيا"
         };
         
+        // --- 3. TRANSLATION DICTIONARY (CITIES) ---
         const DICT_CITIES = {
-            "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة",
-            "Madinah": "المدينة المنورة", "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة",
-            "Rabat": "الرباط", "Tunis": "تونس العاصمة", "Paris": "باريس", "Washington": "واشنطن",
-            "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور"
+            "Ain Oussera": "عين وسارة",
+            "Algiers": "الجزائر العاصمة", // DISTINCT NAME
+            "Makkah": "مكة المكرمة",
+            "Madinah": "المدينة المنورة",
+            "Gaza": "غزة",
+            "Jerusalem": "القدس",
+            "Cairo": "القاهرة",
+            "Rabat": "الرباط",
+            "Tunis": "تونس العاصمة",
+            "Paris": "باريس",
+            "Washington": "واشنطن",
+            "London": "لندن",
+            "Ankara": "أنقرة",
+            "Jakarta": "جاكرتا",
+            "Kuala Lumpur": "كوالالمبور"
         };
 
+        // --- STATE ---
         const state = {
             lang: localStorage.getItem('p_lang') || 'en',
             theme: localStorage.getItem('p_theme') || 'pink',
@@ -283,7 +464,7 @@
             country: "Algeria",
             timings: null,
             hijri: null,
-            timezone: null,
+            timezone: null, 
             audioReady: false,
             lastPlayedPrayer: ""
         };
@@ -303,8 +484,14 @@
 
         const audio = document.getElementById('adhan-audio');
 
+        // --- INIT ---
         window.onload = () => {
+            // First user interaction enables the test sound
+            document.addEventListener('click', enableAudio, { once: true });
+            document.addEventListener('touchstart', enableAudio, { once: true });
+
             applyTheme(state.theme);
+            
             const params = new URLSearchParams(window.location.search);
             if(params.get('country')) state.country = params.get('country');
             if(params.get('city')) state.city = params.get('city');
@@ -314,54 +501,83 @@
             document.getElementById('input-country').value = state.country;
 
             applyLang(state.lang); 
+            
             fetchData();
             setInterval(tick, 1000);
         };
 
-        // AUDIO FUNCTIONS
-        function enableAudio() {
-            if(state.audioReady) return; // Already enabled
+        // --- LOGIC FOR DROPDOWNS ---
+        function changeCountry() {
+            const countrySelect = document.getElementById('input-country');
+            const val = countrySelect.value; 
+            const engCountry = getKeyByValue(DICT_COUNTRIES, val) || val;
             
-            // Play for 3 seconds then pause to confirm
-            audio.volume = 1.0;
-            audio.play().then(() => {
-                state.audioReady = true;
-                const hint = document.getElementById('audio-hint');
-                hint.innerText = "Sound Enabled";
-                hint.style.opacity = '1';
+            state.country = engCountry;
+            populateCities(state.country);
+            
+            const citySelect = document.getElementById('input-city');
+            state.city = citySelect.options[0].value;
+            
+            updateLoc();
+        }
+
+        function populateCities(country) {
+            const citySelect = document.getElementById('input-city');
+            citySelect.innerHTML = ""; 
+
+            const cities = COUNTRY_DATA[country] || ["Capital"];
+            cities.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.text = city; 
+                citySelect.appendChild(opt);
+            });
+            
+            if(state.lang === 'ar') updateInputTexts('ar');
+        }
+
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+
+        // --- API & LOGIC ---
+        async function fetchData() {
+            try {
+                let queryCity = state.city;
+                let queryCountry = state.country;
+
+                const englishCity = getKeyByValue(DICT_CITIES, queryCity) || queryCity;
+                const englishCountry = getKeyByValue(DICT_COUNTRIES, queryCountry) || queryCountry;
+
+                const url = `https://api.aladhan.com/v1/timingsByCity?city=${englishCity}&country=${englishCountry}&method=19`;
+                const res = await fetch(url);
+                const data = await res.json();
                 
-                // Pause after 3 seconds
-                setTimeout(() => {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    hint.style.opacity = '0';
-                }, 3000);
-
-            }).catch(e => console.log("Audio Blocked", e));
-        }
-
-        function toggleSound(e) {
-            if(e) e.stopPropagation();
-            state.sound = !state.sound;
-            const btn = document.getElementById('btn-sound');
-            btn.innerText = state.sound ? "🔊" : "🔇";
-            btn.style.opacity = state.sound ? "1" : "0.5";
-            if(state.sound && !state.audioReady) enableAudio();
-        }
-
-        function playAdhan() {
-            if(state.sound && state.audioReady) {
-                audio.currentTime = 0;
-                audio.play().catch(e => console.error(e));
+                state.timings = data.data.timings;
+                state.hijri = data.data.date.hijri;
+                state.timezone = data.data.meta.timezone; 
+                
+                renderPrayerTimes();
+                renderDate();
+                tick();
+            } catch (e) { 
+                console.error("API Error", e);
+                document.getElementById('date-display').innerText = "Error Loading Data";
             }
         }
 
-        // TIME & LOGIC
+        // --- TIME LOGIC ---
         function getCurrentTimeInZone() {
             const now = new Date();
-            if (!state.timezone) return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
+            if (!state.timezone) {
+                return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
+            }
             const formatter = new Intl.DateTimeFormat('en-GB', {
-                timeZone: state.timezone, hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false
+                timeZone: state.timezone,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: false
             });
             const parts = formatter.formatToParts(now);
             const h = parseInt(parts.find(p => p.type === 'hour').value);
@@ -372,36 +588,43 @@
 
         function tick() {
             const time = getCurrentTimeInZone();
-            // Update Clock
-            document.getElementById('clock').innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
-            
-            if(state.timings) {
-                checkAdhan(time); // Independant check
-                updateCountdown(time); // Visual countdown
-            }
+            const clockEl = document.getElementById('clock');
+            clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+
+            if(state.timings) updateCountdown(time);
         }
 
-        function checkAdhan(time) {
-            const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']; // Sunrise excluded
-            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
-            
-            // Loop through prayers to see if NOW is the time
-            for(let name of prayers) {
-                // API time is "05:30 (EET)", split to get "05:30"
-                if(state.timings[name].startsWith(timeStr)) {
-                    // It is the right minute. Check seconds to trigger once.
-                    if(time.s < 2 && state.lastPlayedPrayer !== name) {
-                        state.lastPlayedPrayer = name;
-                        playAdhan();
-                    }
-                }
+        function playAdhan(prayerName) {
+            if(state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.error("Play failed:", e));
+                state.lastPlayedPrayer = prayerName;
             }
-            // Reset lastPlayed if minutes changed (simple way to avoid re-triggering same minute)
-            // No strict reset needed as logic checks equality
         }
 
         function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            const dict = TEXT[state.lang];
+            
+            // --- CRITICAL FIX: EXACT MATCH FIRST ---
+            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            for(let i=0; i<prayers.length; i++) {
+                if(state.timings[prayers[i]] === timeStr && time.s < 2) {
+                    playAdhan(prayers[i]);
+                    
+                    const pNameTrans = dict[prayers[i].toLowerCase()];
+                    document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
+                    document.getElementById('countdown').innerText = "00:00:00";
+                    
+                    document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
+                    const activeEl = document.getElementById(`p-${prayers[i]}`);
+                    if(activeEl) activeEl.classList.add('active');
+                    
+                    return; 
+                }
+            }
+
+            // --- COUNTDOWN LOGIC ---
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
@@ -424,76 +647,29 @@
                 nextName = 'Fajr';
             }
 
-            // Visual Updates
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
 
             const nextTotalSeconds = nextP * 60;
             const currentTotalSeconds = (curMins * 60) + curSecs;
-            let diff = nextTotalSeconds - currentTotalSeconds;
             
-            const hLeft = Math.floor(diff / 3600);
-            diff %= 3600;
-            const mLeft = Math.floor(diff / 60);
-            const sLeft = diff % 60;
-
-            document.getElementById('countdown').innerText = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
+            let diffInSeconds = nextTotalSeconds - currentTotalSeconds;
             
-            const dict = TEXT[state.lang];
-            document.getElementById('lbl-next').innerText = `${dict.next}: ${dict[nextName.toLowerCase()]}`;
-        }
+            const hLeft = Math.floor(diffInSeconds / 3600);
+            diffInSeconds %= 3600;
+            const mLeft = Math.floor(diffInSeconds / 60);
+            const sLeft = diffInSeconds % 60; 
 
-        // --- FETCH & UI UTILS ---
-        function changeCountry() {
-            const countrySelect = document.getElementById('input-country');
-            const val = countrySelect.value; 
-            const engCountry = getKeyByValue(DICT_COUNTRIES, val) || val;
-            state.country = engCountry;
-            populateCities(state.country);
-            state.city = document.getElementById('input-city').options[0].value;
-            updateLoc();
-        }
+            const str = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
+            document.getElementById('countdown').innerText = str;
+            
+            const pNameTrans = dict[nextName.toLowerCase()];
+            document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-        function populateCities(country) {
-            const citySelect = document.getElementById('input-city');
-            citySelect.innerHTML = ""; 
-            const cities = COUNTRY_DATA[country] || ["Capital"];
-            cities.forEach(city => {
-                const opt = document.createElement('option');
-                opt.value = city; opt.text = city; 
-                citySelect.appendChild(opt);
-            });
-            if(state.lang === 'ar') updateInputTexts('ar');
-        }
-
-        async function fetchData() {
-            try {
-                let queryCity = getKeyByValue(DICT_CITIES, state.city) || state.city;
-                let queryCountry = getKeyByValue(DICT_COUNTRIES, state.country) || state.country;
-                const url = `https://api.aladhan.com/v1/timingsByCity?city=${queryCity}&country=${queryCountry}&method=19`;
-                const res = await fetch(url);
-                const data = await res.json();
-                state.timings = data.data.timings;
-                state.hijri = data.data.date.hijri;
-                state.timezone = data.data.meta.timezone;
-                renderPrayerTimes();
-                renderDate();
-                tick();
-            } catch (e) { document.getElementById('date-display').innerText = "Error"; }
-        }
-
-        function renderPrayerTimes() {
-            const container = document.getElementById('prayers-container');
-            container.innerHTML = '';
-            const dict = TEXT[state.lang];
-            ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
-                const time = state.timings[k].split(' ')[0];
-                const div = document.createElement('div');
-                div.className = 'prayer-item'; div.id = `p-${k}`;
-                div.innerHTML = `<span class="p-name">${dict[k.toLowerCase()]}</span><span class="p-time">${time}</span>`;
-                container.appendChild(div);
-            });
+            if (hLeft > 0 || mLeft > 1) {
+                state.lastPlayedPrayer = "";
+            }
         }
 
         function renderDate() {
@@ -501,46 +677,162 @@
             const h = state.hijri;
             const el = document.getElementById('date-display');
             const now = new Date();
+            
             if (state.lang === 'en') {
-                const suffix = ["th", "st", "nd", "rd"][h.day%100>10&&h.day%100<20?0:(h.day%10)%10]||"th";
-                el.innerHTML = `<span class="date-hijri">${h.day}${suffix} ${h.month.en}, ${h.year} AH</span><span class="date-greg">${now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</span>`;
+                const suffix = getOrdinal(h.day);
+                const hijriStr = `${h.day}${suffix} ${h.month.en}, ${h.year} AH`;
+                const gregStr = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+                el.innerHTML = `<span class="date-hijri">${hijriStr}</span><span class="date-greg">${gregStr}</span>`;
             } else {
-                el.innerHTML = `<span class="date-hijri">\u200F${h.day} ${h.month.ar} ${h.year} هـ</span><span class="date-greg">${now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} م</span>`;
+                const hijriStr = `\u200F${h.day} ${h.month.ar} ${h.year} هـ`;
+                let gregStr = now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                gregStr += " م"; 
+                el.innerHTML = `<span class="date-hijri">${hijriStr}</span><span class="date-greg">${gregStr}</span>`;
             }
         }
 
-        function toggleLang(e) {
-            if(e) e.stopPropagation();
-            applyLang(state.lang === 'en' ? 'ar' : 'en');
+        function getOrdinal(n) {
+            const s = ["th", "st", "nd", "rd"];
+            const v = n % 100;
+            return s[(v - 20) % 10] || s[v] || s[0];
         }
-        function applyLang(l) {
-            state.lang = l; localStorage.setItem('p_lang', l); document.documentElement.lang = l;
-            renderStaticText(); updateInputTexts(l);
-            if(state.timings) { renderPrayerTimes(); renderDate(); }
+
+        function renderPrayerTimes() {
+            const container = document.getElementById('prayers-container');
+            container.innerHTML = '';
+            const dict = TEXT[state.lang];
+            const list = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
+            list.forEach(k => {
+                const time = state.timings[k].split(' ')[0];
+                const div = document.createElement('div');
+                div.className = 'prayer-item';
+                div.id = `p-${k}`;
+                div.innerHTML = `<span class="p-name">${dict[k.toLowerCase()]}</span><span class="p-time">${time}</span>`;
+                container.appendChild(div);
+            });
         }
+
         function renderStaticText() {
             const dict = TEXT[state.lang];
             document.getElementById('lbl-city').innerText = dict.selCity;
             document.getElementById('lbl-country').innerText = dict.selCountry;
             document.getElementById('btn-lang').innerText = dict.btn;
+
             let displayCity = state.city;
-            if(state.lang === 'ar' && DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
-            else if(state.lang === 'en') { const eng = getKeyByValue(DICT_CITIES, displayCity); if(eng) displayCity = eng; }
+            if(state.lang === 'ar') {
+                 if(DICT_CITIES[displayCity]) displayCity = DICT_CITIES[displayCity];
+            } else {
+                 const eng = getKeyByValue(DICT_CITIES, displayCity);
+                 if(eng) displayCity = eng;
+            }
             document.getElementById('city-display').innerText = displayCity;
         }
-        function updateInputTexts(l) {
-            Array.from(document.getElementById('input-country').options).forEach(opt => opt.text = (l === 'ar' && DICT_COUNTRIES[opt.value]) ? DICT_COUNTRIES[opt.value] : opt.value);
-            Array.from(document.getElementById('input-city').options).forEach(opt => opt.text = (l === 'ar' && DICT_CITIES[opt.value]) ? DICT_CITIES[opt.value] : opt.value);
-        }
-        function updateLoc() {
-            state.city = document.getElementById('input-city').value;
-            document.getElementById('date-display').innerText = TEXT[state.lang].loading;
-            renderStaticText(); fetchData();
-        }
-        function toggleColors(e) { if(e) e.stopPropagation(); const m = document.getElementById('color-menu'); m.style.display = m.style.display === 'grid' ? 'none' : 'grid'; }
-        function setTheme(t) { state.theme = t; localStorage.setItem('p_theme', t); document.documentElement.setAttribute('data-theme', t); document.getElementById('color-menu').style.display = 'none'; }
-        function getKeyByValue(obj, val) { return Object.keys(obj).find(key => obj[key] === val); }
 
+        function toggleLang() {
+            applyLang(state.lang === 'en' ? 'ar' : 'en');
+        }
+
+        function applyLang(l) {
+            state.lang = l;
+            localStorage.setItem('p_lang', l);
+            document.documentElement.lang = l;
+            
+            renderStaticText();
+            updateInputTexts(l);
+
+            if(state.timings) {
+                renderPrayerTimes();
+                renderDate();
+            }
+        }
+
+        function updateInputTexts(l) {
+            const countrySelect = document.getElementById('input-country');
+            const cOpts = countrySelect.options;
+            for (let i = 0; i < cOpts.length; i++) {
+                const engVal = cOpts[i].value; 
+                if (l === 'ar' && DICT_COUNTRIES[engVal]) {
+                    cOpts[i].text = DICT_COUNTRIES[engVal];
+                } else {
+                    cOpts[i].text = engVal;
+                }
+            }
+
+            const citySelect = document.getElementById('input-city');
+            const cityOpts = citySelect.options;
+            for (let i = 0; i < cityOpts.length; i++) {
+                const engVal = cityOpts[i].value;
+                if (l === 'ar' && DICT_CITIES[engVal]) {
+                    cityOpts[i].text = DICT_CITIES[engVal];
+                } else {
+                    cityOpts[i].text = engVal;
+                }
+            }
+        }
+
+        function toggleSound() {
+            state.sound = !state.sound;
+            const btn = document.getElementById('btn-sound');
+            btn.innerText = state.sound ? "🔊" : "🔇";
+            btn.style.opacity = state.sound ? "1" : "0.5";
+            // If turning sound ON, trigger the 3-second test
+            if(state.sound) {
+                enableAudio();
+            } else {
+                // If turning sound OFF, silence immediately
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        }
+
+        // --- UPDATED ENABLE AUDIO FUNCTION ---
+        function enableAudio() {
+            // Unmute and Play preview for 3 seconds
+            if(state.sound) {
+                audio.play().then(() => {
+                    state.audioReady = true;
+                    const hint = document.getElementById('audio-hint');
+                    hint.innerText = "Sound Test: Playing...";
+                    hint.style.opacity = '1';
+
+                    // FIX: Wait 3 seconds then stop
+                    setTimeout(() => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        hint.innerText = "Sound Enabled";
+                        setTimeout(() => hint.style.opacity = '0', 2000);
+                    }, 3000);
+
+                }).catch(err => console.log("Audio init error:", err));
+            }
+        }
+
+        function toggleColors() {
+            const m = document.getElementById('color-menu');
+            m.style.display = m.style.display === 'grid' ? 'none' : 'grid';
+        }
+
+        function applyTheme(t) {
+            state.theme = t;
+            localStorage.setItem('p_theme', t);
+            document.documentElement.setAttribute('data-theme', t);
+            document.getElementById('color-menu').style.display = 'none';
+        }
+        function setTheme(t) { applyTheme(t); }
+
+        function updateLoc() {
+            let cCity = document.getElementById('input-city').value;
+            let cCountry = document.getElementById('input-country').value;
+
+            state.city = cCity;
+            state.country = cCountry;
+            
+            document.getElementById('date-display').innerText = TEXT[state.lang].loading;
+            
+            renderStaticText();
+            fetchData();
+        }
     </script>
 </body>
 </html>
