@@ -318,7 +318,8 @@
 </head>
 <body>
 
-    <audio id="adhan-audio" src="https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/adhan/makkah.mp3" preload="auto"></audio>
+    <!-- UPDATED AUDIO SOURCE: Faster and more reliable -->
+    <audio id="adhan-audio" src="https://files.aladhan.com/media/adhans/makkah.mp3" preload="auto"></audio>
     <div id="audio-hint">Click anywhere to enable Sound</div>
 
     <div class="widget-card">
@@ -352,7 +353,6 @@
             <div class="inputs-row">
                 <div class="input-group">
                     <span class="input-label" id="lbl-city">Choose City</span>
-                    <!-- CHANGED FROM INPUT TO SELECT -->
                     <select id="input-city" class="input-box" onchange="updateLoc()"></select>
                 </div>
                 <div class="input-group">
@@ -590,14 +590,37 @@
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            
+            if(state.timings) {
+                checkPrayerTrigger(time);
+                updateCountdown(time);
+            }
+        }
 
-            if(state.timings) updateCountdown(time);
+        function checkPrayerTrigger(time) {
+            const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            
+            // Check if exact minute matches
+            for(let i=0; i<prayers.length; i++) {
+                if(state.timings[prayers[i]] === timeStr && time.s < 2) {
+                    playAdhan(prayers[i]);
+                }
+            }
         }
 
         function playAdhan(prayerName) {
             if(state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
+                audio.volume = 1.0;
                 audio.currentTime = 0;
-                audio.play().catch(e => console.error("Play failed:", e));
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Auto-play blocked: User must interact first.");
+                    });
+                }
+                
                 state.lastPlayedPrayer = prayerName;
             }
         }
@@ -606,34 +629,19 @@
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
             const dict = TEXT[state.lang];
             
-            // --- CRITICAL FIX: EXACT MATCH FIRST ---
-            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
-            for(let i=0; i<prayers.length; i++) {
-                if(state.timings[prayers[i]] === timeStr && time.s < 2) {
-                    playAdhan(prayers[i]);
-                    
-                    const pNameTrans = dict[prayers[i].toLowerCase()];
-                    document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
-                    document.getElementById('countdown').innerText = "00:00:00";
-                    
-                    document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
-                    const activeEl = document.getElementById(`p-${prayers[i]}`);
-                    if(activeEl) activeEl.classList.add('active');
-                    
-                    return; 
-                }
-            }
-
-            // --- COUNTDOWN LOGIC ---
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
 
             let nextP = null;
             let nextName = "";
 
+            // Loop to find the strictly NEXT prayer
             for(let i=0; i<prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
+                // STRICTLY GREATER means: if it is NOW 12:00, and Dhuhr is 12:00, 
+                // 720 is NOT > 720. So it skips Dhuhr and finds Asr.
+                // This means the countdown immediately switches to Asr.
                 if(pMins > curMins) {
                     nextP = pMins;
                     nextName = prayers[i];
@@ -667,6 +675,7 @@
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
+            // Reset "last played" once we are significantly past the prayer time
             if (hLeft > 0 || mLeft > 1) {
                 state.lastPlayedPrayer = "";
             }
@@ -790,21 +799,27 @@
         function enableAudio() {
             // Unmute and Play preview for 3 seconds
             if(state.sound) {
-                audio.play().then(() => {
-                    state.audioReady = true;
-                    const hint = document.getElementById('audio-hint');
-                    hint.innerText = "Sound Test: Playing...";
-                    hint.style.opacity = '1';
+                audio.volume = 1.0;
+                const p = audio.play();
+                if(p !== undefined) {
+                    p.then(() => {
+                        state.audioReady = true;
+                        const hint = document.getElementById('audio-hint');
+                        hint.innerText = "Sound Playing...";
+                        hint.style.opacity = '1';
 
-                    // FIX: Wait 3 seconds then stop
-                    setTimeout(() => {
-                        audio.pause();
-                        audio.currentTime = 0;
-                        hint.innerText = "Sound Enabled";
-                        setTimeout(() => hint.style.opacity = '0', 2000);
-                    }, 3000);
-
-                }).catch(err => console.log("Audio init error:", err));
+                        // FIX: Wait 3 seconds then stop
+                        setTimeout(() => {
+                            audio.pause();
+                            audio.currentTime = 0;
+                            hint.innerText = "Sound Enabled";
+                            setTimeout(() => hint.style.opacity = '0', 2000);
+                        }, 3000);
+                    }).catch(err => {
+                        console.log("Audio init error:", err);
+                        document.getElementById('audio-hint').innerText = "Click page to enable sound";
+                    });
+                }
             }
         }
 
