@@ -66,6 +66,7 @@
             overflow: visible;
             transition: background 0.3s;
             position: relative;
+            cursor: pointer; /* Indicates clickable */
         }
 
         /* HEADER ROW */
@@ -305,24 +306,28 @@
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            padding: 5px 10px;
+            background: rgba(120, 42, 59, 0.9);
+            color: #fff;
+            padding: 8px 15px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             pointer-events: none;
-            opacity: 0;
+            opacity: 0.9;
             transition: opacity 0.5s;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
     </style>
 </head>
 <body>
 
-    <!-- UPDATED AUDIO SOURCE: Faster and more reliable -->
+    <!-- UPDATED: High speed audio link -->
     <audio id="adhan-audio" src="https://files.aladhan.com/media/adhans/makkah.mp3" preload="auto"></audio>
-    <div id="audio-hint">Click anywhere to enable Sound</div>
+    <div id="audio-hint">👆 Click here to Enable Sound</div>
 
-    <div class="widget-card">
+    <!-- Added onclick handler to the whole card -->
+    <div class="widget-card" onclick="enableAudio()">
         
         <!-- HEADER -->
         <div class="header-row">
@@ -348,7 +353,7 @@
         <div class="prayer-bar" id="prayers-container"></div>
 
         <!-- CONTROLS -->
-        <div class="controls-row">
+        <div class="controls-row" onclick="event.stopPropagation()"> <!-- Stop propagation so controls don't trigger sound test again -->
             
             <div class="inputs-row">
                 <div class="input-group">
@@ -439,7 +444,7 @@
         // --- 3. TRANSLATION DICTIONARY (CITIES) ---
         const DICT_CITIES = {
             "Ain Oussera": "عين وسارة",
-            "Algiers": "الجزائر العاصمة", // DISTINCT NAME
+            "Algiers": "الجزائر العاصمة", 
             "Makkah": "مكة المكرمة",
             "Madinah": "المدينة المنورة",
             "Gaza": "غزة",
@@ -486,10 +491,6 @@
 
         // --- INIT ---
         window.onload = () => {
-            // First user interaction enables the test sound
-            document.addEventListener('click', enableAudio, { once: true });
-            document.addEventListener('touchstart', enableAudio, { once: true });
-
             applyTheme(state.theme);
             
             const params = new URLSearchParams(window.location.search);
@@ -635,13 +636,10 @@
             let nextP = null;
             let nextName = "";
 
-            // Loop to find the strictly NEXT prayer
             for(let i=0; i<prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
-                // STRICTLY GREATER means: if it is NOW 12:00, and Dhuhr is 12:00, 
-                // 720 is NOT > 720. So it skips Dhuhr and finds Asr.
-                // This means the countdown immediately switches to Asr.
+                // Skips if equal, so no 00:00:00
                 if(pMins > curMins) {
                     nextP = pMins;
                     nextName = prayers[i];
@@ -675,7 +673,6 @@
             const pNameTrans = dict[nextName.toLowerCase()];
             document.getElementById('lbl-next').innerText = `${dict.next}: ${pNameTrans}`;
 
-            // Reset "last played" once we are significantly past the prayer time
             if (hLeft > 0 || mLeft > 1) {
                 state.lastPlayedPrayer = "";
             }
@@ -785,39 +782,36 @@
             const btn = document.getElementById('btn-sound');
             btn.innerText = state.sound ? "🔊" : "🔇";
             btn.style.opacity = state.sound ? "1" : "0.5";
-            // If turning sound ON, trigger the 3-second test
             if(state.sound) {
+                // Manually triggering enableAudio if button clicked
                 enableAudio();
             } else {
-                // If turning sound OFF, silence immediately
                 audio.pause();
                 audio.currentTime = 0;
             }
         }
 
         // --- UPDATED ENABLE AUDIO FUNCTION ---
+        // This function now runs when you click ANYWHERE on the card
         function enableAudio() {
-            // Unmute and Play preview for 3 seconds
-            if(state.sound) {
+            if(!state.audioReady && state.sound) {
                 audio.volume = 1.0;
                 const p = audio.play();
                 if(p !== undefined) {
                     p.then(() => {
                         state.audioReady = true;
                         const hint = document.getElementById('audio-hint');
-                        hint.innerText = "Sound Playing...";
-                        hint.style.opacity = '1';
-
-                        // FIX: Wait 3 seconds then stop
+                        hint.innerText = "Sound Playing (Test)...";
+                        
+                        // Play for 3 seconds then stop
                         setTimeout(() => {
                             audio.pause();
                             audio.currentTime = 0;
-                            hint.innerText = "Sound Enabled";
+                            hint.innerText = "Sound Enabled ✅";
                             setTimeout(() => hint.style.opacity = '0', 2000);
                         }, 3000);
                     }).catch(err => {
                         console.log("Audio init error:", err);
-                        document.getElementById('audio-hint').innerText = "Click page to enable sound";
                     });
                 }
             }
