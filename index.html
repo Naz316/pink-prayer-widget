@@ -35,11 +35,8 @@
         [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; }
         [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --text-accent: #333; --input-bg: rgba(0,0,0,0.05); }
 
-        [lang="ar"] { 
-            --font-main: 'Cairo', sans-serif; 
-        }
+        [lang="ar"] { --font-main: 'Cairo', sans-serif; }
 
-        /* --- LAYOUT --- */
         body {
             background-color: transparent;
             font-family: var(--font-main);
@@ -68,7 +65,6 @@
             position: relative;
         }
 
-        /* HEADER ROW */
         .header-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -85,22 +81,38 @@
         .align-end { align-items: flex-end; text-align: right; }
         .align-center { align-items: center; text-align: center; }
 
-        .label-text {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            height: 14px; 
-            white-space: nowrap;
-        }
-        
+        .label-text { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; height: 14px; white-space: nowrap; }
         .main-text { font-size: 1.1rem; font-weight: bold; line-height: 1.2; }
-        [lang="ar"] .main-text { line-height: 1.1; padding-top: 2px; }
 
-        .mosque-icon { font-size: 2.5rem; opacity: 0.9; margin: 0 10px; line-height: 1; }
+        /* FLOATING HEADER ICONS */
+        .header-icons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+        }
 
-        /* --- DATE ROW --- */
+        .header-icons img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        /* Staggered animation for icons */
+        .header-icons img:nth-child(1) { animation-delay: 0s; }
+        .header-icons img:nth-child(2) { animation-delay: 0.2s; }
+        .header-icons img:nth-child(3) { animation-delay: 0.4s; }
+        .header-icons img:nth-child(4) { animation-delay: 0.6s; }
+        .header-icons img:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
         .date-row {
             text-align: center;
             padding: 12px 10px; 
@@ -114,160 +126,28 @@
             justify-content: center;
         }
         
-        .date-hijri {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-accent); 
-            margin-bottom: 8px; 
-            line-height: 1.2;
-            display: block;
-        }
+        .date-hijri { font-size: 1.1rem; font-weight: 700; color: var(--text-accent); margin-bottom: 8px; line-height: 1.2; display: block; }
+        .date-greg { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; line-height: 1.2; display: block; opacity: 0.9; margin-bottom: 5px; }
 
-        .date-greg {
-            font-size: 0.85rem;
-            color: var(--text-secondary); 
-            font-weight: 600;
-            line-height: 1.2;
-            display: block;
-            opacity: 0.9;
-            margin-bottom: 5px; 
-        }
-        
-        [lang="ar"] .date-hijri {
-            font-family: 'Cairo', sans-serif;
-            direction: rtl;
-            unicode-bidi: embed;
-        }
-        [lang="ar"] .date-greg {
-            direction: rtl;
-        }
-
-        /* PRAYER BAR */
-        .prayer-bar {
-            display: flex;
-            overflow-x: auto;
-            background-color: rgba(0,0,0,0.1);
-            scrollbar-width: none;
-            direction: ltr;
-            height: 85px; /* INCREASED FOR ICONS */
-        }
+        .prayer-bar { display: flex; overflow-x: auto; background-color: rgba(0,0,0,0.1); scrollbar-width: none; direction: ltr; height: 75px; }
         .prayer-bar::-webkit-scrollbar { display: none; }
 
-        .prayer-item {
-            flex: 1;
-            min-width: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-right: 1px solid var(--border-card);
-            gap: 4px;
-        }
+        .prayer-item { flex: 1; min-width: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid var(--border-card); gap: 6px; }
         .prayer-item:last-child { border-right: none; }
-        
         .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
-        .p-name { font-size: 0.7rem; color: var(--text-secondary); margin: 0; line-height: 1; }
-        .p-time { font-size: 0.9rem; font-weight: bold; direction: ltr; line-height: 1; }
+        .p-name { font-size: 0.75rem; color: var(--text-secondary); margin: 0; line-height: 1; }
+        .p-time { font-size: 1rem; font-weight: bold; direction: ltr; line-height: 1; }
 
-        /* FLOATING ICON STYLES */
-        .p-icon {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-            margin-bottom: 2px;
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* CONTROLS SECTION */
-        .controls-row {
-            padding: 12px 20px; 
-            display: flex;
-            flex-direction: column;
-            gap: 12px; 
-            border-top: 1px solid var(--border-card);
-            direction: ltr;
-            flex-grow: 1; 
-            justify-content: center;
-        }
-
+        .controls-row { padding: 12px 20px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border-card); direction: ltr; flex-grow: 1; justify-content: center; }
         .input-group { display: flex; flex-direction: column; flex: 1; }
-        
-        .input-label {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px; 
-            text-align: center;
-            display: block;
-            line-height: 1;
-        }
-
+        .input-label { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 8px; text-align: center; display: block; line-height: 1; }
         .inputs-row { display: flex; gap: 15px; width: 100%; }
+        .input-box { background: var(--input-bg); border: 1px solid var(--border-card); color: var(--text-primary); border-radius: 6px; font-family: inherit; font-size: 0.9rem; outline: none; text-align: center; width: 100%; height: 38px; line-height: 38px; cursor: pointer; }
+        
+        .tools { display: flex; justify-content: center; align-items: center; width: 100%; gap: 25px; position: relative; height: 35px; }
+        .icon-btn { background: none; border: none; cursor: pointer; font-size: 1.4rem; color: var(--text-secondary); transition: 0.2s; padding: 0; line-height: 1; }
+        .lang-btn { background: var(--input-bg); border: 1px solid var(--border-card); color: var(--text-primary); padding: 0; width: 50px; height: 28px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .input-box {
-            background: var(--input-bg);
-            border: 1px solid var(--border-card);
-            color: var(--text-primary);
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 0.9rem;
-            outline: none;
-            text-align: center;
-            width: 100%;
-            height: 38px; 
-            line-height: 38px; 
-            padding: 0; 
-            margin: 0;
-            cursor: pointer;
-        }
-        [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
-        .input-box option { background: #333; color: #fff; }
-
-        /* BUTTONS */
-        .tools {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            gap: 25px;
-            position: relative;
-            height: 35px; 
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.4rem;
-            color: var(--text-secondary);
-            transition: 0.2s;
-            padding: 0;
-            line-height: 1;
-        }
-        .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
-
-        .lang-btn {
-            background: var(--input-bg);
-            border: 1px solid var(--border-card);
-            color: var(--text-primary);
-            padding: 0;
-            width: 50px;
-            height: 28px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* COLOR POPUP */
         .color-popup {
             display: none;
             position: absolute;
@@ -285,17 +165,8 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         
-        .color-dot {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.3);
-            transition: transform 0.2s;
-            position: relative; 
-        }
+        .color-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); transition: transform 0.2s; position: relative; }
         .color-dot:hover { transform: scale(1.2); border-color: #fff; }
-
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
@@ -310,25 +181,10 @@
             white-space: nowrap;
             pointer-events: none;
             border: 1px solid #555;
-            font-family: 'Roboto', sans-serif;
             z-index: 300;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        #audio-hint {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
+        #audio-hint { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; pointer-events: none; opacity: 0; transition: opacity 0.5s; }
     </style>
 </head>
 <body>
@@ -343,7 +199,14 @@
                 <span class="main-text" id="countdown">--:--:--</span>
             </div>
             <div class="header-item align-center">
-                <div class="mosque-icon">🕌</div>
+                <!-- FLOATING ICONS REPLACE MOSQUE -->
+                <div class="header-icons">
+                    <img src="https://cdn-icons-png.flaticon.com/128/2918/2918211.png">
+                    <img src="https://cdn-icons-png.flaticon.com/128/1717/1717468.png">
+                    <img src="https://cdn-icons-png.flaticon.com/128/10203/10203988.png">
+                    <img src="https://cdn-icons-png.flaticon.com/128/13779/13779449.png">
+                    <img src="https://cdn-icons-png.flaticon.com/128/7321/7321062.png">
+                </div>
             </div>
             <div class="header-item align-end">
                 <span class="label-text" id="city-display">...</span>
@@ -387,19 +250,18 @@
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
                 <div class="color-popup" id="color-menu">
-                    <!-- IDs added for name translation -->
-                    <div class="color-dot" id="dot-pink" data-name="Pink" style="background:#581c33" onclick="setTheme('pink')"></div>
-                    <div class="color-dot" id="dot-purple" data-name="Purple" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                    <div class="color-dot" id="dot-red" data-name="Red" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                    <div class="color-dot" id="dot-orange" data-name="Orange" style="background:#42210b" onclick="setTheme('orange')"></div>
-                    <div class="color-dot" id="dot-yellow" data-name="Yellow" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                    <div class="color-dot" id="dot-green" data-name="Green" style="background:#13381e" onclick="setTheme('green')"></div>
-                    <div class="color-dot" id="dot-cyan" data-name="Cyan" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                    <div class="color-dot" id="dot-blue" data-name="Blue" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                    <div class="color-dot" id="dot-brown" data-name="Brown" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                    <div class="color-dot" id="dot-grey" data-name="Grey" style="background:#595959" onclick="setTheme('grey')"></div>
-                    <div class="color-dot" id="dot-black" data-name="Black" style="background:#000" onclick="setTheme('black')"></div>
-                    <div class="color-dot" id="dot-white" data-name="White" style="background:#fff" onclick="setTheme('white')"></div>
+                    <div class="color-dot" data-name="Pink" style="background:#581c33" onclick="setTheme('pink')"></div>
+                    <div class="color-dot" data-name="Purple" style="background:#2e1a47" onclick="setTheme('purple')"></div>
+                    <div class="color-dot" data-name="Red" style="background:#3d0e0e" onclick="setTheme('red')"></div>
+                    <div class="color-dot" data-name="Orange" style="background:#42210b" onclick="setTheme('orange')"></div>
+                    <div class="color-dot" data-name="Yellow" style="background:#85751f" onclick="setTheme('yellow')"></div>
+                    <div class="color-dot" data-name="Green" style="background:#13381e" onclick="setTheme('green')"></div>
+                    <div class="color-dot" data-name="Cyan" style="background:#0e333d" onclick="setTheme('cyan')"></div>
+                    <div class="color-dot" data-name="Blue" style="background:#111e3d" onclick="setTheme('blue')"></div>
+                    <div class="color-dot" data-name="Brown" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
+                    <div class="color-dot" data-name="Grey" style="background:#595959" onclick="setTheme('grey')"></div>
+                    <div class="color-dot" data-name="Black" style="background:#000" onclick="setTheme('black')"></div>
+                    <div class="color-dot" data-name="White" style="background:#fff" onclick="setTheme('white')"></div>
                 </div>
             </div>
         </div>
@@ -412,14 +274,11 @@
         function getStorage(key) { try { return localStorage.getItem(widgetId + '_' + key); } catch(e) { return null; } }
         function setStorage(key, val) { try { localStorage.setItem(widgetId + '_' + key, val); } catch(e) {} }
 
-        const COUNTRY_DATA = {
-            "Algeria": ["Ain Oussera", "Algiers"], "Saudi Arabia": ["Makkah", "Madinah"], "Palestine": ["Gaza", "Jerusalem"], "Egypt": ["Cairo"], "Morocco": ["Rabat"], "Tunisia": ["Tunis"], "France": ["Paris"], "US": ["Washington"], "UK": ["London"], "Turkey": ["Ankara"], "Indonesia": ["Jakarta"], "Malaysia": ["Kuala Lumpur"]
-        };
-
+        const COUNTRY_DATA = { "Algeria": ["Ain Oussera", "Algiers"], "Saudi Arabia": ["Makkah", "Madinah"], "Palestine": ["Gaza", "Jerusalem"], "Egypt": ["Cairo"], "Morocco": ["Rabat"], "Tunisia": ["Tunis"], "France": ["Paris"], "US": ["Washington"], "UK": ["London"], "Turkey": ["Ankara"], "Indonesia": ["Jakarta"], "Malaysia": ["Kuala Lumpur"] };
         const DICT_COUNTRIES = { "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية", "Egypt": "مصر", "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا", "US": "أمريكا", "UK": "بريطانيا", "Turkey": "تركيا", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا" };
         const DICT_CITIES = { "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة", "Madinah": "المدينة المنورة", "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة", "Paris": "باريس", "Washington": "واشنطن", "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور" };
 
-        const COLOR_DICT = {
+        const COLOR_NAMES = {
             en: ["Pink", "Purple", "Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Brown", "Grey", "Black", "White"],
             ar: ["وردي", "بنفسجي", "أحمر", "برتقالي", "أصفر", "أخضر", "سماوي", "أزرق", "بني", "رمادي", "أسود", "أبيض"]
         };
@@ -438,33 +297,20 @@
             ar: { fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء", next: "الصلاة القادمة", loading: "جاري التحميل...", btn: "EN", selCity: "اختر المدينة", selCountry: "اختر الدولة" }
         };
 
-        // Icon Mapping
-        const ICONS = {
-            'Fajr': 'https://cdn-icons-png.flaticon.com/128/2918/2918211.png',
-            'Sunrise': 'https://cdn-icons-png.flaticon.com/128/2918/2918211.png',
-            'Dhuhr': 'https://cdn-icons-png.flaticon.com/128/1717/1717468.png',
-            'Asr': 'https://cdn-icons-png.flaticon.com/128/10203/10203988.png',
-            'Maghrib': 'https://cdn-icons-png.flaticon.com/128/13779/13779449.png',
-            'Isha': 'https://cdn-icons-png.flaticon.com/128/7321/7321062.png'
-        };
-
         const audio = document.getElementById('adhan-audio');
 
         window.onload = () => {
-            try {
-                applyTheme(state.theme);
-                populateCities(state.country);
-                document.getElementById('input-country').value = state.country;
-                document.getElementById('input-city').value = state.city;
-                applyLang(state.lang);
-                fetchData();
-                setInterval(tick, 1000);
-            } catch (e) { console.error(e); }
+            applyTheme(state.theme);
+            populateCities(state.country);
+            document.getElementById('input-country').value = state.country;
+            document.getElementById('input-city').value = state.city;
+            applyLang(state.lang);
+            fetchData();
+            setInterval(tick, 1000);
         };
 
         function changeCountry() {
-            const countrySelect = document.getElementById('input-country');
-            state.country = countrySelect.value;
+            state.country = document.getElementById('input-country').value;
             setStorage('p_country', state.country);
             populateCities(state.country);
             state.city = document.getElementById('input-city').options[0].value;
@@ -544,10 +390,7 @@
             const container = document.getElementById('prayers-container'); container.innerHTML = '';
             ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
                 const div = document.createElement('div'); div.className = 'prayer-item'; div.id = `p-${k}`;
-                div.innerHTML = `
-                    <img src="${ICONS[k]}" class="p-icon" alt="${k}">
-                    <span class="p-name">${TEXT[state.lang][k.toLowerCase()]}</span>
-                    <span class="p-time">${state.timings[k].split(' ')[0]}</span>`;
+                div.innerHTML = `<span class="p-name">${TEXT[state.lang][k.toLowerCase()]}</span><span class="p-time">${state.timings[k].split(' ')[0]}</span>`;
                 container.appendChild(div);
             });
         }
@@ -559,10 +402,10 @@
             document.getElementById('btn-lang').innerText = TEXT[l].btn;
             document.getElementById('city-display').innerText = (l === 'ar' ? (DICT_CITIES[state.city] || state.city) : state.city);
             
-            // Translate Color Tooltips
+            // TRANSLATE COLOR NAMES
             const dots = document.querySelectorAll('.color-dot');
             dots.forEach((dot, index) => {
-                dot.setAttribute('data-name', COLOR_DICT[l][index]);
+                dot.setAttribute('data-name', COLOR_NAMES[l][index]);
             });
 
             const countrySelect = document.getElementById('input-country');
