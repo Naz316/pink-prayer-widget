@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Prayer Tracker · Floating Icons · Bilingual Colors</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precise Prayer Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. RESET & VARIABLES --- */
+        /* --- 1. CSS RESET & VARIABLES --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
@@ -19,36 +19,25 @@
             --highlight-bg: #782a3b;
             --input-bg: rgba(255,255,255,0.1);
             --font-main: 'Roboto', sans-serif;
-            --accent-main: #ff8fa3; /* Base theme color for light mode text */
         }
 
-        /* THEMES - Added --accent-main to drive Light Mode text color */
-        [data-theme="pink"]   { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; --text-accent: #ff9eb5; --accent-main: #8f2d52; }
-        [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; --text-accent: #c4a6ff; --accent-main: #5e3691; }
-        [data-theme="red"]    { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; --text-accent: #ff8888; --accent-main: #a12525; }
-        [data-theme="orange"] { --bg-card: #42210b; --border-card: #663614; --highlight-bg: #8f4718; --text-secondary: #ffdec7; --text-accent: #ffb380; --accent-main: #8f4718; }
-        [data-theme="yellow"] { --bg-card: #3d360e; --border-card: #615619; --highlight-bg: #85751f; --text-secondary: #fff8cc; --text-accent: #ffe666; --accent-main: #7a6b1a; }
-        [data-theme="green"]  { --bg-card: #13381e; --border-card: #225e34; --highlight-bg: #2d7a44; --text-secondary: #ccffda; --text-accent: #88ffaa; --accent-main: #235e35; }
-        [data-theme="cyan"]   { --bg-card: #0e333d; --border-card: #1d5666; --highlight-bg: #24768a; --text-secondary: #ccf7ff; --text-accent: #66eeff; --accent-main: #1d6173; }
-        [data-theme="blue"]   { --bg-card: #111e3d; --border-card: #213666; --highlight-bg: #2b498a; --text-secondary: #ccd9ff; --text-accent: #88aaff; --accent-main: #2b498a; }
-        [data-theme="brown"]  { --bg-card: #3d2b1e; --border-card: #5e4430; --highlight-bg: #7a583e; --text-secondary: #ffeacc; --text-accent: #ffcc99; --accent-main: #5e4430; }
-        [data-theme="grey"]   { --bg-card: #262626; --border-card: #404040; --highlight-bg: #595959; --text-secondary: #e0e0e0; --text-accent: #aaaaaa; --accent-main: #444444; }
-        [data-theme="black"]  { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; --accent-main: #111111; }
-        [data-theme="white"]  { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --text-accent: #333; --input-bg: rgba(0,0,0,0.05); --accent-main: #333333; }
+        /* THEMES */
+        [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; --text-accent: #ff9eb5; }
+        [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; --text-accent: #c4a6ff; }
+        [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; --text-accent: #ff8888; }
+        [data-theme="orange"] { --bg-card: #42210b; --border-card: #663614; --highlight-bg: #8f4718; --text-secondary: #ffdec7; --text-accent: #ffb380; }
+        [data-theme="yellow"] { --bg-card: #3d360e; --border-card: #615619; --highlight-bg: #85751f; --text-secondary: #fff8cc; --text-accent: #ffe666; }
+        [data-theme="green"] { --bg-card: #13381e; --border-card: #225e34; --highlight-bg: #2d7a44; --text-secondary: #ccffda; --text-accent: #88ffaa; }
+        [data-theme="cyan"] { --bg-card: #0e333d; --border-card: #1d5666; --highlight-bg: #24768a; --text-secondary: #ccf7ff; --text-accent: #66eeff; }
+        [data-theme="blue"] { --bg-card: #111e3d; --border-card: #213666; --highlight-bg: #2b498a; --text-secondary: #ccd9ff; --text-accent: #88aaff; }
+        [data-theme="brown"] { --bg-card: #3d2b1e; --border-card: #5e4430; --highlight-bg: #7a583e; --text-secondary: #ffeacc; --text-accent: #ffcc99; }
+        [data-theme="grey"] { --bg-card: #262626; --border-card: #404040; --highlight-bg: #595959; --text-secondary: #e0e0e0; --text-accent: #aaaaaa; }
+        [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; }
+        [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --text-accent: #333; --input-bg: rgba(0,0,0,0.05); }
 
-        /* LIGHT MODE OVERRIDES */
-        [data-mode="light"] {
-            --bg-card: #ffffff;
-            --text-primary: var(--accent-main);
-            --text-secondary: var(--accent-main);
-            --text-accent: var(--accent-main);
-            --border-card: #eeeeee;
-            --header-bg: #f9f9f9;
-            --input-bg: #f0f0f0;
-            --highlight-bg: #f0f0f0;
+        [lang="ar"] { 
+            --font-main: 'Cairo', sans-serif; 
         }
-
-        [lang="ar"] { --font-main: 'Cairo', sans-serif; }
 
         /* --- LAYOUT --- */
         body {
@@ -61,7 +50,6 @@
             color: var(--text-primary);
             overflow: hidden;
             user-select: none;
-            transition: color 0.3s;
         }
 
         .widget-card {
@@ -76,57 +64,11 @@
             flex-direction: column;
             justify-content: flex-start;
             overflow: visible;
-            transition: background 0.3s, border-color 0.3s;
+            transition: background 0.3s;
             position: relative;
         }
 
-        /* MODE SWITCH STYLES */
-        .mode-switch-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-top: 40px; /* Space for the floating icon above */
-        }
-
-        .toggle-track {
-            width: 54px;
-            height: 28px;
-            background-color: #333;
-            border-radius: 20px;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-
-        [data-mode="light"] .toggle-track {
-            background-color: #eee;
-            border-color: #ddd;
-        }
-
-        .toggle-knob {
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 3px;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        [data-mode="light"] .toggle-knob {
-            transform: translateX(25px);
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* --- HEADER ROW --- */
+        /* HEADER ROW */
         .header-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -134,7 +76,7 @@
             padding: 10px 20px;
             background-color: var(--header-bg);
             direction: ltr; 
-            height: 100px;
+            height: 90px;
             overflow: hidden;
         }
 
@@ -151,31 +93,12 @@
             letter-spacing: 0.5px;
             height: 14px; 
             white-space: nowrap;
-            opacity: 0.8;
         }
         
         .main-text { font-size: 1.1rem; font-weight: bold; line-height: 1.2; }
+        [lang="ar"] .main-text { line-height: 1.1; padding-top: 2px; }
 
-        /* --- FLOATING ICON --- */
-        .floating-icon {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            cursor: pointer;
-            z-index: 25;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-            transition: transform 0.2s ease;
-            animation: gentleFloat 2.5s ease-in-out infinite;
-        }
-        
-        .floating-icon:hover { transform: translateX(-50%) scale(1.05); }
-        .floating-icon img { width: 50px; height: 50px; object-fit: contain; }
-
-        @keyframes gentleFloat {
-            0%, 100% { transform: translateX(-50%) translateY(0px); }
-            50% { transform: translateX(-50%) translateY(-5px); }
-        }
+        .mosque-icon { font-size: 2.5rem; opacity: 0.9; margin: 0 10px; line-height: 1; }
 
         /* --- DATE ROW --- */
         .date-row {
@@ -183,6 +106,7 @@
             padding: 12px 10px; 
             background-color: var(--header-bg);
             border-bottom: 1px solid var(--border-card);
+            height: auto; 
             min-height: 85px; 
             display: flex;
             flex-direction: column; 
@@ -190,18 +114,44 @@
             justify-content: center;
         }
         
-        .date-hijri { font-size: 1.1rem; font-weight: 700; color: var(--text-accent); margin-bottom: 8px; }
-        .date-greg { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; opacity: 0.9; }
+        .date-hijri {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-accent); 
+            margin-bottom: 8px; 
+            line-height: 1.2;
+            display: block;
+        }
+
+        .date-greg {
+            font-size: 0.85rem;
+            color: var(--text-secondary); 
+            font-weight: 600;
+            line-height: 1.2;
+            display: block;
+            opacity: 0.9;
+            margin-bottom: 5px; 
+        }
         
+        [lang="ar"] .date-hijri {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            unicode-bidi: embed;
+        }
+        [lang="ar"] .date-greg {
+            direction: rtl;
+        }
+
         /* PRAYER BAR */
         .prayer-bar {
             display: flex;
             overflow-x: auto;
-            background-color: rgba(0,0,0,0.05);
+            background-color: rgba(0,0,0,0.1);
             scrollbar-width: none;
             direction: ltr;
             height: 75px; 
         }
+        .prayer-bar::-webkit-scrollbar { display: none; }
 
         .prayer-item {
             flex: 1;
@@ -213,11 +163,11 @@
             border-right: 1px solid var(--border-card);
             gap: 6px;
         }
-        .prayer-item.active { background-color: var(--highlight-bg); }
-        [data-mode="light"] .prayer-item.active { background-color: rgba(0,0,0,0.05); font-weight: bold; }
-
-        .p-name { font-size: 0.75rem; color: var(--text-secondary); }
-        .p-time { font-size: 1rem; font-weight: bold; }
+        .prayer-item:last-child { border-right: none; }
+        
+        .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
+        .p-name { font-size: 0.75rem; color: var(--text-secondary); margin: 0; line-height: 1; }
+        .p-time { font-size: 1rem; font-weight: bold; direction: ltr; line-height: 1; }
 
         /* CONTROLS SECTION */
         .controls-row {
@@ -227,76 +177,187 @@
             gap: 12px; 
             border-top: 1px solid var(--border-card);
             direction: ltr;
+            flex-grow: 1; 
+            justify-content: center;
         }
+
+        .input-group { display: flex; flex-direction: column; flex: 1; }
+        
+        .input-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px; 
+            text-align: center;
+            display: block;
+            line-height: 1;
+        }
+
+        .inputs-row { display: flex; gap: 15px; width: 100%; }
 
         .input-box {
             background: var(--input-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
             border-radius: 6px;
+            font-family: inherit;
             font-size: 0.9rem;
+            outline: none;
             text-align: center;
             width: 100%;
-            height: 38px;
+            height: 38px; 
+            line-height: 38px; 
+            padding: 0; 
+            margin: 0;
             cursor: pointer;
         }
+        [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
+        .input-box option { background: #333; color: #fff; }
 
-        .tools { display: flex; justify-content: center; gap: 25px; height: 35px; align-items: center; position: relative; }
-        .icon-btn { background: none; border: none; cursor: pointer; font-size: 1.4rem; color: var(--text-secondary); transition: 0.2s; }
-        .lang-btn { background: var(--input-bg); border: 1px solid var(--border-card); color: var(--text-primary); width: 50px; height: 28px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
-
-        .color-popup {
-            display: none; position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%);
-            background: #222; border: 1px solid #444; border-radius: 6px; padding: 10px; z-index: 200;
-            grid-template-columns: repeat(4, 1fr); gap: 8px;
+        /* BUTTONS */
+        .tools {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 25px;
+            position: relative;
+            height: 35px; 
         }
-        .color-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); }
 
-        #audio-hint { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; opacity: 0; transition: opacity 0.5s; z-index: 100;}
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            padding: 0;
+            line-height: 1;
+        }
+        .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
+
+        .lang-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border-card);
+            color: var(--text-primary);
+            padding: 0;
+            width: 50px;
+            height: 28px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* COLOR POPUP */
+        .color-popup {
+            display: none;
+            position: absolute;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(30px);
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px;
+            z-index: 200;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.2s;
+            position: relative; 
+        }
+        .color-dot:hover { transform: scale(1.2); border-color: #fff; }
+
+        .color-dot:hover::after {
+            content: attr(data-name);
+            position: absolute;
+            bottom: 140%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            white-space: nowrap;
+            pointer-events: none;
+            border: 1px solid #555;
+            font-family: 'Roboto', sans-serif;
+            z-index: 300;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        #audio-hint {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
     </style>
 </head>
 <body>
+
+    <!-- SECURE AUDIO (IslamCan - HTTPS) -->
     <audio id="adhan-audio" src="https://www.islamcan.com/audio/adhan/azan1.mp3" preload="auto"></audio>
     <div id="audio-hint">Sound Enabled</div>
 
     <div class="widget-card">
-        <div class="floating-icon" id="floatingIcon">
-            <img id="switchIconImg" src="https://cdn-icons-png.flaticon.com/128/2918/2918211.png" alt="icon">
-        </div>
-
+        
+        <!-- HEADER -->
         <div class="header-row">
             <div class="header-item align-start">
                 <span class="label-text" id="lbl-next">Next Prayer</span>
                 <span class="main-text" id="countdown">--:--:--</span>
             </div>
-            
             <div class="header-item align-center">
-                <!-- NEW MODE SWITCH -->
-                <div class="mode-switch-container">
-                    <div class="toggle-track" onclick="toggleMode()">
-                        <div class="toggle-knob" id="mode-knob">☀️</div>
-                    </div>
-                </div>
+                <div class="mosque-icon">🕌</div>
             </div>
-
             <div class="header-item align-end">
                 <span class="label-text" id="city-display">...</span>
                 <span class="main-text" id="clock">00:00</span>
             </div>
         </div>
 
+        <!-- DATE -->
         <div class="date-row">
             <div class="date-text" id="date-display">Loading...</div>
         </div>
 
+        <!-- PRAYER SCROLL -->
         <div class="prayer-bar" id="prayers-container"></div>
 
+        <!-- CONTROLS -->
         <div class="controls-row">
-            <div style="display: flex; gap: 15px;">
-                <div style="flex: 1;">
+            
+            <div class="inputs-row">
+                <div class="input-group">
+                    <span class="input-label" id="lbl-city">Choose City</span>
+                    <!-- CHANGED FROM INPUT TO SELECT -->
                     <select id="input-city" class="input-box" onchange="updateLoc()"></select>
                 </div>
-                <div style="flex: 1;">
+                <div class="input-group">
+                    <span class="input-label" id="lbl-country">Choose Country</span>
                     <select id="input-country" class="input-box" onchange="changeCountry()">
                         <option value="Algeria">Algeria</option>
                         <option value="Palestine">Palestine</option>
@@ -315,39 +376,71 @@
             </div>
 
             <div class="tools">
+                <!-- Sound Left -->
                 <button class="icon-btn" onclick="toggleSound()" id="btn-sound" style="opacity: 0.5;">🔇</button>
+                
+                <!-- Language Center -->
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
+                
+                <!-- Color Right -->
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
+                <!-- Color Popup -->
                 <div class="color-popup" id="color-menu">
-                    <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
-                    <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                    <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                    <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
-                    <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                    <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
-                    <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                    <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                    <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                    <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
-                    <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
-                    <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
+                    <div class="color-dot" data-name="Pink" style="background:#581c33" onclick="setTheme('pink')"></div>
+                    <div class="color-dot" data-name="Purple" style="background:#2e1a47" onclick="setTheme('purple')"></div>
+                    <div class="color-dot" data-name="Red" style="background:#3d0e0e" onclick="setTheme('red')"></div>
+                    <div class="color-dot" data-name="Orange" style="background:#42210b" onclick="setTheme('orange')"></div>
+                    <div class="color-dot" data-name="Yellow" style="background:#85751f" onclick="setTheme('yellow')"></div>
+                    <div class="color-dot" data-name="Green" style="background:#13381e" onclick="setTheme('green')"></div>
+                    <div class="color-dot" data-name="Cyan" style="background:#0e333d" onclick="setTheme('cyan')"></div>
+                    <div class="color-dot" data-name="Blue" style="background:#111e3d" onclick="setTheme('blue')"></div>
+                    <div class="color-dot" data-name="Brown" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
+                    <div class="color-dot" data-name="Grey" style="background:#595959" onclick="setTheme('grey')"></div>
+                    <div class="color-dot" data-name="Black" style="background:#000" onclick="setTheme('black')"></div>
+                    <div class="color-dot" data-name="White" style="background:#fff" onclick="setTheme('white')"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // --- 1. DETECT UNIQUE ID FROM URL ---
         const urlParams = new URLSearchParams(window.location.search);
         const widgetId = urlParams.get('id') || 'default';
 
+        // --- 2. UPDATED STORAGE HELPERS TO USE THE ID ---
         function getStorage(key) { try { return localStorage.getItem(widgetId + '_' + key); } catch(e) { return null; } }
         function setStorage(key, val) { try { localStorage.setItem(widgetId + '_' + key, val); } catch(e) {} }
 
+        // --- DATA: CITIES PER COUNTRY (ENGLISH) ---
+        const COUNTRY_DATA = {
+            "Algeria": ["Ain Oussera", "Algiers"],
+            "Saudi Arabia": ["Makkah", "Madinah"],
+            "Palestine": ["Gaza", "Jerusalem"],
+            "Egypt": ["Cairo"],
+            "Morocco": ["Rabat"],
+            "Tunisia": ["Tunis"],
+            "France": ["Paris"],
+            "US": ["Washington"],
+            "UK": ["London"],
+            "Turkey": ["Ankara"],
+            "Indonesia": ["Jakarta"],
+            "Malaysia": ["Kuala Lumpur"]
+        };
+
+        const DICT_COUNTRIES = {
+            "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية", "Egypt": "مصر", "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا", "US": "أمريكا", "UK": "بريطانيا", "Turkey": "تركيا", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا"
+        };
+        
+        const DICT_CITIES = {
+            "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة", "Madinah": "المدينة المنورة", "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة", "Paris": "باريس", "Washington": "واشنطن", "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور"
+        };
+
+        // --- STATE (NOW LOADS CITY/COUNTRY FROM STORAGE TOO) ---
         const state = {
             lang: getStorage('p_lang') || 'en',
             theme: getStorage('p_theme') || 'pink',
-            mode: getStorage('p_mode') || 'dark', // NEW: track light/dark mode
             sound: false,
             city: getStorage('p_city') || "Ain Oussera",
             country: getStorage('p_country') || "Algeria",
@@ -357,132 +450,254 @@
             lastPlayedPrayer: ""
         };
 
-        // --- MODE TOGGLE LOGIC ---
-        function toggleMode() {
-            state.mode = (state.mode === 'dark' ? 'light' : 'dark');
-            setStorage('p_mode', state.mode);
-            applyMode();
+        const TEXT = {
+            en: {
+                fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
+                next: "Next Prayer", loading: "Loading...", btn: "عربي",
+                selCity: "Choose City", selCountry: "Choose Country"
+            },
+            ar: {
+                fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء",
+                next: "الصلاة القادمة", loading: "جاري التحميل...", btn: "EN",
+                selCity: "اختر المدينة", selCountry: "اختر الدولة"
+            }
+        };
+
+        const audio = document.getElementById('adhan-audio');
+
+        // --- INIT ---
+        window.onload = () => {
+            try {
+                applyTheme(state.theme);
+                
+                // Allow URL overrides if present
+                const params = new URLSearchParams(window.location.search);
+                if(params.get('country')) state.country = params.get('country');
+                if(params.get('city')) state.city = params.get('city');
+
+                populateCities(state.country);
+                document.getElementById('input-country').value = state.country;
+                
+                const citySel = document.getElementById('input-city');
+                let cityExists = false;
+                for(let i=0; i<citySel.options.length; i++) {
+                    if(citySel.options[i].value === state.city) cityExists = true;
+                }
+                if(!cityExists && citySel.options.length > 0) state.city = citySel.options[0].value;
+                citySel.value = state.city;
+
+                applyLang(state.lang);
+                fetchData();
+                setInterval(tick, 1000);
+            } catch (e) {
+                console.error("Init Error", e);
+                document.getElementById('date-display').innerText = "Init Failed";
+            }
+        };
+
+        function changeCountry() {
+            const countrySelect = document.getElementById('input-country');
+            const val = countrySelect.value; 
+            const engCountry = getKeyByValue(DICT_COUNTRIES, val) || val;
+            
+            state.country = engCountry;
+            populateCities(state.country);
+            
+            const citySelect = document.getElementById('input-city');
+            state.city = citySelect.options[0].value;
+            
+            updateLoc();
         }
 
-        function applyMode() {
-            document.documentElement.setAttribute('data-mode', state.mode);
-            const knob = document.getElementById('mode-knob');
-            knob.innerText = state.mode === 'dark' ? '☀️' : '🌙';
+        function populateCities(country) {
+            const citySelect = document.getElementById('input-city');
+            citySelect.innerHTML = ""; 
+            const cities = COUNTRY_DATA[country] || ["Capital"];
+            cities.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.text = city; 
+                citySelect.appendChild(opt);
+            });
+            if(state.lang === 'ar') updateInputTexts('ar');
         }
 
-        // --- ICON CYCLE ---
-        const iconUrls = [
-            "https://cdn-icons-png.flaticon.com/128/2918/2918211.png",
-            "https://cdn-icons-png.flaticon.com/128/1717/1717468.png",
-            "https://cdn-icons-png.flaticon.com/128/10203/10203988.png",
-            "https://cdn-icons-png.flaticon.com/128/13779/13779449.png",
-            "https://cdn-icons-png.flaticon.com/128/7321/7321062.png"
-        ];
-        let currentIconIndex = 0;
-        function cycleIcon() {
-            currentIconIndex = (currentIconIndex + 1) % iconUrls.length;
-            document.getElementById('switchIconImg').src = iconUrls[currentIconIndex];
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
         }
-
-        // --- EXISTING LOGIC PRESERVED ---
-        const COUNTRY_DATA = { "Algeria": ["Ain Oussera", "Algiers"], "Saudi Arabia": ["Makkah", "Madinah"], "Palestine": ["Gaza", "Jerusalem"], "Egypt": ["Cairo"], "Morocco": ["Rabat"], "Tunisia": ["Tunis"], "France": ["Paris"], "US": ["Washington"], "UK": ["London"], "Turkey": ["Ankara"], "Indonesia": ["Jakarta"], "Malaysia": ["Kuala Lumpur"] };
-        const DICT_COUNTRIES = { "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية", "Egypt": "مصر", "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا", "US": "أمريكا", "UK": "بريطانيا", "Turkey": "تركيا", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا" };
-        const DICT_CITIES = { "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة", "Madinah": "المدينة المنورة", "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة", "Paris": "باريس", "Washington": "واشنطن", "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور" };
-        const TEXT = { en: { fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", next: "Next Prayer", loading: "Loading...", btn: "عربي", selCity: "City", selCountry: "Country" }, ar: { fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء", next: "الصلاة القادمة", loading: "جاري التحميل...", btn: "EN", selCity: "المدينة", selCountry: "الدولة" } };
 
         async function fetchData() {
             try {
-                const url = `https://api.aladhan.com/v1/timingsByCity?city=${state.city}&country=${state.country}&method=19`;
+                let engCity = state.city;
+                let engCountry = state.country;
+                const kCity = Object.keys(DICT_CITIES).find(key => DICT_CITIES[key] === state.city);
+                if(kCity) engCity = kCity;
+                const kCountry = Object.keys(DICT_COUNTRIES).find(key => DICT_COUNTRIES[key] === state.country);
+                if(kCountry) engCountry = kCountry;
+
+                const url = `https://api.aladhan.com/v1/timingsByCity?city=${engCity}&country=${engCountry}&method=19`;
                 const res = await fetch(url);
                 const data = await res.json();
+                
                 if (data.code === 200) {
                     state.timings = data.data.timings;
                     state.hijri = data.data.date.hijri;
                     state.timezone = data.data.meta.timezone;
-                    renderPrayerTimes(); renderDate(); tick();
+                    renderPrayerTimes();
+                    renderDate();
+                    tick();
+                } else {
+                    document.getElementById('date-display').innerText = "API Error";
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("API Error", e);
+                document.getElementById('date-display').innerText = "Network Error";
+            }
         }
 
-        function tick() {
+        function getCurrentTimeInZone() {
             const now = new Date();
-            const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: state.timezone || 'UTC', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false });
+            if (!state.timezone) return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
+            const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: state.timezone, hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false });
             const parts = formatter.formatToParts(now);
             const h = parseInt(parts.find(p => p.type === 'hour').value);
             const m = parseInt(parts.find(p => p.type === 'minute').value);
             const s = parseInt(parts.find(p => p.type === 'second').value);
-            document.getElementById('clock').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
-            if(state.timings) updateCountdown({h,m,s});
+            return { h, m, s };
+        }
+
+        function tick() {
+            const time = getCurrentTimeInZone();
+            const clockEl = document.getElementById('clock');
+            clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            if(state.timings) updateCountdown(time);
+        }
+
+        function playAdhan(prayerName) {
+            if(state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.error("Play failed:", e));
+                state.lastPlayedPrayer = prayerName;
+            }
         }
 
         function updateCountdown(time) {
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-            const curMins = time.h * 60 + time.m;
-            let nextP = null; let nextName = "";
-            for(let i=0; i<prayers.length; i++){
-                const [ph, pm] = state.timings[prayers[i]].split(':').map(Number);
-                if((ph*60+pm) > curMins) { nextP = ph*60+pm; nextName = prayers[i]; break; }
+            const dict = TEXT[state.lang];
+            const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            for(let i=0; i<prayers.length; i++) {
+                if(state.timings[prayers[i]] === timeStr && time.s < 2) playAdhan(prayers[i]);
             }
-            if(!nextP) { const [fh, fm] = state.timings['Fajr'].split(':').map(Number); nextP = (fh*60+fm)+(24*60); nextName = 'Fajr'; }
-            
-            const diff = (nextP * 60) - (curMins * 60 + time.s);
-            const hl = Math.floor(diff / 3600);
-            const ml = Math.floor((diff % 3600) / 60);
-            const sl = diff % 60;
-            document.getElementById('countdown').innerText = `-${hl}:${ml.toString().padStart(2,'0')}:${sl.toString().padStart(2,'0')}`;
-            document.getElementById('lbl-next').innerText = `${TEXT[state.lang].next}: ${TEXT[state.lang][nextName.toLowerCase()]}`;
-            
+            const curMins = time.h * 60 + time.m;
+            const curSecs = time.s;
+            let nextP = null; let nextName = "";
+            for(let i=0; i<prayers.length; i++) {
+                const [h, m] = state.timings[prayers[i]].split(':').map(Number);
+                const pMins = h * 60 + m;
+                if(pMins > curMins) { nextP = pMins; nextName = prayers[i]; break; }
+            }
+            if(!nextP) {
+                const [h, m] = state.timings['Fajr'].split(':').map(Number);
+                nextP = (h * 60 + m) + (24 * 60); nextName = 'Fajr';
+            }
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
             if(activeEl) activeEl.classList.add('active');
+
+            const nextTotalSeconds = nextP * 60;
+            const currentTotalSeconds = (curMins * 60) + curSecs;
+            let diffInSeconds = nextTotalSeconds - currentTotalSeconds;
+            const hLeft = Math.floor(diffInSeconds / 3600);
+            diffInSeconds %= 3600;
+            const mLeft = Math.floor(diffInSeconds / 60);
+            const sLeft = diffInSeconds % 60; 
+            document.getElementById('countdown').innerText = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
+            document.getElementById('lbl-next').innerText = `${dict.next}: ${dict[nextName.toLowerCase()]}`;
+            if (hLeft > 0 || mLeft > 1) state.lastPlayedPrayer = "";
         }
+
+        function renderDate() {
+            if(!state.timings || !state.hijri) return;
+            const h = state.hijri; const el = document.getElementById('date-display'); const now = new Date();
+            if (state.lang === 'en') {
+                const suffix = getOrdinal(h.day);
+                el.innerHTML = `<span class="date-hijri">${h.day}${suffix} ${h.month.en}, ${h.year} AH</span><span class="date-greg">${now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</span>`;
+            } else {
+                el.innerHTML = `<span class="date-hijri">\u200F${h.day} ${h.month.ar} ${h.year} هـ</span><span class="date-greg">${now.toLocaleDateString('ar-DZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} م</span>`;
+            }
+        }
+
+        function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
 
         function renderPrayerTimes() {
             const container = document.getElementById('prayers-container'); container.innerHTML = '';
+            const dict = TEXT[state.lang];
             ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
                 const div = document.createElement('div'); div.className = 'prayer-item'; div.id = `p-${k}`;
-                div.innerHTML = `<span class="p-name">${TEXT[state.lang][k.toLowerCase()]}</span><span class="p-time">${state.timings[k]}</span>`;
+                div.innerHTML = `<span class="p-name">${dict[k.toLowerCase()]}</span><span class="p-time">${state.timings[k].split(' ')[0]}</span>`;
                 container.appendChild(div);
             });
         }
 
-        function renderDate() {
-            const h = state.hijri; if(!h) return;
-            const el = document.getElementById('date-display');
-            if(state.lang === 'en') el.innerHTML = `<span class="date-hijri">${h.day} ${h.month.en} ${h.year} AH</span><span class="date-greg">${new Date().toLocaleDateString('en-GB',{weekday:'long',month:'short',day:'numeric'})}</span>`;
-            else el.innerHTML = `<span class="date-hijri">${h.day} ${h.month.ar} ${h.year} هـ</span><span class="date-greg">${new Date().toLocaleDateString('ar-DZ',{weekday:'long',month:'long',day:'numeric'})}</span>`;
+        function renderStaticText() {
+            const dict = TEXT[state.lang];
+            document.getElementById('lbl-city').innerText = dict.selCity;
+            document.getElementById('lbl-country').innerText = dict.selCountry;
+            document.getElementById('btn-lang').innerText = dict.btn;
+            let displayCity = state.city;
+            if(state.lang === 'ar') displayCity = DICT_CITIES[displayCity] || displayCity;
+            document.getElementById('city-display').innerText = displayCity;
         }
 
-        function toggleLang() { state.lang = state.lang === 'en' ? 'ar' : 'en'; setStorage('p_lang', state.lang); applyLang(); }
-        function applyLang() { 
-            document.documentElement.lang = state.lang;
-            document.getElementById('btn-lang').innerText = TEXT[state.lang].btn;
-            document.getElementById('city-display').innerText = state.lang === 'ar' ? (DICT_CITIES[state.city] || state.city) : state.city;
+        function toggleLang() { applyLang(state.lang === 'en' ? 'ar' : 'en'); }
+
+        function applyLang(l) {
+            state.lang = l; setStorage('p_lang', l); document.documentElement.lang = l;
+            renderStaticText(); updateInputTexts(l);
             if(state.timings) { renderPrayerTimes(); renderDate(); }
         }
 
-        function setTheme(t) { state.theme = t; setStorage('p_theme', t); document.documentElement.setAttribute('data-theme', t); document.getElementById('color-menu').style.display='none'; }
-        function toggleColors() { const m = document.getElementById('color-menu'); m.style.display = m.style.display === 'grid' ? 'none' : 'grid'; }
-        function toggleSound() { state.sound = !state.sound; document.getElementById('btn-sound').innerText = state.sound ? "🔊" : "🔇"; document.getElementById('btn-sound').style.opacity = state.sound ? "1" : "0.5"; }
-        
-        function populateCities(c) {
-            const sel = document.getElementById('input-city'); sel.innerHTML = '';
-            (COUNTRY_DATA[c] || []).forEach(city => { const opt = document.createElement('option'); opt.value = city; opt.text = city; sel.appendChild(opt); });
+        function updateInputTexts(l) {
+            const countrySelect = document.getElementById('input-country');
+            for (let i = 0; i < countrySelect.options.length; i++) {
+                const engVal = countrySelect.options[i].value; 
+                countrySelect.options[i].text = (l === 'ar' && DICT_COUNTRIES[engVal]) ? DICT_COUNTRIES[engVal] : engVal;
+            }
+            const citySelect = document.getElementById('input-city');
+            for (let i = 0; i < citySelect.options.length; i++) {
+                const engVal = citySelect.options[i].value;
+                citySelect.options[i].text = (l === 'ar' && DICT_CITIES[engVal]) ? DICT_CITIES[engVal] : engVal;
+            }
         }
-        function changeCountry() { state.country = document.getElementById('input-country').value; populateCities(state.country); updateLoc(); }
-        function updateLoc() { state.city = document.getElementById('input-city').value; setStorage('p_city', state.city); setStorage('p_country', state.country); fetchData(); applyLang(); }
 
-        window.onload = () => {
-            applyMode();
-            setTheme(state.theme);
-            populateCities(state.country);
-            document.getElementById('input-country').value = state.country;
-            document.getElementById('input-city').value = state.city;
-            applyLang();
-            fetchData();
-            setInterval(tick, 1000);
-            document.getElementById('floatingIcon').onclick = cycleIcon;
-        };
+        function toggleSound() {
+            const btn = document.getElementById('btn-sound'); const hint = document.getElementById('audio-hint');
+            if(!state.sound) {
+                state.sound = true; btn.innerText = "🔊"; btn.style.opacity = "1";
+                hint.innerText = "Testing Audio..."; hint.style.opacity = '1';
+                audio.play().then(() => { setTimeout(() => { audio.pause(); audio.currentTime = 0; hint.innerText = "Sound Enabled"; setTimeout(() => hint.style.opacity = '0', 2000); }, 3000); }).catch(err => { hint.innerText = "Error"; });
+            } else {
+                state.sound = false; btn.innerText = "🔇"; btn.style.opacity = "0.5"; audio.pause();
+            }
+        }
+
+        function toggleColors() { const m = document.getElementById('color-menu'); m.style.display = m.style.display === 'grid' ? 'none' : 'grid'; }
+
+        function applyTheme(t) {
+            state.theme = t; setStorage('p_theme', t);
+            document.documentElement.setAttribute('data-theme', t);
+            document.getElementById('color-menu').style.display = 'none';
+        }
+        function setTheme(t) { applyTheme(t); }
+
+        function updateLoc() {
+            state.city = document.getElementById('input-city').value;
+            state.country = document.getElementById('input-country').value;
+            setStorage('p_city', state.city);
+            setStorage('p_country', state.country);
+            document.getElementById('date-display').innerText = TEXT[state.lang].loading;
+            renderStaticText(); fetchData();
+        }
     </script>
 </body>
 </html>
