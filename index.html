@@ -442,37 +442,37 @@
         .color-dot:hover { 
             transform: scale(1.2);
         }
-        /* 1. THE CHECKMARK (Moved to ::before so it doesn't fight the tooltip) */
+        /* 1. THE CHECKMARK (Only for the selected dot) */
         .color-dot.selected::before {
             content: "✓";
             color: white;
             font-size: 14px;
             font-weight: bold;
-            text-shadow: 0 0 2px black;
+            text-shadow: 0 0 2px rgba(0,0,0,0.8);
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 5; /* Lower than the label */
+            z-index: 5;
         }
 
-        /* 2. THE TOOLTIP LABEL (Appears on hover for ALL dots) */
+        /* 2. THE TOOLTIP BOX (Appears on hover for ALL dots) */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
-            bottom: 150%; /* Moves it ABOVE the dot */
+            bottom: 155%; /* Positioned clearly above the dot */
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.9); /* Dark rectangle */
-            color: #ffffff; /* White text */
-            padding: 4px 10px;
-            font-size: 12px;
+            background-color: rgba(0, 0, 0, 0.95);
+            color: #ffffff;
+            padding: 5px 10px;
+            font-size: 13px;
             font-weight: 600;
-            border-radius: 5px;
+            border-radius: 6px;
             white-space: nowrap;
             pointer-events: none;
-            z-index: 100; /* Higher than the checkmark */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             font-family: 'Cairo', sans-serif;
         }
 
