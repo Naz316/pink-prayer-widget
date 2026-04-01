@@ -453,23 +453,21 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        .color-dot:hover::after {
+       .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
             bottom: 140%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #000;
-            color: #fff;
-            padding: 4px 8px;
-            font-size: 11px;
-            border-radius: 4px;
+            color: var(--text-accent); 
+            font-size: 13px;
+            font-weight: bold;
             white-space: nowrap;
             pointer-events: none;
-            border: 1px solid #555;
-            font-family: 'Roboto', sans-serif;
+            font-family: inherit;
             z-index: 300;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            /* All background, border, and shadow properties removed */
+        }
         }
         [lang="ar"] .color-dot:hover::after {
             font-family: 'Cairo', sans-serif;
