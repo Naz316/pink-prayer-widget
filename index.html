@@ -442,37 +442,43 @@
         .color-dot:hover { 
             transform: scale(1.2);
         }
-        /* 1. THE CHECKMARK (Only for the selected dot) */
+        /* 1. REMOVE THE BLACK ARROW/TRIANGLE COMPLETELY */
+        .color-dot:hover::before {
+            content: none !important;
+        }
+
+        /* 2. THE CHECKMARK (Stays visible in the center) */
         .color-dot.selected::before {
-            content: "✓";
+            content: "✓" !important;
             color: white;
             font-size: 14px;
             font-weight: bold;
-            text-shadow: 0 0 2px rgba(0,0,0,0.8);
+            text-shadow: 0 0 3px rgba(0,0,0,0.9);
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 5;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        /* 2. THE TOOLTIP BOX (Appears on hover for ALL dots) */
+        /* 3. THE TOOLTIP BOX (Clean rectangle with NO arrow) */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
-            bottom: 155%; /* Positioned clearly above the dot */
+            bottom: 160%; /* Positioned above the dot and checkmark */
             left: 50%;
             transform: translateX(-50%);
             background-color: rgba(0, 0, 0, 0.95);
             color: #ffffff;
-            padding: 5px 10px;
+            padding: 5px 12px;
             font-size: 13px;
             font-weight: 600;
             border-radius: 6px;
             white-space: nowrap;
             pointer-events: none;
             z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             font-family: 'Cairo', sans-serif;
         }
 
