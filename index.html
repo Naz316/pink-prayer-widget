@@ -442,46 +442,43 @@
         .color-dot:hover { 
             transform: scale(1.2);
         }
-        /* 1. REMOVE THE BLACK ARROW/TRIANGLE COMPLETELY */
-        .color-dot:hover::before {
-            content: none !important;
-        }
-
-        /* 2. THE CHECKMARK (Stays visible in the center) */
+        /* 1. THE CHECKMARK (Stays inside the dot) */
         .color-dot.selected::before {
-            content: "✓" !important;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            text-shadow: 0 0 3px rgba(0,0,0,0.9);
+            content: "✓";
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 10;
-            pointer-events: none;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 0 2px rgba(0,0,0,0.8);
+            z-index: 5;
         }
 
-        /* 3. THE TOOLTIP BOX (Clean rectangle with NO arrow) */
+        /* 2. THE COLOR NAME BOX (Floating above - NO arrow) */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
-            bottom: 160%; /* Positioned above the dot and checkmark */
+            bottom: 155%; 
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(0, 0, 0, 0.9);
             color: #ffffff;
-            padding: 5px 12px;
+            padding: 4px 10px;
             font-size: 13px;
             font-weight: 600;
-            border-radius: 6px;
+            border-radius: 5px;
             white-space: nowrap;
-            pointer-events: none;
             z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             font-family: 'Cairo', sans-serif;
         }
 
+        /* 3. DISABLE ANY LEFTOVER ARROWS */
+        .color-dot:hover::before {
+            border: none !important;
+            background: none !important;
+        }
         /* Small arrow pointing down to the dot */
         .color-dot:hover::before {
             content: "";
