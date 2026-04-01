@@ -442,9 +442,9 @@
         .color-dot:hover { 
             transform: scale(1.2);
         }
-        /* 1. THE CHECKMARK (Stays inside the dot) */
+        /* 1. THE CHECKMARK (Stays visible even on hover) */
         .color-dot.selected::before {
-            content: "✓";
+            content: "✓" !important;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -454,26 +454,33 @@
             font-weight: bold;
             text-shadow: 0 0 2px rgba(0,0,0,0.8);
             z-index: 5;
+            display: block !important;
         }
 
-        /* 2. THE COLOR NAME BOX (Floating above - NO arrow) */
+        /* 2. THE COLOR NAME BOX (Black rectangle above - NO arrow) */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
-            bottom: 155%; 
+            bottom: 165%; /* Moves box high enough so you see the checkmark */
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             color: #ffffff;
-            padding: 4px 10px;
+            padding: 5px 12px;
             font-size: 13px;
             font-weight: 600;
-            border-radius: 5px;
+            border-radius: 6px;
             white-space: nowrap;
             z-index: 100;
-            font-family: 'Cairo', sans-serif;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-family: 'Cairo', 'Roboto', sans-serif;
+            pointer-events: none;
         }
 
+        /* Support for Arabic Font in Tooltip */
+        [lang="ar"] .color-dot:hover::after {
+            font-family: 'Cairo', sans-serif;
+        }
         /* 3. DISABLE ANY LEFTOVER ARROWS */
         .color-dot:hover::before {
             border: none !important;
