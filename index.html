@@ -409,7 +409,7 @@
             background-color: #ffffff;
         }
 
-        /* COLOR POPUP - no border on hover, only tooltip */
+        /* COLOR POPUP - fixed checkmark */
         .color-popup {
             display: none;
             position: absolute;
@@ -417,7 +417,6 @@
             left: 50%;
             transform: translateX(30px);
             background: #222;
-            border: none;  /* removed the black border */
             border-radius: 6px;
             padding: 10px;
             z-index: 200;
@@ -426,7 +425,7 @@
             width: auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        
+
         .color-dot {
             width: 20px;
             height: 20px;
@@ -437,14 +436,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none; /* no border */
+            border: none;
         }
-        .color-dot:hover { 
+
+        .color-dot:hover {
             transform: scale(1.2);
         }
-        /* 1. THE CHECKMARK (Stays visible even on hover) */
+
+        /* Checkmark on selected color */
         .color-dot.selected::before {
-            content: "✓" !important;
+            content: "✓";
             position: absolute;
             top: 50%;
             left: 50%;
@@ -453,52 +454,28 @@
             font-size: 14px;
             font-weight: bold;
             text-shadow: 0 0 2px rgba(0,0,0,0.8);
-            z-index: 5;
-            display: block !important;
+            z-index: 2;
         }
 
-        /* 2. THE COLOR NAME BOX (Black rectangle above - NO arrow) */
+        /* Tooltip on hover */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
-            bottom: 165%; /* Moves box high enough so you see the checkmark */
+            bottom: 150%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.95);
-            color: #ffffff;
-            padding: 5px 12px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 6px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
             white-space: nowrap;
-            z-index: 100;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            font-family: 'Cairo', 'Roboto', sans-serif;
             pointer-events: none;
+            font-family: inherit;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        /* Support for Arabic Font in Tooltip */
-        [lang="ar"] .color-dot:hover::after {
-            font-family: 'Cairo', sans-serif;
-        }
-        /* 3. DISABLE ANY LEFTOVER ARROWS */
-        .color-dot:hover::before {
-            border: none !important;
-            background: none !important;
-        }
-        /* Small arrow pointing down to the dot */
-        .color-dot:hover::before {
-            content: "";
-            position: absolute;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 6px;
-            border-style: solid;
-            border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
-            z-index: 300;
-        }
-        }
         [lang="ar"] .color-dot:hover::after {
             font-family: 'Cairo', sans-serif;
         }
