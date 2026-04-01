@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Prayer Tracker · Floating Icons · Bilingual Colors</title>
+    <title>Prayer Tracker · Floating Icons · Dark/Light Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. RESET & VARIABLES (unchanged) --- */
+        /* --- RESET & VARIABLES --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
@@ -19,9 +19,10 @@
             --highlight-bg: #782a3b;
             --input-bg: rgba(255,255,255,0.1);
             --font-main: 'Roboto', sans-serif;
+            --accent-color: #ff9eb5;
         }
 
-        /* THEMES (preserved) */
+        /* DARK MODE THEMES (original) */
         [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; --text-accent: #ff9eb5; }
         [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; --text-accent: #c4a6ff; }
         [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; --text-accent: #ff8888; }
@@ -33,13 +34,80 @@
         [data-theme="brown"] { --bg-card: #3d2b1e; --border-card: #5e4430; --highlight-bg: #7a583e; --text-secondary: #ffeacc; --text-accent: #ffcc99; }
         [data-theme="grey"] { --bg-card: #262626; --border-card: #404040; --highlight-bg: #595959; --text-secondary: #e0e0e0; --text-accent: #aaaaaa; }
         [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; }
-        [data-theme="white"] { --bg-card: #ffffff; --border-card: #e0e0e0; --highlight-bg: #e0e0e0; --text-secondary: #666666; --text-primary: #222; --text-accent: #333; --input-bg: rgba(0,0,0,0.05); }
+        [data-theme="magenta"] { --bg-card: #3d1a2f; --border-card: #6a2e4a; --highlight-bg: #b8456f; --text-secondary: #ffcce5; --text-accent: #ff99cc; }
 
-        [lang="ar"] { 
-            --font-main: 'Cairo', sans-serif; 
+        /* LIGHT MODE OVERRIDES — uses same accent colors as dark mode */
+        body.light-mode {
+            --bg-card: #ffffff;
+            --header-bg: #f5f5f5;
+            --input-bg: rgba(0,0,0,0.05);
+            --border-card: var(--accent-color);
+            --text-primary: #222222;
+            --text-secondary: var(--accent-color);
+            --text-accent: var(--accent-color);
+            --highlight-bg: var(--accent-color);
+        }
+        /* Active prayer highlight in light mode */
+        body.light-mode .prayer-item.active {
+            background-color: var(--accent-color);
+        }
+        body.light-mode .prayer-item.active .p-name,
+        body.light-mode .prayer-item.active .p-time {
+            color: white;
+        }
+        /* For light mode, dropdown options need dark text for readability */
+        body.light-mode .input-box option {
+            background: #fff;
+            color: #222;
         }
 
-        /* --- LAYOUT --- */
+        /* --- GLOBAL TEXT STYLES: all non-active text uses accent color --- */
+        .label-text,
+        .main-text,
+        .input-label,
+        .p-name,
+        .p-time,
+        .date-hijri,
+        .date-greg,
+        #city-display,
+        #clock,
+        #countdown,
+        #lbl-next,
+        .input-box {
+            color: var(--text-accent);
+        }
+
+        /* Active prayer item text becomes white */
+        .prayer-item.active .p-name,
+        .prayer-item.active .p-time {
+            color: white !important;
+        }
+
+        /* Ensure the header labels also use accent */
+        .header-item .label-text,
+        .header-item .main-text {
+            color: var(--text-accent);
+        }
+
+        /* Smooth transitions */
+        .widget-card,
+        .prayer-item,
+        .prayer-item.active,
+        .p-name,
+        .p-time,
+        .date-hijri,
+        .date-greg,
+        .label-text,
+        .main-text,
+        .input-box,
+        .icon-btn,
+        .lang-btn {
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        [lang="ar"] { --font-main: 'Cairo', sans-serif; }
+
+        /* --- LAYOUT (unchanged) --- */
         body {
             background-color: transparent;
             font-family: var(--font-main);
@@ -64,11 +132,10 @@
             flex-direction: column;
             justify-content: flex-start;
             overflow: visible;
-            transition: background 0.3s;
             position: relative;
         }
 
-        /* HEADER ROW (mosque icon removed, middle column empty) */
+        /* HEADER ROW (mosque icon removed) */
         .header-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -85,23 +152,10 @@
         .align-end { align-items: flex-end; text-align: right; }
         .align-center { align-items: center; text-align: center; }
 
-        .label-text {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            height: 14px; 
-            white-space: nowrap;
-        }
-        
-        .main-text { font-size: 1.1rem; font-weight: bold; line-height: 1.2; }
-        [lang="ar"] .main-text { line-height: 1.1; padding-top: 2px; }
-
-        /* --- FLOATING ICON (no background, larger, animated float) --- */
+        /* --- FLOATING ICON --- */
         .floating-icon {
             position: absolute;
-            top: 12px;                /* slight adjustment for visual balance */
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
             cursor: pointer;
@@ -109,58 +163,34 @@
             filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
             transition: transform 0.2s ease, filter 0.2s;
             animation: gentleFloat 2.5s ease-in-out infinite;
-            background: transparent;   /* no black background */
-            padding: 6px;             /* just for click area, no visible bg */
+            background: transparent;
+            padding: 6px;
             border-radius: 60px;
         }
-        
-        .floating-icon:hover {
-            transform: translateX(-50%) scale(1.05);
-            filter: drop-shadow(0 12px 20px rgba(0,0,0,0.35));
-        }
-        
-        .floating-icon img {
-            width: 52px;              /* bigger icons */
-            height: 52px;
-            object-fit: contain;
-            display: block;
-            pointer-events: none;
-            transition: transform 0.2s;
-        }
-        
-        /* gentle floating animation: moves up and down slightly */
+        .floating-icon:hover { transform: translateX(-50%) scale(1.05); filter: drop-shadow(0 12px 20px rgba(0,0,0,0.35)); }
+        .floating-icon img { width: 52px; height: 52px; object-fit: contain; display: block; pointer-events: none; }
         @keyframes gentleFloat {
-            0% {
-                transform: translateX(-50%) translateY(0px);
-            }
-            50% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-            100% {
-                transform: translateX(-50%) translateY(0px);
-            }
+            0% { transform: translateX(-50%) translateY(0px); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+            100% { transform: translateX(-50%) translateY(0px); }
         }
-        
-        /* responsive: slightly smaller on narrow screens */
         @media (max-width: 500px) {
             .floating-icon img { width: 44px; height: 44px; }
             .floating-icon { top: 12px; }
         }
 
-        /* --- DATE ROW --- */
+        /* --- DATE ROW (Hijri above Gregorian) --- */
         .date-row {
             text-align: center;
             padding: 12px 10px; 
             background-color: var(--header-bg);
             border-bottom: 1px solid var(--border-card);
-            height: auto; 
             min-height: 85px; 
             display: flex;
             flex-direction: column; 
             align-items: center;
             justify-content: center;
         }
-        
         .date-hijri {
             font-size: 1.1rem;
             font-weight: 700;
@@ -169,7 +199,6 @@
             line-height: 1.2;
             display: block;
         }
-
         .date-greg {
             font-size: 0.85rem;
             color: var(--text-secondary); 
@@ -179,7 +208,6 @@
             opacity: 0.9;
             margin-bottom: 5px; 
         }
-        
         [lang="ar"] .date-hijri {
             font-family: 'Cairo', sans-serif;
             direction: rtl;
@@ -213,8 +241,6 @@
         .prayer-item:last-child { border-right: none; }
         
         .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
-        .p-name { font-size: 0.75rem; color: var(--text-secondary); margin: 0; line-height: 1; }
-        .p-time { font-size: 1rem; font-weight: bold; direction: ltr; line-height: 1; }
 
         /* CONTROLS SECTION */
         .controls-row {
@@ -232,7 +258,6 @@
         
         .input-label {
             font-size: 0.7rem;
-            color: var(--text-secondary);
             margin-bottom: 8px; 
             text-align: center;
             display: block;
@@ -244,7 +269,6 @@
         .input-box {
             background: var(--input-bg);
             border: 1px solid var(--border-card);
-            color: var(--text-primary);
             border-radius: 6px;
             font-family: inherit;
             font-size: 0.9rem;
@@ -258,15 +282,14 @@
             cursor: pointer;
         }
         [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
-        .input-box option { background: #333; color: #fff; }
 
-        /* BUTTONS */
+        /* BUTTONS & SLIDER */
         .tools {
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
-            gap: 25px;
+            gap: 20px;
             position: relative;
             height: 35px; 
         }
@@ -299,7 +322,94 @@
             justify-content: center;
         }
 
-        /* COLOR POPUP */
+        /* CUSTOM SLIDER WITH ICONS INSIDE */
+        .mode-switch-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 28px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider-track {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 34px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6px;
+            font-size: 14px;
+            background-color: var(--track-bg);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .slider-icons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .slider-icons span {
+            font-size: 14px;
+            line-height: 1;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+        }
+        .slider-knob {
+            position: absolute;
+            height: 24px;
+            width: 24px;
+            top: 2px;
+            left: 2px;
+            background-color: var(--knob-bg);
+            border-radius: 50%;
+            transition: transform 0.3s, background-color 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        input:checked + .slider-track + .slider-knob {
+            transform: translateX(32px);
+        }
+        /* Dark mode (checked): track white, knob colored */
+        input:checked + .slider-track {
+            background-color: #ffffff;
+        }
+        input:checked + .slider-track .slider-icons span:first-child {
+            color: #333;
+        }
+        input:checked + .slider-track .slider-icons span:last-child {
+            color: #ffaa33;
+        }
+        input:checked + .slider-track + .slider-knob {
+            background-color: var(--accent-color);
+        }
+        /* Light mode (unchecked): track colored, knob white */
+        input:not(:checked) + .slider-track {
+            background-color: var(--accent-color);
+        }
+        input:not(:checked) + .slider-track .slider-icons span:first-child {
+            color: #ffaa33;
+        }
+        input:not(:checked) + .slider-track .slider-icons span:last-child {
+            color: #fff;
+        }
+        input:not(:checked) + .slider-track + .slider-knob {
+            background-color: #ffffff;
+        }
+
+        /* COLOR POPUP - no border on hover, only tooltip */
         .color-popup {
             display: none;
             position: absolute;
@@ -307,7 +417,7 @@
             left: 50%;
             transform: translateX(30px);
             background: #222;
-            border: 1px solid #444;
+            border: none;  /* removed the black border */
             border-radius: 6px;
             padding: 10px;
             z-index: 200;
@@ -322,12 +432,27 @@
             height: 20px;
             border-radius: 50%;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.3);
             transition: transform 0.2s;
-            position: relative; 
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none; /* no border */
         }
-        .color-dot:hover { transform: scale(1.2); border-color: #fff; }
-
+        .color-dot:hover { 
+            transform: scale(1.2);
+        }
+        .color-dot.selected::after {
+            content: "✓";
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 0 2px black;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
@@ -370,12 +495,12 @@
     <div id="audio-hint">Sound Enabled</div>
 
     <div class="widget-card">
-        <!-- FLOATING ICON (no black background, larger, animated) -->
+        <!-- Floating Icon -->
         <div class="floating-icon" id="floatingIcon">
-            <img id="switchIconImg" src="https://cdn-icons-png.flaticon.com/128/2918/2918211.png" alt="icon" loading="eager">
+            <img id="switchIconImg" src="https://cdn-icons-png.flaticon.com/128/2918/2918211.png" alt="icon">
         </div>
 
-        <!-- HEADER ROW (mosque icon removed) -->
+        <!-- HEADER -->
         <div class="header-row">
             <div class="header-item align-start">
                 <span class="label-text" id="lbl-next">Next Prayer</span>
@@ -396,7 +521,7 @@
         <!-- PRAYER SCROLL -->
         <div class="prayer-bar" id="prayers-container"></div>
 
-        <!-- CONTROLS (unchanged) -->
+        <!-- CONTROLS -->
         <div class="controls-row">
             <div class="inputs-row">
                 <div class="input-group">
@@ -427,27 +552,41 @@
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
+                <!-- Dark/Light Switch with icons inside -->
+                <div class="mode-switch-wrapper">
+                    <label class="custom-switch">
+                        <input type="checkbox" id="darkLightToggle">
+                        <div class="slider-track">
+                            <div class="slider-icons">
+                                <span>☀️</span>
+                                <span>🌙</span>
+                            </div>
+                        </div>
+                        <div class="slider-knob"></div>
+                    </label>
+                </div>
+
                 <!-- Color Popup -->
                 <div class="color-popup" id="color-menu">
-                    <div class="color-dot" style="background:#581c33" onclick="setTheme('pink')"></div>
-                    <div class="color-dot" style="background:#2e1a47" onclick="setTheme('purple')"></div>
-                    <div class="color-dot" style="background:#3d0e0e" onclick="setTheme('red')"></div>
-                    <div class="color-dot" style="background:#42210b" onclick="setTheme('orange')"></div>
-                    <div class="color-dot" style="background:#85751f" onclick="setTheme('yellow')"></div>
-                    <div class="color-dot" style="background:#13381e" onclick="setTheme('green')"></div>
-                    <div class="color-dot" style="background:#0e333d" onclick="setTheme('cyan')"></div>
-                    <div class="color-dot" style="background:#111e3d" onclick="setTheme('blue')"></div>
-                    <div class="color-dot" style="background:#3d2b1e" onclick="setTheme('brown')"></div>
-                    <div class="color-dot" style="background:#595959" onclick="setTheme('grey')"></div>
-                    <div class="color-dot" style="background:#000" onclick="setTheme('black')"></div>
-                    <div class="color-dot" style="background:#fff" onclick="setTheme('white')"></div>
+                    <div class="color-dot" data-name="Pink" style="background:#581c33" data-accent="pink" onclick="setAccent('pink')"></div>
+                    <div class="color-dot" data-name="Purple" style="background:#2e1a47" data-accent="purple" onclick="setAccent('purple')"></div>
+                    <div class="color-dot" data-name="Red" style="background:#3d0e0e" data-accent="red" onclick="setAccent('red')"></div>
+                    <div class="color-dot" data-name="Orange" style="background:#42210b" data-accent="orange" onclick="setAccent('orange')"></div>
+                    <div class="color-dot" data-name="Yellow" style="background:#85751f" data-accent="yellow" onclick="setAccent('yellow')"></div>
+                    <div class="color-dot" data-name="Green" style="background:#13381e" data-accent="green" onclick="setAccent('green')"></div>
+                    <div class="color-dot" data-name="Cyan" style="background:#0e333d" data-accent="cyan" onclick="setAccent('cyan')"></div>
+                    <div class="color-dot" data-name="Blue" style="background:#111e3d" data-accent="blue" onclick="setAccent('blue')"></div>
+                    <div class="color-dot" data-name="Brown" style="background:#3d2b1e" data-accent="brown" onclick="setAccent('brown')"></div>
+                    <div class="color-dot" data-name="Grey" style="background:#595959" data-accent="grey" onclick="setAccent('grey')"></div>
+                    <div class="color-dot" data-name="Black" style="background:#000" data-accent="black" onclick="setAccent('black')"></div>
+                    <div class="color-dot" data-name="Magenta" style="background:#d94f8c" data-accent="magenta" onclick="setAccent('magenta')"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- ICON CYCLE FEATURE ---
+        // ========== ICON CYCLE ==========
         const iconUrls = [
             "https://cdn-icons-png.flaticon.com/128/2918/2918211.png",
             "https://cdn-icons-png.flaticon.com/128/1717/1717468.png",
@@ -456,19 +595,73 @@
             "https://cdn-icons-png.flaticon.com/128/7321/7321062.png"
         ];
         let currentIconIndex = 0;
-
         function cycleIcon() {
             currentIconIndex = (currentIconIndex + 1) % iconUrls.length;
             const img = document.getElementById('switchIconImg');
             if (img) {
                 img.src = iconUrls[currentIconIndex];
-                // tiny flash effect for feedback
                 img.style.opacity = '0.7';
                 setTimeout(() => { if(img) img.style.opacity = '1'; }, 80);
             }
         }
 
-        // --- EXISTING SCRIPT (preserved with all functionality) ---
+        // ========== DARK/LIGHT MODE & ACCENT MANAGEMENT ==========
+        let currentMode = 'dark';
+        let currentAccent = 'pink';
+
+        const accentColorMap = {
+            pink: '#ff9eb5',
+            purple: '#c4a6ff',
+            red: '#ff8888',
+            orange: '#ffb380',
+            yellow: '#ffe666',
+            green: '#88ffaa',
+            cyan: '#66eeff',
+            blue: '#88aaff',
+            brown: '#ffcc99',
+            grey: '#aaaaaa',
+            black: '#999999',
+            magenta: '#ff99cc'
+        };
+
+        function updateSelectedDot() {
+            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('selected'));
+            const targetDot = document.querySelector(`.color-dot[data-accent="${currentAccent}"]`);
+            if (targetDot) targetDot.classList.add('selected');
+        }
+
+        function applyTheme() {
+            const accentColor = accentColorMap[currentAccent] || '#ff9eb5';
+            document.documentElement.style.setProperty('--accent-color', accentColor);
+            
+            if (currentMode === 'dark') {
+                document.body.classList.remove('light-mode');
+                document.documentElement.setAttribute('data-theme', currentAccent);
+                document.body.style.removeProperty('--light-accent-color');
+            } else {
+                document.body.classList.add('light-mode');
+                document.documentElement.removeAttribute('data-theme');
+                document.body.style.setProperty('--light-accent-color', accentColor);
+            }
+            updateSelectedDot();
+            updateColorNames();
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            localStorage.setItem(widgetId + '_mode', mode);
+            const toggle = document.getElementById('darkLightToggle');
+            if (toggle) toggle.checked = (mode === 'dark');
+            applyTheme();
+        }
+
+        function setAccent(accent) {
+            currentAccent = accent;
+            localStorage.setItem(widgetId + '_accent', accent);
+            applyTheme();
+        }
+
+        // ========== ORIGINAL SCRIPT ==========
         const urlParams = new URLSearchParams(window.location.search);
         const widgetId = urlParams.get('id') || 'default';
 
@@ -500,7 +693,6 @@
 
         const state = {
             lang: getStorage('p_lang') || 'en',
-            theme: getStorage('p_theme') || 'pink',
             sound: false,
             city: getStorage('p_city') || "Ain Oussera",
             country: getStorage('p_country') || "Algeria",
@@ -523,19 +715,19 @@
             }
         };
 
-        const COLOR_NAMES_EN = ["Pink", "Purple", "Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Brown", "Grey", "Black", "White"];
-        const COLOR_NAMES_AR = ["وردي", "بنفسجي", "أحمر", "برتقالي", "أصفر", "أخضر", "سماوي", "أزرق", "بني", "رمادي", "أسود", "أبيض"];
+        const COLOR_NAMES_EN = ["Pink", "Purple", "Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Brown", "Grey", "Black", "Magenta"];
+        const COLOR_NAMES_AR = ["وردي", "بنفسجي", "أحمر", "برتقالي", "أصفر", "أخضر", "سماوي", "أزرق", "بني", "رمادي", "أسود", "ماجنتا"];
 
         function updateColorNames() {
             const dots = document.querySelectorAll('.color-dot');
             const isArabic = (state.lang === 'ar');
-            for (let i = 0; i < dots.length && i < COLOR_NAMES_EN.length; i++) {
+            for (let i = 0; i < dots.length; i++) {
                 const name = isArabic ? COLOR_NAMES_AR[i] : COLOR_NAMES_EN[i];
                 dots[i].setAttribute('data-name', name);
             }
         }
 
-        const audioEl = document.getElementById('adhan-audio');
+        const audio = document.getElementById('adhan-audio');
 
         function populateCities(country) {
             const citySelect = document.getElementById('input-city');
@@ -603,8 +795,8 @@
 
         function playAdhan(prayerName) {
             if(state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
-                audioEl.currentTime = 0;
-                audioEl.play().catch(e => console.error("Play failed:", e));
+                audio.currentTime = 0;
+                audio.play().catch(e => console.error("Play failed:", e));
                 state.lastPlayedPrayer = prayerName;
             }
         }
@@ -704,15 +896,14 @@
             if(!state.sound) {
                 state.sound = true; btn.innerText = "🔊"; btn.style.opacity = "1";
                 hint.innerText = "Testing Audio..."; hint.style.opacity = '1';
-                audioEl.play().then(() => { setTimeout(() => { audioEl.pause(); audioEl.currentTime = 0; hint.innerText = "Sound Enabled"; setTimeout(() => hint.style.opacity = '0', 2000); }, 3000); }).catch(err => { hint.innerText = "Error"; });
+                audio.play().then(() => { setTimeout(() => { audio.pause(); audio.currentTime = 0; hint.innerText = "Sound Enabled"; setTimeout(() => hint.style.opacity = '0', 2000); }, 3000); }).catch(err => { hint.innerText = "Error"; });
             } else {
-                state.sound = false; btn.innerText = "🔇"; btn.style.opacity = "0.5"; audioEl.pause();
+                state.sound = false; btn.innerText = "🔇"; btn.style.opacity = "0.5"; audio.pause();
             }
         }
 
         function toggleColors() { const m = document.getElementById('color-menu'); m.style.display = m.style.display === 'grid' ? 'none' : 'grid'; }
-        function applyTheme(t) { state.theme = t; setStorage('p_theme', t); document.documentElement.setAttribute('data-theme', t); document.getElementById('color-menu').style.display = 'none'; }
-        function setTheme(t) { applyTheme(t); }
+
         function updateLoc() {
             state.city = document.getElementById('input-city').value;
             state.country = document.getElementById('input-country').value;
@@ -721,6 +912,7 @@
             document.getElementById('date-display').innerText = TEXT[state.lang].loading;
             renderStaticText(); fetchData();
         }
+
         function changeCountry() {
             const countrySelect = document.getElementById('input-country');
             const val = countrySelect.value; 
@@ -732,13 +924,23 @@
             updateLoc();
         }
 
-        // --- INITIALIZATION ---
+        // --- INIT ---
         window.onload = () => {
             try {
-                applyTheme(state.theme);
+                const savedMode = localStorage.getItem(widgetId + '_mode');
+                if (savedMode === 'light') currentMode = 'light';
+                else currentMode = 'dark';
+                const savedAccent = localStorage.getItem(widgetId + '_accent');
+                if (savedAccent) currentAccent = savedAccent;
+                else currentAccent = 'pink';
+
+                setMode(currentMode);
+                setAccent(currentAccent);
+
                 const params = new URLSearchParams(window.location.search);
                 if(params.get('country')) state.country = params.get('country');
                 if(params.get('city')) state.city = params.get('city');
+
                 populateCities(state.country);
                 document.getElementById('input-country').value = state.country;
                 const citySel = document.getElementById('input-city');
@@ -748,15 +950,15 @@
                 }
                 if(!cityExists && citySel.options.length > 0) state.city = citySel.options[0].value;
                 citySel.value = state.city;
+
                 applyLang(state.lang);
-                updateColorNames();
                 fetchData();
                 setInterval(tick, 1000);
-                
-                // Attach icon click handler
-                const iconDiv = document.getElementById('floatingIcon');
-                if (iconDiv) {
-                    iconDiv.addEventListener('click', cycleIcon);
+
+                document.getElementById('floatingIcon').addEventListener('click', cycleIcon);
+                const toggle = document.getElementById('darkLightToggle');
+                if (toggle) {
+                    toggle.addEventListener('change', (e) => setMode(e.target.checked ? 'dark' : 'light'));
                 }
             } catch (e) {
                 console.error("Init Error", e);
