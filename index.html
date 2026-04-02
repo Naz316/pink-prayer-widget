@@ -19,24 +19,24 @@
             --highlight-bg: #782a3b;
             --input-bg: rgba(255,255,255,0.1);
             --font-main: 'Roboto', sans-serif;
-            --accent-color: #ff9eb5;
+            --accent-color: #cc0000; /* fallback */
         }
 
-        /* DARK MODE THEMES (original) */
-        [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; --text-accent: #ff9eb5; }
-        [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; --text-accent: #c4a6ff; }
-        [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; --text-accent: #ff8888; }
-        [data-theme="orange"] { --bg-card: #42210b; --border-card: #663614; --highlight-bg: #8f4718; --text-secondary: #ffdec7; --text-accent: #ffb380; }
-        [data-theme="yellow"] { --bg-card: #3d360e; --border-card: #615619; --highlight-bg: #85751f; --text-secondary: #fff8cc; --text-accent: #ffcc00; }
-        [data-theme="green"] { --bg-card: #13381e; --border-card: #225e34; --highlight-bg: #2d7a44; --text-secondary: #ccffda; --text-accent: #88ffaa; }
-        [data-theme="cyan"] { --bg-card: #0e333d; --border-card: #1d5666; --highlight-bg: #24768a; --text-secondary: #ccf7ff; --text-accent: #66eeff; }
-        [data-theme="blue"] { --bg-card: #111e3d; --border-card: #213666; --highlight-bg: #2b498a; --text-secondary: #ccd9ff; --text-accent: #88aaff; }
-        [data-theme="brown"] { --bg-card: #3d2b1e; --border-card: #5e4430; --highlight-bg: #7a583e; --text-secondary: #ffeacc; --text-accent: #ffcc99; }
-        [data-theme="grey"] { --bg-card: #262626; --border-card: #404040; --highlight-bg: #595959; --text-secondary: #e0e0e0; --text-accent: #aaaaaa; }
-        [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; }
-        [data-theme="magenta"] { --bg-card: #3d1a2f; --border-card: #6a2e4a; --highlight-bg: #b8456f; --text-secondary: #ffcce5; --text-accent: #ff99cc; }
+        /* DARK MODE THEMES (original, using Azkar tracker colors) */
+        [data-theme="red"] { --bg-card: #3B1414; --border-card: #cc0000; --highlight-bg: #cc0000; --text-secondary: #ffcccc; --text-accent: #cc0000; }
+        [data-theme="purple"] { --bg-card: #1E122C; --border-card: #800080; --highlight-bg: #800080; --text-secondary: #dcd0ff; --text-accent: #800080; }
+        [data-theme="blue"] { --bg-card: #0A192F; --border-card: #0066cc; --highlight-bg: #0066cc; --text-secondary: #ccd9ff; --text-accent: #0066cc; }
+        [data-theme="brown"] { --bg-card: #2D1B0D; --border-card: #8B4513; --highlight-bg: #8B4513; --text-secondary: #ffeacc; --text-accent: #8B4513; }
+        [data-theme="yellow"] { --bg-card: #332B00; --border-card: #ffcc00; --highlight-bg: #ffcc00; --text-secondary: #fff8cc; --text-accent: #ffcc00; }
+        [data-theme="black"] { --bg-card: #000000; --border-card: #444444; --highlight-bg: #444444; --text-secondary: #cccccc; --text-accent: #444444; }
+        [data-theme="grey"] { --bg-card: #222222; --border-card: #808080; --highlight-bg: #808080; --text-secondary: #e0e0e0; --text-accent: #808080; }
+        [data-theme="slate"] { --bg-card: #1a202c; --border-card: #334155; --highlight-bg: #334155; --text-secondary: #ccd9ff; --text-accent: #334155; }
+        [data-theme="pink"] { --bg-card: #331122; --border-card: #ff66b2; --highlight-bg: #ff66b2; --text-secondary: #ffccd5; --text-accent: #ff66b2; }
+        [data-theme="green"] { --bg-card: #0D2612; --border-card: #228b22; --highlight-bg: #228b22; --text-secondary: #ccffda; --text-accent: #228b22; }
+        [data-theme="orange"] { --bg-card: #2E1A00; --border-card: #ff8c00; --highlight-bg: #ff8c00; --text-secondary: #ffdec7; --text-accent: #ff8c00; }
+        [data-theme="teal"] { --bg-card: #002222; --border-card: #008080; --highlight-bg: #008080; --text-secondary: #ccf7ff; --text-accent: #008080; }
 
-        /* LIGHT MODE OVERRIDES — uses same accent colors as dark mode */
+        /* LIGHT MODE OVERRIDES — uses same accent colors as dark mode for text and highlights */
         body.light-mode {
             --bg-card: #ffffff;
             --header-bg: #f5f5f5;
@@ -571,18 +571,18 @@
 
                 <!-- Color Popup -->
                 <div class="color-popup" id="color-menu">
-                    <div class="color-dot" data-name="Pink" style="background:#581c33" data-accent="pink" onclick="setAccent('pink')"></div>
-                    <div class="color-dot" data-name="Purple" style="background:#2e1a47" data-accent="purple" onclick="setAccent('purple')"></div>
-                    <div class="color-dot" data-name="Red" style="background:#3d0e0e" data-accent="red" onclick="setAccent('red')"></div>
-                    <div class="color-dot" data-name="Orange" style="background:#42210b" data-accent="orange" onclick="setAccent('orange')"></div>
-                    <div class="color-dot" data-name="Yellow" style="background:#85751f" data-accent="yellow" onclick="setAccent('yellow')"></div>
-                    <div class="color-dot" data-name="Green" style="background:#13381e" data-accent="green" onclick="setAccent('green')"></div>
-                    <div class="color-dot" data-name="Cyan" style="background:#0e333d" data-accent="cyan" onclick="setAccent('cyan')"></div>
-                    <div class="color-dot" data-name="Blue" style="background:#111e3d" data-accent="blue" onclick="setAccent('blue')"></div>
-                    <div class="color-dot" data-name="Brown" style="background:#3d2b1e" data-accent="brown" onclick="setAccent('brown')"></div>
-                    <div class="color-dot" data-name="Grey" style="background:#595959" data-accent="grey" onclick="setAccent('grey')"></div>
-                    <div class="color-dot" data-name="Black" style="background:#000" data-accent="black" onclick="setAccent('black')"></div>
-                    <div class="color-dot" data-name="Magenta" style="background:#d94f8c" data-accent="magenta" onclick="setAccent('magenta')"></div>
+                    <div class="color-dot" data-name="Red" style="background:#cc0000" data-accent="red" onclick="setAccent('red')"></div>
+                    <div class="color-dot" data-name="Purple" style="background:#800080" data-accent="purple" onclick="setAccent('purple')"></div>
+                    <div class="color-dot" data-name="Blue" style="background:#0066cc" data-accent="blue" onclick="setAccent('blue')"></div>
+                    <div class="color-dot" data-name="Brown" style="background:#8B4513" data-accent="brown" onclick="setAccent('brown')"></div>
+                    <div class="color-dot" data-name="Yellow" style="background:#ffcc00" data-accent="yellow" onclick="setAccent('yellow')"></div>
+                    <div class="color-dot" data-name="Black" style="background:#444444" data-accent="black" onclick="setAccent('black')"></div>
+                    <div class="color-dot" data-name="Grey" style="background:#808080" data-accent="grey" onclick="setAccent('grey')"></div>
+                    <div class="color-dot" data-name="Slate" style="background:#334155" data-accent="slate" onclick="setAccent('slate')"></div>
+                    <div class="color-dot" data-name="Pink" style="background:#ff66b2" data-accent="pink" onclick="setAccent('pink')"></div>
+                    <div class="color-dot" data-name="Green" style="background:#228b22" data-accent="green" onclick="setAccent('green')"></div>
+                    <div class="color-dot" data-name="Orange" style="background:#ff8c00" data-accent="orange" onclick="setAccent('orange')"></div>
+                    <div class="color-dot" data-name="Teal" style="background:#008080" data-accent="teal" onclick="setAccent('teal')"></div>
                 </div>
             </div>
         </div>
@@ -610,21 +610,22 @@
 
         // ========== DARK/LIGHT MODE & ACCENT MANAGEMENT ==========
         let currentMode = 'dark';
-        let currentAccent = 'pink';
+        let currentAccent = 'red';
 
+        // Updated accent color map using Azkar tracker hex codes
         const accentColorMap = {
-            pink: '#ff9eb5',
-            purple: '#c4a6ff',
-            red: '#ff8888',
-            orange: '#ffb380',
+            red: '#cc0000',
+            purple: '#800080',
+            blue: '#0066cc',
+            brown: '#8B4513',
             yellow: '#ffcc00',
-            green: '#88ffaa',
-            cyan: '#66eeff',
-            blue: '#88aaff',
-            brown: '#ffcc99',
-            grey: '#aaaaaa',
-            black: '#999999',
-            magenta: '#ff99cc'
+            black: '#444444',
+            grey: '#808080',
+            slate: '#334155',
+            pink: '#ff66b2',
+            green: '#228b22',
+            orange: '#ff8c00',
+            teal: '#008080'
         };
 
         function updateSelectedDot() {
@@ -634,7 +635,7 @@
         }
 
         function applyTheme() {
-            const accentColor = accentColorMap[currentAccent] || '#ff9eb5';
+            const accentColor = accentColorMap[currentAccent] || '#cc0000';
             document.documentElement.style.setProperty('--accent-color', accentColor);
             
             if (currentMode === 'dark') {
@@ -718,8 +719,8 @@
             }
         };
 
-        const COLOR_NAMES_EN = ["Pink", "Purple", "Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Brown", "Grey", "Black", "Magenta"];
-        const COLOR_NAMES_AR = ["وردي", "بنفسجي", "أحمر", "برتقالي", "أصفر", "أخضر", "سماوي", "أزرق", "بني", "رمادي", "أسود", "ماجنتا"];
+        const COLOR_NAMES_EN = ["Red", "Purple", "Blue", "Brown", "Yellow", "Black", "Grey", "Slate", "Pink", "Green", "Orange", "Teal"];
+        const COLOR_NAMES_AR = ["أحمر", "بنفسجي", "أزرق", "بني", "أصفر", "أسود", "رمادي", "سحابي داكن", "وردي", "أخضر", "برتقالي", "تركوازي"];
 
         function updateColorNames() {
             const dots = document.querySelectorAll('.color-dot');
@@ -934,8 +935,8 @@
                 if (savedMode === 'light') currentMode = 'light';
                 else currentMode = 'dark';
                 const savedAccent = localStorage.getItem(widgetId + '_accent');
-                if (savedAccent) currentAccent = savedAccent;
-                else currentAccent = 'pink';
+                if (savedAccent && accentColorMap[savedAccent]) currentAccent = savedAccent;
+                else currentAccent = 'red';
 
                 setMode(currentMode);
                 setAccent(currentAccent);
