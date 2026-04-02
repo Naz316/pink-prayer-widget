@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -493,6 +494,7 @@
         }
     </style>
 </head>
+
 <body>
     <audio id="adhan-audio" src="https://www.islamcan.com/audio/adhan/azan1.mp3" preload="auto"></audio>
     <div id="audio-hint">Sound Enabled</div>
@@ -598,13 +600,16 @@
             "https://cdn-icons-png.flaticon.com/128/7321/7321062.png"
         ];
         let currentIconIndex = 0;
+
         function cycleIcon() {
             currentIconIndex = (currentIconIndex + 1) % iconUrls.length;
             const img = document.getElementById('switchIconImg');
             if (img) {
                 img.src = iconUrls[currentIconIndex];
                 img.style.opacity = '0.7';
-                setTimeout(() => { if(img) img.style.opacity = '1'; }, 80);
+                setTimeout(() => {
+                    if (img) img.style.opacity = '1';
+                }, 80);
             }
         }
 
@@ -637,7 +642,7 @@
         function applyTheme() {
             const accentColor = accentColorMap[currentAccent] || '#cc0000';
             document.documentElement.style.setProperty('--accent-color', accentColor);
-            
+
             if (currentMode === 'dark') {
                 document.body.classList.remove('light-mode');
                 document.documentElement.setAttribute('data-theme', currentAccent);
@@ -669,8 +674,19 @@
         const urlParams = new URLSearchParams(window.location.search);
         const widgetId = urlParams.get('id') || 'default';
 
-        function getStorage(key) { try { return localStorage.getItem(widgetId + '_' + key); } catch(e) { return null; } }
-        function setStorage(key, val) { try { localStorage.setItem(widgetId + '_' + key, val); } catch(e) {} }
+        function getStorage(key) {
+            try {
+                return localStorage.getItem(widgetId + '_' + key);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setStorage(key, val) {
+            try {
+                localStorage.setItem(widgetId + '_' + key, val);
+            } catch (e) {}
+        }
 
         const COUNTRY_DATA = {
             "Algeria": ["Ain Oussera", "Algiers"],
@@ -688,11 +704,36 @@
         };
 
         const DICT_COUNTRIES = {
-            "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية", "Egypt": "مصر", "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا", "US": "أمريكا", "UK": "بريطانيا", "Turkey": "تركيا", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا"
+            "Algeria": "الجزائر",
+            "Palestine": "فلسطين",
+            "Saudi Arabia": "السعودية",
+            "Egypt": "مصر",
+            "Morocco": "المغرب",
+            "Tunisia": "تونس",
+            "France": "فرنسا",
+            "US": "أمريكا",
+            "UK": "بريطانيا",
+            "Turkey": "تركيا",
+            "Indonesia": "إندونيسيا",
+            "Malaysia": "ماليزيا"
         };
-        
+
         const DICT_CITIES = {
-            "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة", "Madinah": "المدينة المنورة", "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة", "Paris": "باريس", "Washington": "واشنطن", "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور"
+            "Ain Oussera": "عين وسارة",
+            "Algiers": "الجزائر العاصمة",
+            "Makkah": "مكة المكرمة",
+            "Madinah": "المدينة المنورة",
+            "Gaza": "غزة",
+            "Jerusalem": "القدس",
+            "Cairo": "القاهرة",
+            "Rabat": "الرباط",
+            "Tunis": "تونس العاصمة",
+            "Paris": "باريس",
+            "Washington": "واشنطن",
+            "London": "لندن",
+            "Ankara": "أنقرة",
+            "Jakarta": "جاكرتا",
+            "Kuala Lumpur": "كوالالمبور"
         };
 
         const state = {
@@ -708,14 +749,30 @@
 
         const TEXT = {
             en: {
-                fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
-                next: "Next Prayer", loading: "Loading...", btn: "عربي",
-                selCity: "Choose City", selCountry: "Choose Country"
+                fajr: "Fajr",
+                sunrise: "Sunrise",
+                dhuhr: "Dhuhr",
+                asr: "Asr",
+                maghrib: "Maghrib",
+                isha: "Isha",
+                next: "Next Prayer",
+                loading: "Loading...",
+                btn: "عربي",
+                selCity: "Choose City",
+                selCountry: "Choose Country"
             },
             ar: {
-                fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء",
-                next: "الصلاة القادمة", loading: "جاري التحميل...", btn: "EN",
-                selCity: "اختر المدينة", selCountry: "اختر الدولة"
+                fajr: "الفجر",
+                sunrise: "الشروق",
+                dhuhr: "الظهر",
+                asr: "العصر",
+                maghrib: "المغرب",
+                isha: "العشاء",
+                next: "الصلاة القادمة",
+                loading: "جاري التحميل...",
+                btn: "EN",
+                selCity: "اختر المدينة",
+                selCountry: "اختر الدولة"
             }
         };
 
@@ -735,15 +792,15 @@
 
         function populateCities(country) {
             const citySelect = document.getElementById('input-city');
-            citySelect.innerHTML = ""; 
+            citySelect.innerHTML = "";
             const cities = COUNTRY_DATA[country] || ["Capital"];
             cities.forEach(city => {
                 const opt = document.createElement('option');
                 opt.value = city;
-                opt.text = city; 
+                opt.text = city;
                 citySelect.appendChild(opt);
             });
-            if(state.lang === 'ar') updateInputTexts('ar');
+            if (state.lang === 'ar') updateInputTexts('ar');
         }
 
         function getKeyByValue(object, value) {
@@ -755,14 +812,14 @@
                 let engCity = state.city;
                 let engCountry = state.country;
                 const kCity = Object.keys(DICT_CITIES).find(key => DICT_CITIES[key] === state.city);
-                if(kCity) engCity = kCity;
+                if (kCity) engCity = kCity;
                 const kCountry = Object.keys(DICT_COUNTRIES).find(key => DICT_COUNTRIES[key] === state.country);
-                if(kCountry) engCountry = kCountry;
+                if (kCountry) engCountry = kCountry;
 
                 const url = `https://api.aladhan.com/v1/timingsByCity?city=${engCity}&country=${engCountry}&method=19`;
                 const res = await fetch(url);
                 const data = await res.json();
-                
+
                 if (data.code === 200) {
                     state.timings = data.data.timings;
                     state.hijri = data.data.date.hijri;
@@ -773,7 +830,7 @@
                 } else {
                     document.getElementById('date-display').innerText = "API Error";
                 }
-            } catch (e) { 
+            } catch (e) {
                 console.error("API Error", e);
                 document.getElementById('date-display').innerText = "Network Error";
             }
@@ -781,24 +838,38 @@
 
         function getCurrentTimeInZone() {
             const now = new Date();
-            if (!state.timezone) return { h: now.getHours(), m: now.getMinutes(), s: now.getSeconds() };
-            const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: state.timezone, hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false });
+            if (!state.timezone) return {
+                h: now.getHours(),
+                m: now.getMinutes(),
+                s: now.getSeconds()
+            };
+            const formatter = new Intl.DateTimeFormat('en-GB', {
+                timeZone: state.timezone,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: false
+            });
             const parts = formatter.formatToParts(now);
             const h = parseInt(parts.find(p => p.type === 'hour').value);
             const m = parseInt(parts.find(p => p.type === 'minute').value);
             const s = parseInt(parts.find(p => p.type === 'second').value);
-            return { h, m, s };
+            return {
+                h,
+                m,
+                s
+            };
         }
 
         function tick() {
             const time = getCurrentTimeInZone();
             const clockEl = document.getElementById('clock');
             clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
-            if(state.timings) updateCountdown(time);
+            if (state.timings) updateCountdown(time);
         }
 
         function playAdhan(prayerName) {
-            if(state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
+            if (state.sound && state.lastPlayedPrayer !== prayerName && prayerName !== 'Sunrise') {
                 audio.currentTime = 0;
                 audio.play().catch(e => console.error("Play failed:", e));
                 state.lastPlayedPrayer = prayerName;
@@ -809,24 +880,30 @@
             const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
             const dict = TEXT[state.lang];
             const timeStr = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
-            for(let i=0; i<prayers.length; i++) {
-                if(state.timings[prayers[i]] === timeStr && time.s < 2) playAdhan(prayers[i]);
+            for (let i = 0; i < prayers.length; i++) {
+                if (state.timings[prayers[i]] === timeStr && time.s < 2) playAdhan(prayers[i]);
             }
             const curMins = time.h * 60 + time.m;
             const curSecs = time.s;
-            let nextP = null; let nextName = "";
-            for(let i=0; i<prayers.length; i++) {
+            let nextP = null;
+            let nextName = "";
+            for (let i = 0; i < prayers.length; i++) {
                 const [h, m] = state.timings[prayers[i]].split(':').map(Number);
                 const pMins = h * 60 + m;
-                if(pMins > curMins) { nextP = pMins; nextName = prayers[i]; break; }
+                if (pMins > curMins) {
+                    nextP = pMins;
+                    nextName = prayers[i];
+                    break;
+                }
             }
-            if(!nextP) {
+            if (!nextP) {
                 const [h, m] = state.timings['Fajr'].split(':').map(Number);
-                nextP = (h * 60 + m) + (24 * 60); nextName = 'Fajr';
+                nextP = (h * 60 + m) + (24 * 60);
+                nextName = 'Fajr';
             }
             document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
             const activeEl = document.getElementById(`p-${nextName}`);
-            if(activeEl) activeEl.classList.add('active');
+            if (activeEl) activeEl.classList.add('active');
 
             const nextTotalSeconds = nextP * 60;
             const currentTotalSeconds = (curMins * 60) + curSecs;
@@ -834,15 +911,17 @@
             const hLeft = Math.floor(diffInSeconds / 3600);
             diffInSeconds %= 3600;
             const mLeft = Math.floor(diffInSeconds / 60);
-            const sLeft = diffInSeconds % 60; 
+            const sLeft = diffInSeconds % 60;
             document.getElementById('countdown').innerText = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('lbl-next').innerText = `${dict.next}: ${dict[nextName.toLowerCase()]}`;
             if (hLeft > 0 || mLeft > 1) state.lastPlayedPrayer = "";
         }
 
         function renderDate() {
-            if(!state.timings || !state.hijri) return;
-            const h = state.hijri; const el = document.getElementById('date-display'); const now = new Date();
+            if (!state.timings || !state.hijri) return;
+            const h = state.hijri;
+            const el = document.getElementById('date-display');
+            const now = new Date();
             if (state.lang === 'en') {
                 const suffix = getOrdinal(h.day);
                 el.innerHTML = `<span class="date-hijri">${h.day}${suffix} ${h.month.en}, ${h.year} AH</span><span class="date-greg">${now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</span>`;
@@ -851,13 +930,20 @@
             }
         }
 
-        function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
+        function getOrdinal(n) {
+            const s = ["th", "st", "nd", "rd"];
+            const v = n % 100;
+            return s[(v - 20) % 10] || s[v] || s[0];
+        }
 
         function renderPrayerTimes() {
-            const container = document.getElementById('prayers-container'); container.innerHTML = '';
+            const container = document.getElementById('prayers-container');
+            container.innerHTML = '';
             const dict = TEXT[state.lang];
             ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
-                const div = document.createElement('div'); div.className = 'prayer-item'; div.id = `p-${k}`;
+                const div = document.createElement('div');
+                div.className = 'prayer-item';
+                div.id = `p-${k}`;
                 div.innerHTML = `<span class="p-name">${dict[k.toLowerCase()]}</span><span class="p-time">${state.timings[k].split(' ')[0]}</span>`;
                 container.appendChild(div);
             });
@@ -869,23 +955,31 @@
             document.getElementById('lbl-country').innerText = dict.selCountry;
             document.getElementById('btn-lang').innerText = dict.btn;
             let displayCity = state.city;
-            if(state.lang === 'ar') displayCity = DICT_CITIES[displayCity] || displayCity;
+            if (state.lang === 'ar') displayCity = DICT_CITIES[displayCity] || displayCity;
             document.getElementById('city-display').innerText = displayCity;
         }
 
-        function toggleLang() { applyLang(state.lang === 'en' ? 'ar' : 'en'); }
+        function toggleLang() {
+            applyLang(state.lang === 'en' ? 'ar' : 'en');
+        }
 
         function applyLang(l) {
-            state.lang = l; setStorage('p_lang', l); document.documentElement.lang = l;
-            renderStaticText(); updateInputTexts(l);
+            state.lang = l;
+            setStorage('p_lang', l);
+            document.documentElement.lang = l;
+            renderStaticText();
+            updateInputTexts(l);
             updateColorNames();
-            if(state.timings) { renderPrayerTimes(); renderDate(); }
+            if (state.timings) {
+                renderPrayerTimes();
+                renderDate();
+            }
         }
 
         function updateInputTexts(l) {
             const countrySelect = document.getElementById('input-country');
             for (let i = 0; i < countrySelect.options.length; i++) {
-                const engVal = countrySelect.options[i].value; 
+                const engVal = countrySelect.options[i].value;
                 countrySelect.options[i].text = (l === 'ar' && DICT_COUNTRIES[engVal]) ? DICT_COUNTRIES[engVal] : engVal;
             }
             const citySelect = document.getElementById('input-city');
@@ -896,17 +990,36 @@
         }
 
         function toggleSound() {
-            const btn = document.getElementById('btn-sound'); const hint = document.getElementById('audio-hint');
-            if(!state.sound) {
-                state.sound = true; btn.innerText = "🔊"; btn.style.opacity = "1";
-                hint.innerText = "Testing Audio..."; hint.style.opacity = '1';
-                audio.play().then(() => { setTimeout(() => { audio.pause(); audio.currentTime = 0; hint.innerText = "Sound Enabled"; setTimeout(() => hint.style.opacity = '0', 2000); }, 3000); }).catch(err => { hint.innerText = "Error"; });
+            const btn = document.getElementById('btn-sound');
+            const hint = document.getElementById('audio-hint');
+            if (!state.sound) {
+                state.sound = true;
+                btn.innerText = "🔊";
+                btn.style.opacity = "1";
+                hint.innerText = "Testing Audio...";
+                hint.style.opacity = '1';
+                audio.play().then(() => {
+                    setTimeout(() => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        hint.innerText = "Sound Enabled";
+                        setTimeout(() => hint.style.opacity = '0', 2000);
+                    }, 3000);
+                }).catch(err => {
+                    hint.innerText = "Error";
+                });
             } else {
-                state.sound = false; btn.innerText = "🔇"; btn.style.opacity = "0.5"; audio.pause();
+                state.sound = false;
+                btn.innerText = "🔇";
+                btn.style.opacity = "0.5";
+                audio.pause();
             }
         }
 
-        function toggleColors() { const m = document.getElementById('color-menu'); m.style.display = m.style.display === 'grid' ? 'none' : 'grid'; }
+        function toggleColors() {
+            const m = document.getElementById('color-menu');
+            m.style.display = m.style.display === 'grid' ? 'none' : 'grid';
+        }
 
         function updateLoc() {
             state.city = document.getElementById('input-city').value;
@@ -914,12 +1027,13 @@
             setStorage('p_city', state.city);
             setStorage('p_country', state.country);
             document.getElementById('date-display').innerText = TEXT[state.lang].loading;
-            renderStaticText(); fetchData();
+            renderStaticText();
+            fetchData();
         }
 
         function changeCountry() {
             const countrySelect = document.getElementById('input-country');
-            const val = countrySelect.value; 
+            const val = countrySelect.value;
             const engCountry = getKeyByValue(DICT_COUNTRIES, val) || val;
             state.country = engCountry;
             populateCities(state.country);
@@ -942,17 +1056,17 @@
                 setAccent(currentAccent);
 
                 const params = new URLSearchParams(window.location.search);
-                if(params.get('country')) state.country = params.get('country');
-                if(params.get('city')) state.city = params.get('city');
+                if (params.get('country')) state.country = params.get('country');
+                if (params.get('city')) state.city = params.get('city');
 
                 populateCities(state.country);
                 document.getElementById('input-country').value = state.country;
                 const citySel = document.getElementById('input-city');
                 let cityExists = false;
-                for(let i=0; i<citySel.options.length; i++) {
-                    if(citySel.options[i].value === state.city) cityExists = true;
+                for (let i = 0; i < citySel.options.length; i++) {
+                    if (citySel.options[i].value === state.city) cityExists = true;
                 }
-                if(!cityExists && citySel.options.length > 0) state.city = citySel.options[0].value;
+                if (!cityExists && citySel.options.length > 0) state.city = citySel.options[0].value;
                 citySel.value = state.city;
 
                 applyLang(state.lang);
@@ -971,4 +1085,5 @@
         };
     </script>
 </body>
+
 </html>
