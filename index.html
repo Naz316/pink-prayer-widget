@@ -213,16 +213,22 @@
         .prayer-item:last-child { border-right: none; }
         .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
 
-        /* Icons: remove white background using blend modes */
+        /* --- UPDATED ICON TRANSPARENCY SYSTEM --- */
         .p-icon {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             object-fit: contain;
             margin-bottom: 2px;
-            mix-blend-mode: screen;  /* works in dark mode (removes white) */
+            /* Remove white background in Dark Mode by inverting white to black, then using screen blend */
+            filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1);
+            mix-blend-mode: screen;
+            transition: filter 0.3s ease, transform 0.3s ease;
         }
+
+        /* Revert filters for Light Mode to use multiply blend (best for white backgrounds on light surfaces) */
         body.light-mode .p-icon {
-            mix-blend-mode: multiply; /* removes white background in light mode */
+            filter: none;
+            mix-blend-mode: multiply;
         }
 
         .controls-row {
@@ -549,7 +555,7 @@
             }
         }
 
-        // ========== ANIMATED PRAYER ICONS (GIF) with new Fajr ==========
+        // ========== ANIMATED PRAYER ICONS (GIF) with high quality links ==========
         const PRAYER_ICONS = {
             'Fajr': 'https://cdn-icons-gif.flaticon.com/14263/14263777.gif',
             'Sunrise': 'https://cdn-icons-gif.flaticon.com/14204/14204927.gif',
@@ -610,7 +616,7 @@
             applyTheme();
         }
 
-        // ========== MAIN SCRIPT (full featured) ==========
+        // ========== MAIN SCRIPT ==========
         const widgetId = 'prayer_tracker';
         function getStorage(key) { try { return localStorage.getItem(widgetId + '_' + key); } catch(e) { return null; } }
         function setStorage(key, val) { try { localStorage.setItem(widgetId + '_' + key, val); } catch(e) {} }
