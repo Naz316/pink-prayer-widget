@@ -536,7 +536,11 @@
     </div>
 
     <script>
-        // ========== ICON CYCLE ==========
+        // ========== UNIQUE ID FOR MULTIPLE PAGES ==========
+        const urlParams = new URLSearchParams(window.location.search);
+        const widgetId = urlParams.get('id') || 'default';
+
+        // ========== ICON CYCLE WITH PERSISTENCE ==========
         const iconUrls = [
             "https://cdn-icons-png.flaticon.com/128/2918/2918211.png",
             "https://cdn-icons-png.flaticon.com/128/1717/1717468.png",
@@ -545,6 +549,22 @@
             "https://cdn-icons-png.flaticon.com/128/7321/7321062.png"
         ];
         let currentIconIndex = 0;
+
+        function saveIconIndex() {
+            localStorage.setItem(widgetId + '_iconIndex', currentIconIndex);
+        }
+
+        function loadIconIndex() {
+            const saved = localStorage.getItem(widgetId + '_iconIndex');
+            if (saved !== null && !isNaN(parseInt(saved))) {
+                currentIconIndex = parseInt(saved) % iconUrls.length;
+            } else {
+                currentIconIndex = 0;
+            }
+            const img = document.getElementById('switchIconImg');
+            if (img) img.src = iconUrls[currentIconIndex];
+        }
+
         function cycleIcon() {
             currentIconIndex = (currentIconIndex + 1) % iconUrls.length;
             const img = document.getElementById('switchIconImg');
@@ -553,9 +573,10 @@
                 img.style.opacity = '0.7';
                 setTimeout(() => { if(img) img.style.opacity = '1'; }, 80);
             }
+            saveIconIndex();
         }
 
-        // ========== ANIMATED PRAYER ICONS (GIF) with high quality links ==========
+        // ========== ANIMATED PRAYER ICONS ==========
         const PRAYER_ICONS = {
             'Fajr': 'https://cdn-icons-gif.flaticon.com/14263/14263777.gif',
             'Sunrise': 'https://cdn-icons-gif.flaticon.com/14204/14204927.gif',
@@ -576,10 +597,6 @@
             yellow: '#ffcc00', green: '#228b22', cyan: '#008080', blue: '#0066cc',
             brown: '#8B4513', grey: '#808080', black: '#444444', magenta: '#d94f8c'
         };
-
-        // ========== UNIQUE ID FOR MULTIPLE PAGES (FIXED) ==========
-        const urlParams = new URLSearchParams(window.location.search);
-        const widgetId = urlParams.get('id') || 'default';
 
         let currentMode = 'dark';
         let currentAccent = 'pink';
@@ -881,6 +898,10 @@
         // --- INIT ---
         window.onload = () => {
             try {
+                // Load floating icon index first
+                loadIconIndex();
+
+                // Load mode and accent
                 const savedMode = localStorage.getItem(widgetId + '_mode');
                 if (savedMode === 'light') currentMode = 'light';
                 else currentMode = 'dark';
