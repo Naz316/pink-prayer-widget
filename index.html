@@ -138,7 +138,7 @@
             z-index: 25;
             filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
             transition: transform 0.2s ease, filter 0.2s;
-            animation: gentleFloat 2.5s ease-in-out infinite;
+            animation: gentleFloat 2s ease-in-out infinite;
             background: transparent;
             padding: 6px;
             border-radius: 60px;
@@ -147,7 +147,7 @@
         .floating-icon img { width: 52px; height: 52px; object-fit: contain; display: block; pointer-events: none; }
         @keyframes gentleFloat {
             0% { transform: translateX(-50%) translateY(0px); }
-            50% { transform: translateX(-50%) translateY(-5px); }
+            50% { transform: translateX(-50%) translateY(-12px); }
             100% { transform: translateX(-50%) translateY(0px); }
         }
         @media (max-width: 500px) {
