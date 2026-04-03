@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Prayer Tracker · Floating Icons · Dark/Light Mode</title>
+    <title>Prayer Tracker · Animated Icons · Hybrid Colors · No White BG</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         /* --- RESET & VARIABLES --- */
@@ -19,24 +19,24 @@
             --highlight-bg: #782a3b;
             --input-bg: rgba(255,255,255,0.1);
             --font-main: 'Roboto', sans-serif;
-            --accent-color: #cc0000; /* fallback */
+            --accent-color: #ff9eb5;
         }
 
-        /* DARK MODE THEMES (original, using Azkar tracker colors) */
-        [data-theme="red"] { --bg-card: #3B1414; --border-card: #cc0000; --highlight-bg: #cc0000; --text-secondary: #ffcccc; --text-accent: #cc0000; }
-        [data-theme="purple"] { --bg-card: #1E122C; --border-card: #800080; --highlight-bg: #800080; --text-secondary: #dcd0ff; --text-accent: #800080; }
-        [data-theme="blue"] { --bg-card: #0A192F; --border-card: #0066cc; --highlight-bg: #0066cc; --text-secondary: #ccd9ff; --text-accent: #0066cc; }
-        [data-theme="brown"] { --bg-card: #2D1B0D; --border-card: #8B4513; --highlight-bg: #8B4513; --text-secondary: #ffeacc; --text-accent: #8B4513; }
-        [data-theme="yellow"] { --bg-card: #332B00; --border-card: #ffcc00; --highlight-bg: #ffcc00; --text-secondary: #fff8cc; --text-accent: #ffcc00; }
-        [data-theme="black"] { --bg-card: #000000; --border-card: #444444; --highlight-bg: #444444; --text-secondary: #cccccc; --text-accent: #444444; }
-        [data-theme="grey"] { --bg-card: #222222; --border-card: #808080; --highlight-bg: #808080; --text-secondary: #e0e0e0; --text-accent: #808080; }
-        [data-theme="slate"] { --bg-card: #1a202c; --border-card: #334155; --highlight-bg: #334155; --text-secondary: #ccd9ff; --text-accent: #334155; }
-        [data-theme="pink"] { --bg-card: #331122; --border-card: #ff66b2; --highlight-bg: #ff66b2; --text-secondary: #ffccd5; --text-accent: #ff66b2; }
-        [data-theme="green"] { --bg-card: #0D2612; --border-card: #228b22; --highlight-bg: #228b22; --text-secondary: #ccffda; --text-accent: #228b22; }
-        [data-theme="orange"] { --bg-card: #2E1A00; --border-card: #ff8c00; --highlight-bg: #ff8c00; --text-secondary: #ffdec7; --text-accent: #ff8c00; }
-        [data-theme="teal"] { --bg-card: #002222; --border-card: #008080; --highlight-bg: #008080; --text-secondary: #ccf7ff; --text-accent: #008080; }
+        /* ---------- DARK MODE THEMES (7.4 - lighter/softer accents) ---------- */
+        [data-theme="pink"] { --bg-card: #581c33; --border-card: #7a2646; --highlight-bg: #8f2d52; --text-secondary: #ffccd5; --text-accent: #ff9eb5; }
+        [data-theme="purple"] { --bg-card: #2e1a47; --border-card: #4a2b70; --highlight-bg: #5e3691; --text-secondary: #dcd0ff; --text-accent: #c4a6ff; }
+        [data-theme="red"] { --bg-card: #3d0e0e; --border-card: #5e2222; --highlight-bg: #7a1f1f; --text-secondary: #ffcccc; --text-accent: #ff8888; }
+        [data-theme="orange"] { --bg-card: #42210b; --border-card: #663614; --highlight-bg: #8f4718; --text-secondary: #ffdec7; --text-accent: #ffb380; }
+        [data-theme="yellow"] { --bg-card: #3d360e; --border-card: #615619; --highlight-bg: #85751f; --text-secondary: #fff8cc; --text-accent: #ffe666; }
+        [data-theme="green"] { --bg-card: #13381e; --border-card: #225e34; --highlight-bg: #2d7a44; --text-secondary: #ccffda; --text-accent: #88ffaa; }
+        [data-theme="cyan"] { --bg-card: #0e333d; --border-card: #1d5666; --highlight-bg: #24768a; --text-secondary: #ccf7ff; --text-accent: #66eeff; }
+        [data-theme="blue"] { --bg-card: #111e3d; --border-card: #213666; --highlight-bg: #2b498a; --text-secondary: #ccd9ff; --text-accent: #88aaff; }
+        [data-theme="brown"] { --bg-card: #3d2b1e; --border-card: #5e4430; --highlight-bg: #7a583e; --text-secondary: #ffeacc; --text-accent: #ffcc99; }
+        [data-theme="grey"] { --bg-card: #262626; --border-card: #404040; --highlight-bg: #595959; --text-secondary: #e0e0e0; --text-accent: #aaaaaa; }
+        [data-theme="black"] { --bg-card: #000000; --border-card: #333333; --highlight-bg: #333333; --text-secondary: #cccccc; --text-accent: #999999; }
+        [data-theme="magenta"] { --bg-card: #3d1a2f; --border-card: #6a2e4a; --highlight-bg: #b8456f; --text-secondary: #ffcce5; --text-accent: #ff99cc; }
 
-        /* LIGHT MODE OVERRIDES — uses same accent colors as dark mode for text and highlights */
+        /* ---------- LIGHT MODE OVERRIDES (7.5 - darker/vibrant accents) ---------- */
         body.light-mode {
             --bg-card: #ffffff;
             --header-bg: #f5f5f5;
@@ -47,7 +47,6 @@
             --text-accent: var(--accent-color);
             --highlight-bg: var(--accent-color);
         }
-        /* Active prayer highlight in light mode */
         body.light-mode .prayer-item.active {
             background-color: var(--accent-color);
         }
@@ -55,59 +54,39 @@
         body.light-mode .prayer-item.active .p-time {
             color: white;
         }
-        /* For light mode, dropdown options need dark text for readability */
         body.light-mode .input-box option {
             background: #fff;
             color: #222;
         }
 
-        /* --- GLOBAL TEXT STYLES: all non-active text uses accent color --- */
-        .label-text,
-        .main-text,
-        .input-label,
-        .p-name,
-        .p-time,
-        .date-hijri,
-        .date-greg,
-        #city-display,
-        #clock,
-        #countdown,
-        #lbl-next,
-        .input-box {
+        /* --- GLOBAL TEXT STYLES --- */
+        .label-text, .main-text, .input-label, .p-name, .p-time, .date-hijri, .date-greg,
+        #city-display, #clock, #countdown, #lbl-next, .input-box {
             color: var(--text-accent);
         }
-
-        /* Active prayer item text becomes white */
-        .prayer-item.active .p-name,
-        .prayer-item.active .p-time {
+        .prayer-item.active .p-name, .prayer-item.active .p-time {
             color: white !important;
         }
-
-        /* Ensure the header labels also use accent */
-        .header-item .label-text,
-        .header-item .main-text {
+        .header-item .label-text, .header-item .main-text {
             color: var(--text-accent);
+        }
+
+        /* --- FIX ARABIC SPACING (remove extra gap between name and time) --- */
+        .prayer-item {
+            gap: 2px;  /* consistent for both languages */
+        }
+        .p-name, .p-time {
+            line-height: 1.2;
         }
 
         /* Smooth transitions */
-        .widget-card,
-        .prayer-item,
-        .prayer-item.active,
-        .p-name,
-        .p-time,
-        .date-hijri,
-        .date-greg,
-        .label-text,
-        .main-text,
-        .input-box,
-        .icon-btn,
-        .lang-btn {
+        .widget-card, .prayer-item, .prayer-item.active, .p-name, .p-time,
+        .date-hijri, .date-greg, .label-text, .main-text, .input-box, .icon-btn, .lang-btn {
             transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
         [lang="ar"] { --font-main: 'Cairo', sans-serif; }
 
-        /* --- LAYOUT (unchanged) --- */
         body {
             background-color: transparent;
             font-family: var(--font-main);
@@ -135,7 +114,6 @@
             position: relative;
         }
 
-        /* HEADER ROW (mosque icon removed) */
         .header-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -146,13 +124,11 @@
             height: 90px;
             overflow: hidden;
         }
-
         .header-item { display: flex; flex-direction: column; justify-content: center; }
         .align-start { align-items: flex-start; text-align: left; }
         .align-end { align-items: flex-end; text-align: right; }
         .align-center { align-items: center; text-align: center; }
 
-        /* --- FLOATING ICON --- */
         .floating-icon {
             position: absolute;
             top: 12px;
@@ -179,7 +155,6 @@
             .floating-icon { top: 12px; }
         }
 
-        /* --- DATE ROW (Hijri above Gregorian) --- */
         .date-row {
             text-align: center;
             padding: 12px 10px; 
@@ -194,14 +169,12 @@
         .date-hijri {
             font-size: 1.1rem;
             font-weight: 700;
-            color: var(--text-accent); 
             margin-bottom: 8px; 
             line-height: 1.2;
             display: block;
         }
         .date-greg {
             font-size: 0.85rem;
-            color: var(--text-secondary); 
             font-weight: 600;
             line-height: 1.2;
             display: block;
@@ -217,32 +190,41 @@
             direction: rtl;
         }
 
-        /* PRAYER BAR */
         .prayer-bar {
             display: flex;
             overflow-x: auto;
             background-color: rgba(0,0,0,0.1);
             scrollbar-width: none;
             direction: ltr;
-            height: 75px; 
+            height: 100px; 
         }
         .prayer-bar::-webkit-scrollbar { display: none; }
 
         .prayer-item {
             flex: 1;
-            min-width: 60px;
+            min-width: 70px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             border-right: 1px solid var(--border-card);
-            gap: 6px;
+            gap: 2px;  /* consistent minimal gap */
         }
         .prayer-item:last-child { border-right: none; }
-        
         .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
 
-        /* CONTROLS SECTION */
+        /* Icons: remove white background using blend modes */
+        .p-icon {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            margin-bottom: 2px;
+            mix-blend-mode: screen;  /* works in dark mode (removes white) */
+        }
+        body.light-mode .p-icon {
+            mix-blend-mode: multiply; /* removes white background in light mode */
+        }
+
         .controls-row {
             padding: 12px 20px; 
             display: flex;
@@ -255,15 +237,7 @@
         }
 
         .input-group { display: flex; flex-direction: column; flex: 1; }
-        
-        .input-label {
-            font-size: 0.7rem;
-            margin-bottom: 8px; 
-            text-align: center;
-            display: block;
-            line-height: 1;
-        }
-
+        .input-label { font-size: 0.7rem; margin-bottom: 8px; text-align: center; display: block; line-height: 1; }
         .inputs-row { display: flex; gap: 15px; width: 100%; }
 
         .input-box {
@@ -283,7 +257,6 @@
         }
         [lang="ar"] .input-box { font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; }
 
-        /* BUTTONS & SLIDER */
         .tools {
             display: flex;
             justify-content: center;
@@ -322,7 +295,7 @@
             justify-content: center;
         }
 
-        /* UPDATED SLIDER (Version B) */
+        /* Custom switch */
         .mode-switch-wrapper {
             display: flex;
             align-items: center;
@@ -372,42 +345,30 @@
             width: 24px;
             top: 2px;
             left: 2px;
-            background-color: var(--knob-bg);
             border-radius: 50%;
             transition: transform 0.3s, background-color 0.3s;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             z-index: 2;
         }
-        /* Dark mode (checked, right): track = accent color, knob = white */
         input:checked + .slider-track {
             background-color: var(--accent-color);
         }
-        input:checked + .slider-track .slider-icons span:first-child {
-            opacity: 0.5;   /* sun dim */
-        }
-        input:checked + .slider-track .slider-icons span:last-child {
-            opacity: 1;     /* moon bright */
-        }
+        input:checked + .slider-track .slider-icons span:first-child { opacity: 0.5; }
+        input:checked + .slider-track .slider-icons span:last-child { opacity: 1; }
         input:checked + .slider-track + .slider-knob {
             background-color: #ffffff;
             transform: translateX(32px);
         }
-        /* Light mode (unchecked, left): track = light grey, knob = accent color */
         input:not(:checked) + .slider-track {
             background-color: #e0e0e0;
         }
-        input:not(:checked) + .slider-track .slider-icons span:first-child {
-            opacity: 1;     /* sun bright */
-        }
-        input:not(:checked) + .slider-track .slider-icons span:last-child {
-            opacity: 0.5;   /* moon dim */
-        }
+        input:not(:checked) + .slider-track .slider-icons span:first-child { opacity: 1; }
+        input:not(:checked) + .slider-track .slider-icons span:last-child { opacity: 0.5; }
         input:not(:checked) + .slider-track + .slider-knob {
             background-color: var(--accent-color);
             transform: translateX(0px);
         }
 
-        /* COLOR POPUP - fixed checkmark */
         .color-popup {
             display: none;
             position: absolute;
@@ -436,12 +397,7 @@
             justify-content: center;
             border: none;
         }
-
-        .color-dot:hover {
-            transform: scale(1.2);
-        }
-
-        /* Checkmark on selected color */
+        .color-dot:hover { transform: scale(1.2); }
         .color-dot.selected::before {
             content: "✓";
             position: absolute;
@@ -454,15 +410,13 @@
             text-shadow: 0 0 2px rgba(0,0,0,0.8);
             z-index: 2;
         }
-
-        /* Tooltip on hover */
         .color-dot:hover::after {
             content: attr(data-name);
             position: absolute;
             bottom: 150%;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0,0,0,0.9);
             color: #fff;
             padding: 4px 8px;
             font-size: 11px;
@@ -473,10 +427,7 @@
             z-index: 100;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
-
-        [lang="ar"] .color-dot:hover::after {
-            font-family: 'Cairo', sans-serif;
-        }
+        [lang="ar"] .color-dot:hover::after { font-family: 'Cairo', sans-serif; }
 
         #audio-hint {
             position: absolute;
@@ -498,12 +449,10 @@
     <div id="audio-hint">Sound Enabled</div>
 
     <div class="widget-card">
-        <!-- Floating Icon -->
         <div class="floating-icon" id="floatingIcon">
             <img id="switchIconImg" src="https://cdn-icons-png.flaticon.com/128/2918/2918211.png" alt="icon">
         </div>
 
-        <!-- HEADER -->
         <div class="header-row">
             <div class="header-item align-start">
                 <span class="label-text" id="lbl-next">Next Prayer</span>
@@ -516,15 +465,12 @@
             </div>
         </div>
 
-        <!-- DATE -->
         <div class="date-row">
-            <div class="date-text" id="date-display">Loading...</div>
+            <div id="date-display">Loading...</div>
         </div>
 
-        <!-- PRAYER SCROLL -->
         <div class="prayer-bar" id="prayers-container"></div>
 
-        <!-- CONTROLS -->
         <div class="controls-row">
             <div class="inputs-row">
                 <div class="input-group">
@@ -555,34 +501,29 @@
                 <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
-                <!-- Dark/Light Switch -->
                 <div class="mode-switch-wrapper">
                     <label class="custom-switch">
                         <input type="checkbox" id="darkLightToggle">
                         <div class="slider-track">
-                            <div class="slider-icons">
-                                <span>☀️</span>
-                                <span>🌙</span>
-                            </div>
+                            <div class="slider-icons"><span>☀️</span><span>🌙</span></div>
                         </div>
                         <div class="slider-knob"></div>
                     </label>
                 </div>
 
-                <!-- Color Popup -->
                 <div class="color-popup" id="color-menu">
-                    <div class="color-dot" data-name="Red" style="background:#cc0000" data-accent="red" onclick="setAccent('red')"></div>
-                    <div class="color-dot" data-name="Purple" style="background:#800080" data-accent="purple" onclick="setAccent('purple')"></div>
-                    <div class="color-dot" data-name="Blue" style="background:#0066cc" data-accent="blue" onclick="setAccent('blue')"></div>
-                    <div class="color-dot" data-name="Brown" style="background:#8B4513" data-accent="brown" onclick="setAccent('brown')"></div>
-                    <div class="color-dot" data-name="Yellow" style="background:#ffcc00" data-accent="yellow" onclick="setAccent('yellow')"></div>
-                    <div class="color-dot" data-name="Black" style="background:#444444" data-accent="black" onclick="setAccent('black')"></div>
-                    <div class="color-dot" data-name="Grey" style="background:#808080" data-accent="grey" onclick="setAccent('grey')"></div>
-                    <div class="color-dot" data-name="Slate" style="background:#334155" data-accent="slate" onclick="setAccent('slate')"></div>
-                    <div class="color-dot" data-name="Pink" style="background:#ff66b2" data-accent="pink" onclick="setAccent('pink')"></div>
-                    <div class="color-dot" data-name="Green" style="background:#228b22" data-accent="green" onclick="setAccent('green')"></div>
-                    <div class="color-dot" data-name="Orange" style="background:#ff8c00" data-accent="orange" onclick="setAccent('orange')"></div>
-                    <div class="color-dot" data-name="Teal" style="background:#008080" data-accent="teal" onclick="setAccent('teal')"></div>
+                    <div class="color-dot" data-name="Pink" style="background:#581c33" data-accent="pink" onclick="setAccent('pink')"></div>
+                    <div class="color-dot" data-name="Purple" style="background:#2e1a47" data-accent="purple" onclick="setAccent('purple')"></div>
+                    <div class="color-dot" data-name="Red" style="background:#3d0e0e" data-accent="red" onclick="setAccent('red')"></div>
+                    <div class="color-dot" data-name="Orange" style="background:#42210b" data-accent="orange" onclick="setAccent('orange')"></div>
+                    <div class="color-dot" data-name="Yellow" style="background:#85751f" data-accent="yellow" onclick="setAccent('yellow')"></div>
+                    <div class="color-dot" data-name="Green" style="background:#13381e" data-accent="green" onclick="setAccent('green')"></div>
+                    <div class="color-dot" data-name="Cyan" style="background:#0e333d" data-accent="cyan" onclick="setAccent('cyan')"></div>
+                    <div class="color-dot" data-name="Blue" style="background:#111e3d" data-accent="blue" onclick="setAccent('blue')"></div>
+                    <div class="color-dot" data-name="Brown" style="background:#3d2b1e" data-accent="brown" onclick="setAccent('brown')"></div>
+                    <div class="color-dot" data-name="Grey" style="background:#595959" data-accent="grey" onclick="setAccent('grey')"></div>
+                    <div class="color-dot" data-name="Black" style="background:#000" data-accent="black" onclick="setAccent('black')"></div>
+                    <div class="color-dot" data-name="Magenta" style="background:#d94f8c" data-accent="magenta" onclick="setAccent('magenta')"></div>
                 </div>
             </div>
         </div>
@@ -608,25 +549,30 @@
             }
         }
 
-        // ========== DARK/LIGHT MODE & ACCENT MANAGEMENT ==========
-        let currentMode = 'dark';
-        let currentAccent = 'red';
-
-        // Updated accent color map using Azkar tracker hex codes
-        const accentColorMap = {
-            red: '#cc0000',
-            purple: '#800080',
-            blue: '#0066cc',
-            brown: '#8B4513',
-            yellow: '#ffcc00',
-            black: '#444444',
-            grey: '#808080',
-            slate: '#334155',
-            pink: '#ff66b2',
-            green: '#228b22',
-            orange: '#ff8c00',
-            teal: '#008080'
+        // ========== ANIMATED PRAYER ICONS (GIF) with new Fajr ==========
+        const PRAYER_ICONS = {
+            'Fajr': 'https://cdn-icons-gif.flaticon.com/14263/14263777.gif',
+            'Sunrise': 'https://cdn-icons-gif.flaticon.com/14204/14204927.gif',
+            'Dhuhr': 'https://cdn-icons-gif.flaticon.com/17102/17102813.gif',
+            'Asr': 'https://cdn-icons-gif.flaticon.com/17102/17102931.gif',
+            'Maghrib': 'https://cdn-icons-gif.flaticon.com/11779/11779599.gif',
+            'Isha': 'https://cdn-icons-gif.flaticon.com/18970/18970840.gif'
         };
+
+        // ========== DUAL COLOR SCHEMES ==========
+        const darkAccentMap = {
+            pink: '#ff9eb5', purple: '#c4a6ff', red: '#ff8888', orange: '#ffb380',
+            yellow: '#ffe666', green: '#88ffaa', cyan: '#66eeff', blue: '#88aaff',
+            brown: '#ffcc99', grey: '#aaaaaa', black: '#999999', magenta: '#ff99cc'
+        };
+        const lightAccentMap = {
+            pink: '#ff66b2', purple: '#800080', red: '#cc0000', orange: '#ff8c00',
+            yellow: '#ffcc00', green: '#228b22', cyan: '#008080', blue: '#0066cc',
+            brown: '#8B4513', grey: '#808080', black: '#444444', magenta: '#d94f8c'
+        };
+
+        let currentMode = 'dark';
+        let currentAccent = 'pink';
 
         function updateSelectedDot() {
             document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('selected'));
@@ -635,13 +581,12 @@
         }
 
         function applyTheme() {
-            const accentColor = accentColorMap[currentAccent] || '#cc0000';
+            const accentColor = (currentMode === 'dark') ? darkAccentMap[currentAccent] : lightAccentMap[currentAccent];
             document.documentElement.style.setProperty('--accent-color', accentColor);
             
             if (currentMode === 'dark') {
                 document.body.classList.remove('light-mode');
                 document.documentElement.setAttribute('data-theme', currentAccent);
-                document.body.style.removeProperty('--light-accent-color');
             } else {
                 document.body.classList.add('light-mode');
                 document.documentElement.removeAttribute('data-theme');
@@ -665,10 +610,8 @@
             applyTheme();
         }
 
-        // ========== ORIGINAL SCRIPT ==========
-        const urlParams = new URLSearchParams(window.location.search);
-        const widgetId = urlParams.get('id') || 'default';
-
+        // ========== MAIN SCRIPT (full featured) ==========
+        const widgetId = 'prayer_tracker';
         function getStorage(key) { try { return localStorage.getItem(widgetId + '_' + key); } catch(e) { return null; } }
         function setStorage(key, val) { try { localStorage.setItem(widgetId + '_' + key, val); } catch(e) {} }
 
@@ -688,11 +631,14 @@
         };
 
         const DICT_COUNTRIES = {
-            "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية", "Egypt": "مصر", "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا", "US": "أمريكا", "UK": "بريطانيا", "Turkey": "تركيا", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا"
+            "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية", "Egypt": "مصر",
+            "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا", "US": "أمريكا", "UK": "بريطانيا",
+            "Turkey": "تركيا", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا"
         };
-        
         const DICT_CITIES = {
-            "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة", "Madinah": "المدينة المنورة", "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة", "Paris": "باريس", "Washington": "واشنطن", "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور"
+            "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة", "Madinah": "المدينة المنورة",
+            "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة",
+            "Paris": "باريس", "Washington": "واشنطن", "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور"
         };
 
         const state = {
@@ -707,40 +653,20 @@
         };
 
         const TEXT = {
-            en: {
-                fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
-                next: "Next Prayer", loading: "Loading...", btn: "عربي",
-                selCity: "Choose City", selCountry: "Choose Country"
-            },
-            ar: {
-                fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء",
-                next: "الصلاة القادمة", loading: "جاري التحميل...", btn: "EN",
-                selCity: "اختر المدينة", selCountry: "اختر الدولة"
-            }
+            en: { fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", next: "Next Prayer", loading: "Loading...", btn: "عربي", selCity: "Choose City", selCountry: "Choose Country" },
+            ar: { fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء", next: "الصلاة القادمة", loading: "جاري التحميل...", btn: "EN", selCity: "اختر المدينة", selCountry: "اختر الدولة" }
         };
-
-        const COLOR_NAMES_EN = ["Red", "Purple", "Blue", "Brown", "Yellow", "Black", "Grey", "Slate", "Pink", "Green", "Orange", "Teal"];
-        const COLOR_NAMES_AR = ["أحمر", "بنفسجي", "أزرق", "بني", "أصفر", "أسود", "رمادي", "سحابي داكن", "وردي", "أخضر", "برتقالي", "تركوازي"];
-
-        function updateColorNames() {
-            const dots = document.querySelectorAll('.color-dot');
-            const isArabic = (state.lang === 'ar');
-            for (let i = 0; i < dots.length; i++) {
-                const name = isArabic ? COLOR_NAMES_AR[i] : COLOR_NAMES_EN[i];
-                dots[i].setAttribute('data-name', name);
-            }
-        }
 
         const audio = document.getElementById('adhan-audio');
 
         function populateCities(country) {
             const citySelect = document.getElementById('input-city');
-            citySelect.innerHTML = ""; 
+            citySelect.innerHTML = "";
             const cities = COUNTRY_DATA[country] || ["Capital"];
             cities.forEach(city => {
                 const opt = document.createElement('option');
                 opt.value = city;
-                opt.text = city; 
+                opt.text = city;
                 citySelect.appendChild(opt);
             });
             if(state.lang === 'ar') updateInputTexts('ar');
@@ -762,7 +688,6 @@
                 const url = `https://api.aladhan.com/v1/timingsByCity?city=${engCity}&country=${engCountry}&method=19`;
                 const res = await fetch(url);
                 const data = await res.json();
-                
                 if (data.code === 200) {
                     state.timings = data.data.timings;
                     state.hijri = data.data.date.hijri;
@@ -773,8 +698,7 @@
                 } else {
                     document.getElementById('date-display').innerText = "API Error";
                 }
-            } catch (e) { 
-                console.error("API Error", e);
+            } catch (e) {
                 document.getElementById('date-display').innerText = "Network Error";
             }
         }
@@ -792,8 +716,7 @@
 
         function tick() {
             const time = getCurrentTimeInZone();
-            const clockEl = document.getElementById('clock');
-            clockEl.innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
+            document.getElementById('clock').innerText = `${time.h.toString().padStart(2,'0')}:${time.m.toString().padStart(2,'0')}`;
             if(state.timings) updateCountdown(time);
         }
 
@@ -834,7 +757,7 @@
             const hLeft = Math.floor(diffInSeconds / 3600);
             diffInSeconds %= 3600;
             const mLeft = Math.floor(diffInSeconds / 60);
-            const sLeft = diffInSeconds % 60; 
+            const sLeft = diffInSeconds % 60;
             document.getElementById('countdown').innerText = `-${hLeft}:${mLeft<10?'0'+mLeft:mLeft}:${sLeft<10?'0'+sLeft:sLeft}`;
             document.getElementById('lbl-next').innerText = `${dict.next}: ${dict[nextName.toLowerCase()]}`;
             if (hLeft > 0 || mLeft > 1) state.lastPlayedPrayer = "";
@@ -854,11 +777,18 @@
         function getOrdinal(n) { const s = ["th", "st", "nd", "rd"]; const v = n % 100; return s[(v - 20) % 10] || s[v] || s[0]; }
 
         function renderPrayerTimes() {
-            const container = document.getElementById('prayers-container'); container.innerHTML = '';
+            const container = document.getElementById('prayers-container');
+            container.innerHTML = '';
             const dict = TEXT[state.lang];
             ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
-                const div = document.createElement('div'); div.className = 'prayer-item'; div.id = `p-${k}`;
-                div.innerHTML = `<span class="p-name">${dict[k.toLowerCase()]}</span><span class="p-time">${state.timings[k].split(' ')[0]}</span>`;
+                const div = document.createElement('div');
+                div.className = 'prayer-item';
+                div.id = `p-${k}`;
+                div.innerHTML = `
+                    <img src="${PRAYER_ICONS[k]}" class="p-icon" alt="${k}">
+                    <span class="p-name">${dict[k.toLowerCase()]}</span>
+                    <span class="p-time">${state.timings[k].split(' ')[0]}</span>
+                `;
                 container.appendChild(div);
             });
         }
@@ -871,6 +801,7 @@
             let displayCity = state.city;
             if(state.lang === 'ar') displayCity = DICT_CITIES[displayCity] || displayCity;
             document.getElementById('city-display').innerText = displayCity;
+            updateColorNames();
         }
 
         function toggleLang() { applyLang(state.lang === 'en' ? 'ar' : 'en'); }
@@ -885,7 +816,7 @@
         function updateInputTexts(l) {
             const countrySelect = document.getElementById('input-country');
             for (let i = 0; i < countrySelect.options.length; i++) {
-                const engVal = countrySelect.options[i].value; 
+                const engVal = countrySelect.options[i].value;
                 countrySelect.options[i].text = (l === 'ar' && DICT_COUNTRIES[engVal]) ? DICT_COUNTRIES[engVal] : engVal;
             }
             const citySelect = document.getElementById('input-city');
@@ -895,12 +826,22 @@
             }
         }
 
+        function updateColorNames() {
+            const dots = document.querySelectorAll('.color-dot');
+            const isArabic = (state.lang === 'ar');
+            const names_en = ["Pink","Purple","Red","Orange","Yellow","Green","Cyan","Blue","Brown","Grey","Black","Magenta"];
+            const names_ar = ["وردي","بنفسجي","أحمر","برتقالي","أصفر","أخضر","سماوي","أزرق","بني","رمادي","أسود","ماجنتا"];
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].setAttribute('data-name', isArabic ? names_ar[i] : names_en[i]);
+            }
+        }
+
         function toggleSound() {
             const btn = document.getElementById('btn-sound'); const hint = document.getElementById('audio-hint');
             if(!state.sound) {
                 state.sound = true; btn.innerText = "🔊"; btn.style.opacity = "1";
-                hint.innerText = "Testing Audio..."; hint.style.opacity = '1';
-                audio.play().then(() => { setTimeout(() => { audio.pause(); audio.currentTime = 0; hint.innerText = "Sound Enabled"; setTimeout(() => hint.style.opacity = '0', 2000); }, 3000); }).catch(err => { hint.innerText = "Error"; });
+                hint.innerText = "Sound Enabled"; hint.style.opacity = '1';
+                setTimeout(() => hint.style.opacity = '0', 2000);
             } else {
                 state.sound = false; btn.innerText = "🔇"; btn.style.opacity = "0.5"; audio.pause();
             }
@@ -919,7 +860,7 @@
 
         function changeCountry() {
             const countrySelect = document.getElementById('input-country');
-            const val = countrySelect.value; 
+            const val = countrySelect.value;
             const engCountry = getKeyByValue(DICT_COUNTRIES, val) || val;
             state.country = engCountry;
             populateCities(state.country);
@@ -935,8 +876,8 @@
                 if (savedMode === 'light') currentMode = 'light';
                 else currentMode = 'dark';
                 const savedAccent = localStorage.getItem(widgetId + '_accent');
-                if (savedAccent && accentColorMap[savedAccent]) currentAccent = savedAccent;
-                else currentAccent = 'red';
+                if (savedAccent) currentAccent = savedAccent;
+                else currentAccent = 'pink';
 
                 setMode(currentMode);
                 setAccent(currentAccent);
@@ -958,7 +899,6 @@
                 applyLang(state.lang);
                 fetchData();
                 setInterval(tick, 1000);
-
                 document.getElementById('floatingIcon').addEventListener('click', cycleIcon);
                 const toggle = document.getElementById('darkLightToggle');
                 if (toggle) {
