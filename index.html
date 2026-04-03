@@ -577,6 +577,10 @@
             brown: '#8B4513', grey: '#808080', black: '#444444', magenta: '#d94f8c'
         };
 
+        // ========== UNIQUE ID FOR MULTIPLE PAGES (FIXED) ==========
+        const urlParams = new URLSearchParams(window.location.search);
+        const widgetId = urlParams.get('id') || 'default';
+
         let currentMode = 'dark';
         let currentAccent = 'pink';
 
@@ -617,7 +621,6 @@
         }
 
         // ========== MAIN SCRIPT ==========
-        const widgetId = 'prayer_tracker';
         function getStorage(key) { try { return localStorage.getItem(widgetId + '_' + key); } catch(e) { return null; } }
         function setStorage(key, val) { try { localStorage.setItem(widgetId + '_' + key, val); } catch(e) {} }
 
