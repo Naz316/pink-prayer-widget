@@ -81,7 +81,7 @@
 
         /* Smooth transitions */
         .widget-card, .prayer-item, .prayer-item.active, .p-name, .p-time,
-        .date-hijri, .date-greg, .label-text, .main-text, .input-box, .icon-btn, .lang-btn {
+        .date-hijri, .date-greg, .label-text, .main-text, .input-box, .icon-btn, .lang-icon-btn {
             transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
@@ -213,19 +213,16 @@
         .prayer-item:last-child { border-right: none; }
         .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
 
-        /* --- UPDATED ICON TRANSPARENCY SYSTEM --- */
+        /* --- ICON TRANSPARENCY SYSTEM --- */
         .p-icon {
             width: 38px;
             height: 38px;
             object-fit: contain;
             margin-bottom: 2px;
-            /* Remove white background in Dark Mode by inverting white to black, then using screen blend */
             filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1);
             mix-blend-mode: screen;
             transition: filter 0.3s ease, transform 0.3s ease;
         }
-
-        /* Revert filters for Light Mode to use multiply blend (best for white backgrounds on light surfaces) */
         body.light-mode .p-icon {
             filter: none;
             mix-blend-mode: multiply;
@@ -273,33 +270,38 @@
             height: 35px; 
         }
 
+        /* All icon buttons (sound, language, palette) have same style */
         .icon-btn {
-            background: none;
-            border: none;
+            background: none !important;
+            border: none !important;
             cursor: pointer;
             font-size: 1.4rem;
             color: var(--text-secondary);
             transition: 0.2s;
             padding: 0;
             line-height: 1;
-        }
-        .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
-
-        .lang-btn {
-            background: var(--input-bg);
-            border: 1px solid var(--border-card);
-            color: var(--text-primary);
-            padding: 0;
-            width: 50px;
-            height: 28px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-family: inherit;
-            display: flex;
+            width: auto;
+            height: auto;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
         }
+        .icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
+
+        /* Ensure language button has no extra background or border */
+        .lang-icon-btn {
+            background: none !important;
+            border: none !important;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lang-icon-btn:hover { color: var(--text-primary); transform: scale(1.1); }
 
         /* Custom switch */
         .mode-switch-wrapper {
@@ -504,7 +506,10 @@
 
             <div class="tools">
                 <button class="icon-btn" onclick="toggleSound()" id="btn-sound" style="opacity: 0.5;">🔇</button>
-                <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
+                
+                <!-- Language button with globe emoji, same as icon-btn -->
+                <button class="icon-btn" id="langBtn" onclick="toggleLang()" style="font-size: 1.4rem;">🌐</button>
+                
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
 
                 <div class="mode-switch-wrapper">
@@ -684,8 +689,8 @@
         };
 
         const TEXT = {
-            en: { fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", next: "Next Prayer", loading: "Loading...", btn: "عربي", selCity: "Choose City", selCountry: "Choose Country" },
-            ar: { fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء", next: "الصلاة القادمة", loading: "جاري التحميل...", btn: "EN", selCity: "اختر المدينة", selCountry: "اختر الدولة" }
+            en: { fajr: "Fajr", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", next: "Next Prayer", loading: "Loading...", selCity: "Choose City", selCountry: "Choose Country" },
+            ar: { fajr: "الفجر", sunrise: "الشروق", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء", next: "الصلاة القادمة", loading: "جاري التحميل...", selCity: "اختر المدينة", selCountry: "اختر الدولة" }
         };
 
         const audio = document.getElementById('adhan-audio');
@@ -828,7 +833,6 @@
             const dict = TEXT[state.lang];
             document.getElementById('lbl-city').innerText = dict.selCity;
             document.getElementById('lbl-country').innerText = dict.selCountry;
-            document.getElementById('btn-lang').innerText = dict.btn;
             let displayCity = state.city;
             if(state.lang === 'ar') displayCity = DICT_CITIES[displayCity] || displayCity;
             document.getElementById('city-display').innerText = displayCity;
@@ -903,10 +907,7 @@
         // --- INIT ---
         window.onload = () => {
             try {
-                // Load floating icon index first
                 loadIconIndex();
-
-                // Load mode and accent
                 const savedMode = localStorage.getItem(widgetId + '_mode');
                 if (savedMode === 'light') currentMode = 'light';
                 else currentMode = 'dark';
