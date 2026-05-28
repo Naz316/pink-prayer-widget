@@ -73,7 +73,7 @@
 
         /* --- FIX ARABIC SPACING (remove extra gap between name and time) --- */
         .prayer-item {
-            gap: 2px;  /* consistent for both languages */
+            gap: 2px;
         }
         .p-name, .p-time {
             line-height: 1.2;
@@ -208,7 +208,7 @@
             justify-content: center;
             align-items: center;
             border-right: 1px solid var(--border-card);
-            gap: 2px;  /* consistent minimal gap */
+            gap: 2px;
         }
         .prayer-item:last-child { border-right: none; }
         .prayer-item.active { background-color: var(--highlight-bg); font-weight: bold; }
@@ -487,27 +487,13 @@
                 </div>
                 <div class="input-group">
                     <span class="input-label" id="lbl-country">Choose Country</span>
-                    <select id="input-country" class="input-box" onchange="changeCountry()">
-                        <option value="Algeria">Algeria</option>
-                        <option value="Palestine">Palestine</option>
-                        <option value="Saudi Arabia">Saudi Arabia</option>
-                        <option value="Egypt">Egypt</option>
-                        <option value="Morocco">Morocco</option>
-                        <option value="Tunisia">Tunisia</option>
-                        <option value="France">France</option>
-                        <option value="US">USA</option>
-                        <option value="UK">UK</option>
-                        <option value="Turkey">Turkey</option>
-                        <option value="Indonesia">Indonesia</option>
-                        <option value="Malaysia">Malaysia</option>
-                    </select>
+                    <select id="input-country" class="input-box" onchange="changeCountry()"></select>
                 </div>
             </div>
 
             <div class="tools">
                 <button class="icon-btn" onclick="toggleSound()" id="btn-sound" style="opacity: 0.5;">🔇</button>
                 
-                <!-- Language button with globe emoji, same as icon-btn -->
                 <button class="icon-btn" id="langBtn" onclick="toggleLang()" style="font-size: 1.4rem;">🌐</button>
                 
                 <button class="icon-btn" onclick="toggleColors()">🎨</button>
@@ -651,36 +637,141 @@
         function getStorage(key) { try { return localStorage.getItem(widgetId + '_' + key); } catch(e) { return null; } }
         function setStorage(key, val) { try { localStorage.setItem(widgetId + '_' + key, val); } catch(e) {} }
 
+        // ========== EXPANDED COUNTRY & CITY DATA (ONLY CAPITALS, PLUS MAJOR US CITIES) ==========
         const COUNTRY_DATA = {
-            "Algeria": ["Ain Oussera", "Algiers"],
-            "Saudi Arabia": ["Makkah", "Madinah"],
-            "Palestine": ["Gaza", "Jerusalem"],
+            // Africa
+            "Algeria": ["Algiers"],
             "Egypt": ["Cairo"],
             "Morocco": ["Rabat"],
             "Tunisia": ["Tunis"],
-            "France": ["Paris"],
-            "US": ["Washington"],
-            "UK": ["London"],
+            "Libya": ["Tripoli"],
+            "Sudan": ["Khartoum"],
+            "Nigeria": ["Abuja"],
+            "South Africa": ["Pretoria"],
+            "Kenya": ["Nairobi"],
+            "Ghana": ["Accra"],
+            "Senegal": ["Dakar"],
+            // Asia
+            "Saudi Arabia": ["Riyadh"],
+            "Palestine": ["Ramallah"],
+            "Jordan": ["Amman"],
+            "Lebanon": ["Beirut"],
+            "Iraq": ["Baghdad"],
+            "Syria": ["Damascus"],
+            "Yemen": ["Sanaa"],
+            "Oman": ["Muscat"],
+            "Kuwait": ["Kuwait City"],
+            "Bahrain": ["Manama"],
+            "Qatar": ["Doha"],
+            "UAE": ["Abu Dhabi"],
             "Turkey": ["Ankara"],
+            "Iran": ["Tehran"],
+            "Pakistan": ["Islamabad"],
+            "India": ["New Delhi"],
+            "Bangladesh": ["Dhaka"],
+            "China": ["Beijing"],
+            "Japan": ["Tokyo"],
+            "South Korea": ["Seoul"],
             "Indonesia": ["Jakarta"],
-            "Malaysia": ["Kuala Lumpur"]
+            "Malaysia": ["Kuala Lumpur"],
+            "Thailand": ["Bangkok"],
+            "Vietnam": ["Hanoi"],
+            "Philippines": ["Manila"],
+            "Sri Lanka": ["Colombo"],
+            "Nepal": ["Kathmandu"],
+            "Afghanistan": ["Kabul"],
+            "Uzbekistan": ["Tashkent"],
+            "Kazakhstan": ["Nur-Sultan"],
+            // Europe
+            "France": ["Paris"],
+            "UK": ["London"],
+            "Germany": ["Berlin"],
+            "Italy": ["Rome"],
+            "Spain": ["Madrid"],
+            "Russia": ["Moscow"],
+            "Netherlands": ["Amsterdam"],
+            "Belgium": ["Brussels"],
+            "Switzerland": ["Bern"],
+            "Sweden": ["Stockholm"],
+            "Norway": ["Oslo"],
+            "Denmark": ["Copenhagen"],
+            "Poland": ["Warsaw"],
+            "Greece": ["Athens"],
+            "Portugal": ["Lisbon"],
+            "Austria": ["Vienna"],
+            "Ireland": ["Dublin"],
+            "Finland": ["Helsinki"],
+            // North America
+            "US": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington DC"],
+            "Canada": ["Ottawa", "Toronto", "Vancouver", "Montreal"],
+            "Mexico": ["Mexico City"],
+            // South America
+            "Brazil": ["Brasília"],
+            "Argentina": ["Buenos Aires"],
+            "Chile": ["Santiago"],
+            "Peru": ["Lima"],
+            "Colombia": ["Bogotá"],
+            "Venezuela": ["Caracas"],
+            "Ecuador": ["Quito"],
+            // Oceania
+            "Australia": ["Canberra", "Sydney", "Melbourne", "Brisbane", "Perth"],
+            "New Zealand": ["Wellington"]
         };
 
         const DICT_COUNTRIES = {
-            "Algeria": "الجزائر", "Palestine": "فلسطين", "Saudi Arabia": "السعودية", "Egypt": "مصر",
-            "Morocco": "المغرب", "Tunisia": "تونس", "France": "فرنسا", "US": "أمريكا", "UK": "بريطانيا",
-            "Turkey": "تركيا", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا"
+            "Algeria": "الجزائر", "Egypt": "مصر", "Morocco": "المغرب", "Tunisia": "تونس",
+            "Libya": "ليبيا", "Sudan": "السودان", "Nigeria": "نيجيريا", "South Africa": "جنوب أفريقيا",
+            "Kenya": "كينيا", "Ghana": "غانا", "Senegal": "السنغال",
+            "Saudi Arabia": "السعودية", "Palestine": "فلسطين", "Jordan": "الأردن", "Lebanon": "لبنان",
+            "Iraq": "العراق", "Syria": "سوريا", "Yemen": "اليمن", "Oman": "عمان", "Kuwait": "الكويت",
+            "Bahrain": "البحرين", "Qatar": "قطر", "UAE": "الإمارات", "Turkey": "تركيا", "Iran": "إيران",
+            "Pakistan": "باكستان", "India": "الهند", "Bangladesh": "بنغلاديش", "China": "الصين",
+            "Japan": "اليابان", "South Korea": "كوريا الجنوبية", "Indonesia": "إندونيسيا", "Malaysia": "ماليزيا",
+            "Thailand": "تايلاند", "Vietnam": "فيتنام", "Philippines": "الفلبين", "Sri Lanka": "سريلانكا",
+            "Nepal": "نيبال", "Afghanistan": "أفغانستان", "Uzbekistan": "أوزبكستان", "Kazakhstan": "كازاخستان",
+            "France": "فرنسا", "UK": "بريطانيا", "Germany": "ألمانيا", "Italy": "إيطاليا", "Spain": "إسبانيا",
+            "Russia": "روسيا", "Netherlands": "هولندا", "Belgium": "بلجيكا", "Switzerland": "سويسرا",
+            "Sweden": "السويد", "Norway": "النرويج", "Denmark": "الدنمارك", "Poland": "بولندا",
+            "Greece": "اليونان", "Portugal": "البرتغال", "Austria": "النمسا", "Ireland": "أيرلندا",
+            "Finland": "فنلندا", "US": "أمريكا", "Canada": "كندا", "Mexico": "المكسيك",
+            "Brazil": "البرازيل", "Argentina": "الأرجنتين", "Chile": "تشيلي", "Peru": "بيرو",
+            "Colombia": "كولومبيا", "Venezuela": "فنزويلا", "Ecuador": "الإكوادور",
+            "Australia": "أستراليا", "New Zealand": "نيوزيلندا"
         };
+
         const DICT_CITIES = {
-            "Ain Oussera": "عين وسارة", "Algiers": "الجزائر العاصمة", "Makkah": "مكة المكرمة", "Madinah": "المدينة المنورة",
-            "Gaza": "غزة", "Jerusalem": "القدس", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة",
-            "Paris": "باريس", "Washington": "واشنطن", "London": "لندن", "Ankara": "أنقرة", "Jakarta": "جاكرتا", "Kuala Lumpur": "كوالالمبور"
+            "Algiers": "الجزائر العاصمة", "Cairo": "القاهرة", "Rabat": "الرباط", "Tunis": "تونس العاصمة",
+            "Tripoli": "طرابلس", "Khartoum": "الخرطوم", "Abuja": "أبوجا", "Pretoria": "بريتوريا",
+            "Nairobi": "نيروبي", "Accra": "أكرا", "Dakar": "داكار",
+            "Riyadh": "الرياض", "Ramallah": "رام الله", "Amman": "عمان", "Beirut": "بيروت",
+            "Baghdad": "بغداد", "Damascus": "دمشق", "Sanaa": "صنعاء", "Muscat": "مسقط",
+            "Kuwait City": "مدينة الكويت", "Manama": "المنامة", "Doha": "الدوحة", "Abu Dhabi": "أبو ظبي",
+            "Ankara": "أنقرة", "Tehran": "طهران", "Islamabad": "إسلام آباد", "New Delhi": "نيودلهي",
+            "Dhaka": "دكا", "Beijing": "بكين", "Tokyo": "طوكيو", "Seoul": "سيول", "Jakarta": "جاكرتا",
+            "Kuala Lumpur": "كوالالمبور", "Bangkok": "بانكوك", "Hanoi": "هانوي", "Manila": "مانيلا",
+            "Colombo": "كولومبو", "Kathmandu": "كاتماندو", "Kabul": "كابول", "Tashkent": "طشقند",
+            "Nur-Sultan": "نور سلطان", "Paris": "باريس", "London": "لندن", "Berlin": "برلين",
+            "Rome": "روما", "Madrid": "مدريد", "Moscow": "موسكو", "Amsterdam": "أمستردام",
+            "Brussels": "بروكسل", "Bern": "برن", "Stockholm": "ستوكهولم", "Oslo": "أوسلو",
+            "Copenhagen": "كوبنهاغن", "Warsaw": "وارسو", "Athens": "أثينا", "Lisbon": "لشبونة",
+            "Vienna": "فيينا", "Dublin": "دبلن", "Helsinki": "هلسنكي",
+            "New York": "نيويورك", "Los Angeles": "لوس أنجلوس", "Chicago": "شيكاغو", "Houston": "هيوستن",
+            "Phoenix": "فينيكس", "Philadelphia": "فيلادلفيا", "San Antonio": "سان أنطونيو",
+            "San Diego": "سان دييغو", "Dallas": "دالاس", "San Jose": "سان خوسيه", "Austin": "أوستن",
+            "Jacksonville": "جاكسونفيل", "Fort Worth": "فورت وورث", "Columbus": "كولومبوس",
+            "Charlotte": "شارلوت", "Indianapolis": "إنديانابوليس", "San Francisco": "سان فرانسيسكو",
+            "Seattle": "سياتل", "Denver": "دنفر", "Washington DC": "واشنطن العاصمة",
+            "Ottawa": "أوتاوا", "Toronto": "تورونتو", "Vancouver": "فانكوفر", "Montreal": "مونتريال",
+            "Mexico City": "مدينة مكسيكو", "Brasília": "برازيليا", "Buenos Aires": "بوينس آيرس",
+            "Santiago": "سانتياغو", "Lima": "ليما", "Bogotá": "بوغوتا", "Caracas": "كاراكاس",
+            "Quito": "كيتو", "Canberra": "كانبرا", "Sydney": "سيدني", "Melbourne": "ملبورن",
+            "Brisbane": "بريزبن", "Perth": "بيرث", "Wellington": "ويلينغتون"
         };
 
         const state = {
             lang: getStorage('p_lang') || 'en',
             sound: false,
-            city: getStorage('p_city') || "Ain Oussera",
+            city: getStorage('p_city') || "Algiers",
             country: getStorage('p_country') || "Algeria",
             timings: null,
             hijri: null,
@@ -907,6 +998,16 @@
         // --- INIT ---
         window.onload = () => {
             try {
+                // Populate country dropdown dynamically from COUNTRY_DATA keys
+                const countrySelect = document.getElementById('input-country');
+                countrySelect.innerHTML = '';
+                Object.keys(COUNTRY_DATA).sort().forEach(country => {
+                    const opt = document.createElement('option');
+                    opt.value = country;
+                    opt.text = country;
+                    countrySelect.appendChild(opt);
+                });
+
                 loadIconIndex();
                 const savedMode = localStorage.getItem(widgetId + '_mode');
                 if (savedMode === 'light') currentMode = 'light';
